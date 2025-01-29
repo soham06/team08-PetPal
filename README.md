@@ -1,8 +1,8 @@
-# team08-RGBJSS
+# team08-PetPal
 
 ## Team
 
-#### Team Name: RBGJSS
+#### Team Name: PetPal
 #### Team Number: 08
 
 ### Team Members
