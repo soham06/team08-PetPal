@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "981746823854",
+    "project_id": "petpal-5860b",
+    "storage_bucket": "petpal-5860b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:981746823854:android:8b221d4dcde8ff1056b33f",
+        "android_client_info": {
+          "package_name": "com.cs446.petpal"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC8z4TddeRJRfY0dCEWRMzhwcuTNCPmcds"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
