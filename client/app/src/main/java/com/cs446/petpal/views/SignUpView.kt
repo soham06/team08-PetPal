@@ -1,18 +1,10 @@
-package com.cs446.petpal
+package com.cs446.petpal.views
 
-import android.os.Bundle
-import android.util.Log
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -22,36 +14,22 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.cs446.petpal.ui.theme.PetPalTheme
-import com.cs446.petpal.firebase.emailauth.EmailAuth
+import com.cs446.petpal.viewmodels.SignUpViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 
-class MainActivity : ComponentActivity() {
-    private val emailAuth: EmailAuth by viewModels()
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            PetPalTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    RegisterFormExample(
-                        modifier = Modifier.padding(innerPadding),
-                        emailAuth
-                    )
-                }
-            }
-        }
-    }
-}
 
 @Composable
-fun RegisterFormExample(modifier: Modifier = Modifier, emailAuth: EmailAuth) {
+fun SignUpView(
+    modifier: Modifier = Modifier,
+    viewModel: SignUpViewModel = viewModel()
+) {
+
     var email: String by remember { mutableStateOf("") }
     var password: String by remember { mutableStateOf("") }
 
-    val user by emailAuth.user.collectAsState()
-    val errorMessage by emailAuth.errorMessage.collectAsState()
+    val user by viewModel.user.collectAsState()
+    val errorMessage by viewModel.errorMessage.collectAsState()
 
     Column(
         modifier = modifier
@@ -76,14 +54,14 @@ fun RegisterFormExample(modifier: Modifier = Modifier, emailAuth: EmailAuth) {
 
         if (user == null) {
             Button(
-                onClick = { emailAuth.createAccount(email, password) },
+                onClick = { viewModel.createAccount(email, password) },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Register")
             }
 
             Button(
-                onClick = { emailAuth.signIn(email, password) },
+                onClick = { viewModel.signIn(email, password) },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Login")
@@ -91,7 +69,7 @@ fun RegisterFormExample(modifier: Modifier = Modifier, emailAuth: EmailAuth) {
         } else {
             Text("User signed in: ${user?.email}")
             Button(
-                onClick = { emailAuth.signOut() },
+                onClick = { viewModel.signOut() },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Sign Out")

@@ -1,4 +1,4 @@
-package com.cs446.petpal.firebase.emailauth
+package com.cs446.petpal.viewmodels
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -6,11 +6,11 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.auth
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import com.google.firebase.Firebase
 
 
-class EmailAuth : ViewModel() {
+// TODO: update this code to use our backend api
+class SignUpViewModel : ViewModel() {
     private val TAG = "EmailAuth"
     private val auth: FirebaseAuth = Firebase.auth
 
