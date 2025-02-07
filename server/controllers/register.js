@@ -1,3 +1,6 @@
+import { getFirestore, collection, getDocs } from 'firebase/firestore';
+import firebaseConnection from '../firebase.js'
+
 export async function registerUser (req, res) {
     try {
         const reqBody = req.body;
