@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="gcm_defaultSenderId" translatable="false">981746823854</string>
-    <string name="google_api_key" translatable="false">AIzaSyC8z4TddeRJRfY0dCEWRMzhwcuTNCPmcds</string>
-    <string name="google_app_id" translatable="false">1:981746823854:android:8b221d4dcde8ff1056b33f</string>
-    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyC8z4TddeRJRfY0dCEWRMzhwcuTNCPmcds</string>
-    <string name="google_storage_bucket" translatable="false">petpal-5860b.firebasestorage.app</string>
-    <string name="project_id" translatable="false">petpal-5860b</string>
-</resources>
