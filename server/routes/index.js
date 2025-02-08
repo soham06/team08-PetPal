@@ -10,7 +10,7 @@ router.get('/', (req, res) => {
 });
 
 // user routes
-router.get('/register', registerUser);
+router.post('/register', registerUser);
 router.get('/login', loginUser);
 
 // task routes

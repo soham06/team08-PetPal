@@ -17,6 +17,5 @@ app.use('/api', routes);
 
 app.listen(config.port, () =>
   console.log(`Server is running on: ${config.hostUrl}`),
-  console.log(`${firebaseConnection}`)
 );
 
