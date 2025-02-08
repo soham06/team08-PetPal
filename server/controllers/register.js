@@ -7,7 +7,7 @@ export async function registerUser (req, res) {
         if (!userData.firstName || !userData.lastName 
             || !userData.lastName || !userData.password 
             || !userData.userType) {
-                return res.status(401).json({ message: "Invalid request body, please ensure all required fields are present"});
+                return res.status(400).json({ message: "Invalid request body, please ensure all required fields are present"});
         }
 
         const usersTable = firebaseConnection.collection('users')
@@ -23,7 +23,7 @@ export async function registerUser (req, res) {
         const createdUser = fetchedCreatedUser.docs.map(doc => ({
             userId: doc.id,
             ...doc.data()
-        }));
+        }))[0];
         res.status(200).json(createdUser);
     } catch (error) {
         res.status(400).json({ message: error.message});
