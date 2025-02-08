@@ -14,14 +14,16 @@ The server will start at: `http://localhost:3000`
 
 **`/api/register`** - enables users to register for app
 
+**Note:** firstName, lastName, emailAddress, password, userType are required in the request body for this endpoint to work properly
+
 `Request`: 
 
     {
-        "first_name": "John",
-        "last_name": "Doe",
-        "email_address": "test@gmail.com",
+        "firstName": "John",
+        "lastName": "Doe",
+        "emailAddress": "test@gmail.com",
         "password": "aosfhahnachagcasb",
-        "user_type": "Owner"
+        "userType": "Owner"
     }
 
 `Response`: 200 success code or 400 error code
