@@ -8,7 +8,7 @@ router.get('/', (req, res) => {
     res.send('Welcome to PetPal API');
 });
 
-router.get('/register', registerUser);
+router.post('/register', registerUser);
 router.get('/login', loginUser);
 
 export default router;
