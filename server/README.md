@@ -12,7 +12,7 @@ The server will start at: `http://localhost:3000`
 
 `Response`: `Welcome to PetPal API`
 
-**`/api/register`** - enables users to register for app
+**`POST /api/register`** - enables users to register for app
 
 `Request`: 
 
@@ -26,7 +26,7 @@ The server will start at: `http://localhost:3000`
 
 `Response`: 200 success code or 400 error code
 
-**`/api/login`** - enables users to login
+**`GET /api/login`** - enables users to login
 
 `Request`: 
 
@@ -36,4 +36,21 @@ The server will start at: `http://localhost:3000`
     }
 
 `Response`: User profile for the user
+
+**`GET /tasks/:userId`** - gets a list of tasks for a given user
+
+`Request`: `/tasks/:akhsjfbkaaacjn`
+
+`Response`: List of all tasks for the given user
+
+**`POST /tasks/:userId`** - creates a new task for a given user
+
+`Request`: 
+
+    {
+        "description": "this is a test",
+        "status": "CLOSED"
+    }
+
+`Response`: Created task for the user
 
