@@ -1,22 +1,29 @@
-import { getFirestore, collection, getDocs } from 'firebase/firestore';
+import { getFirestore, collection, getDocs, query, where } from 'firebase/firestore';
 import firebaseConnection from '../firebase.js'
 
 export async function loginUser (req, res) {
-    const usersTable = firebaseConnection.collection('users')
-    const querySnapshot = await usersTable.get()
+    const db = getFirestore(firebaseConnection);
 
-    let userData = {};
-    querySnapshot.forEach((doc) => {
-      userData = { id: doc.id, ...doc.data() };
-    });
+    const credentials = req.body;
 
-    console.log(userData)
+    const usersRef = collection(db, "users");
+    const q = query(usersRef, where("emailAddress", "==", credentials.emailAddress));
+    const users = await getDocs(q);
+
+    if (users.empty) {
+        return res.status(404).json({ message: "No account found with this email."});
+    }
+
+    const userDoc = users.docs[0];
+    const userData = userDoc.data();
+
+    if (credentials.password != userData.password) {
+        return res.status(400).json({ message: "Incorrect password."});
+    }
 
     try {
-        const reqBody = req.body;
-        console.log(reqBody);
-        res.status(200).json(reqBody);
+        res.status(200).json(userData);
     } catch (error) {
-        res.status(404).json({ message: error.message});
+        res.status(400).json({ message: error.message});
     }
 };
