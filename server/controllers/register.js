@@ -7,6 +7,8 @@ export async function registerUser (req, res) {
 
         const userData = req.body;
 
+        console.log(req.body)
+
         if (!userData.firstName || !userData.lastName 
             || !userData.emailAddress || !userData.password
             || !userData.userType || !userData.address) {
@@ -30,6 +32,7 @@ export async function registerUser (req, res) {
         }))[0];
         res.status(200).json(createdUser);
     } catch (error) {
+        console.log(error.message)
         res.status(400).json({ message: error.message});
     }
 };
