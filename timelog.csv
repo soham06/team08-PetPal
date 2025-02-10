@@ -17,3 +17,4 @@ date,Rozhan,Gursimran,Bhavya,Jaskirat,Soham,Shaan,task
 2025-02-7,0,0,0,0,0.5,0,setting up user registeration endpoint
 2025-02-7,0,0,0,0,1,0,setting up initial tasks endpoints
 2025-02-7,0,2,0,0,0,0,refactored endpoints for register and tasks so they no longer require admin info. set up the login endpoint.
+2025-02-10,0,1,1,1,0,0,worked on sign up screen
