@@ -19,3 +19,4 @@ date,Rozhan,Gursimran,Bhavya,Jaskirat,Soham,Shaan,task
 2025-02-7,0,2,0,0,0,0,refactored endpoints for register and tasks so they no longer require admin info. set up the login endpoint.
 2025-02-10,0,1,1,1,0,0,worked on sign up screen
 2025-02-10,0,0,0,0,1,0,fixed backend connection on sign up screen
+2025-02-10,0,0,3,0,0,0,worked on homepage and created top and bottom bars
