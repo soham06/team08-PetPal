@@ -5,7 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.cs446.petpal.ui.theme.PetPalTheme
-import com.cs446.petpal.views.SignUpView
+import com.cs446.petpal.views.NewSignUpView
 
 
 class MainActivity : ComponentActivity() {
@@ -14,7 +14,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             PetPalTheme {
-                SignUpView()
+                NewSignUpView()
             }
         }
     }
