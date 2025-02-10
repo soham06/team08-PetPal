@@ -194,9 +194,12 @@ fun NewSignUpView(signUpViewModel: NewSignUpViewModel = viewModel()) {
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(20.dp) // Less rounded button
+                shape = RoundedCornerShape(20.dp), // Less rounded button
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.LightGray,  // Background color
+                )
             ) {
-                Text("Sign Up", color = Color.White)
+                Text("Sign Up", color = Color.Black)
             }
 
             signUpSuccess?.let { success ->
