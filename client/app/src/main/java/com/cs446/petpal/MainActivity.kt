@@ -12,6 +12,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.cs446.petpal.ui.theme.PetPalTheme
+import com.cs446.petpal.views.LoginView
 import com.cs446.petpal.views.LandingPageScreen
 import com.cs446.petpal.views.SignUpView
 import com.cs446.petpal.views.HomepageView
