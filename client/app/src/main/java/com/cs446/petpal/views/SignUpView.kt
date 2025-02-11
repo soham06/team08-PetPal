@@ -26,11 +26,15 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.toSize
+import androidx.compose.ui.text.font.FontStyle
 import com.cs446.petpal.models.User
-import com.cs446.petpal.viewmodels.NewSignUpViewModel
+import com.cs446.petpal.viewmodels.SignUpViewModel
+import java.security.MessageDigest
+//import androidx.compose.foundation.layout.windowInsetsPadding
+//import androidx.compose.foundation.layout.WindowInsets
 
 @Composable
-fun NewSignUpView(signUpViewModel: NewSignUpViewModel = viewModel()) {
+fun SignUpView(signUpViewModel: SignUpViewModel = viewModel()) {
     var firstName by remember { mutableStateOf("") }
     var lastName by remember { mutableStateOf("") }
     var address by remember { mutableStateOf("") }
@@ -42,23 +46,30 @@ fun NewSignUpView(signUpViewModel: NewSignUpViewModel = viewModel()) {
     var passwordVisible by remember { mutableStateOf(false) }
     var confirmPasswordVisible by remember { mutableStateOf(false) }
 
+    fun hashPassword(password: String): String {
+        val md = MessageDigest.getInstance("MD5")
+        val digest = md.digest(password.toByteArray())
+        return digest.joinToString("") { "%02x".format(it) }
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
+//            .windowInsetsPadding(WindowInsets.statusBars)
             .background(Color(0xFFA2D9FF)),
         contentAlignment = Alignment.Center
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp) // Reduced padding
+                .padding(24.dp)
         ) {
             Text(
                 text = "Welcome!",
                 style = MaterialTheme.typography.headlineMedium.copy(
-                    fontSize = 24.sp,
+                    fontSize = 28.sp,
                     fontWeight = FontWeight.Bold
                 )
             )
@@ -66,13 +77,15 @@ fun NewSignUpView(signUpViewModel: NewSignUpViewModel = viewModel()) {
                 text = "Join the world’s largest community of pet owners",
                 fontSize = 15.sp,
                 color = Color.DarkGray,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.SemiBold
             )
 
             val textFieldModifier = Modifier
                 .fillMaxWidth()
-                .background(Color.White, RoundedCornerShape(20.dp))
-                .padding(horizontal = 12.dp, vertical = 6.dp)
+                .background(Color.White, RoundedCornerShape(15.dp))
+                .padding(top = 4.dp, bottom = 10.dp, start = 10.dp, end = 10.dp)
+//                .padding(6.dp)
+//                .shadow(4.dp, RoundedCornerShape(15.dp))
 
             listOf(
                 "First Name" to firstName,
@@ -91,8 +104,13 @@ fun NewSignUpView(signUpViewModel: NewSignUpViewModel = viewModel()) {
                         }
                     },
                     label = { Text(label) },
+//                    colors = TextFieldDefaults.outlinedTextFieldColors(
+//                        containerColor = Color.White,
+//                        focusedBorderColor = Color(0xFF42A5F5),
+//                        unfocusedBorderColor = Color.LightGray
+//                    ),
                     modifier = textFieldModifier,
-                    shape = RoundedCornerShape(20.dp)
+                    shape = RoundedCornerShape(15.dp)
                 )
             }
 
@@ -124,11 +142,10 @@ fun NewSignUpView(signUpViewModel: NewSignUpViewModel = viewModel()) {
                         }
                     },
                     modifier = textFieldModifier,
-                    shape = RoundedCornerShape(20.dp)
+                    shape = RoundedCornerShape(15.dp)
                 )
             }
 
-            // User Type Dropdown
             var expanded by remember { mutableStateOf(false) }
             val userTypes = listOf("Pet Owner", "Pet Sitter")
             var textFieldSize by remember { mutableStateOf(Size.Zero) }
@@ -152,7 +169,7 @@ fun NewSignUpView(signUpViewModel: NewSignUpViewModel = viewModel()) {
                         .onGloballyPositioned { coordinates ->
                             textFieldSize = coordinates.size.toSize()
                         },
-                    shape = RoundedCornerShape(50.dp)
+                    shape = RoundedCornerShape(15.dp)
                 )
 
                 DropdownMenu(
@@ -174,17 +191,17 @@ fun NewSignUpView(signUpViewModel: NewSignUpViewModel = viewModel()) {
                 }
             }
 
-            // Sign Up Button
             Button(
                 onClick = {
                     if (password == confirmPassword) {
+                        val hashedPassword = hashPassword(password)
                         val user = User(
                             mutableStateOf(firstName),
                             mutableStateOf(lastName),
                             mutableStateOf(address),
                             mutableStateOf(email),
-                            mutableStateOf(password),
-                            mutableStateOf(userType.removePrefix("Pet "))
+                            mutableStateOf(hashedPassword),
+                            mutableStateOf(userType)
                         )
                         signUpViewModel.registerUser(user) { success ->
                             signUpSuccess = success
@@ -194,41 +211,38 @@ fun NewSignUpView(signUpViewModel: NewSignUpViewModel = viewModel()) {
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(20.dp), // Less rounded button
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.LightGray,  // Background color
-                )
+                shape = RoundedCornerShape(20.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFD700))
             ) {
                 Text("Sign Up", color = Color.Black)
             }
 
             signUpSuccess?.let { success ->
                 Text(
-                    text = if (success) " Registration Successful " else " Registration Failed ",
+                    text = if (success) "Registration Successful" else "Registration Failed",
                     color = if (success) Color.Green else Color.Red,
-                    modifier = if (success) Modifier.background(Color.Black) else Modifier.background(Color.White),
                     fontWeight = FontWeight.Bold,
                     fontSize = 15.sp
                 )
             }
+            Row {
+                Text(
+                    text = "Already have an account? ",
+                    color = Color.DarkGray,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 15.sp
+                )
 
-            Text(
-                text = "Already have an account?",
-                color = Color.DarkGray,
-                fontWeight = FontWeight.Bold,
-                fontSize = 15.sp,
-            )
-
-            Text(
-                text = "Login here",
-                color = Color.DarkGray,
-                fontWeight = FontWeight.Bold,
-                textDecoration = TextDecoration.Underline,
-                fontSize = 15.sp,
-                modifier = Modifier.clickable {
-                    // Navigate to Login Screen
-                }
-            )
+                Text(
+                    text = "Login here",
+                    color = Color.Blue,
+                    fontWeight = FontWeight.Bold,
+                    fontStyle = FontStyle.Italic,
+                    textDecoration = TextDecoration.Underline,
+                    fontSize = 15.sp,
+                    modifier = Modifier.clickable { }
+                )
+            }
         }
     }
 }

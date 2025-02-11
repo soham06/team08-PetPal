@@ -8,7 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.cs446.petpal.ui.theme.PetPalTheme
 import com.cs446.petpal.views.LandingPageScreen
-import com.cs446.petpal.views.NewSignUpView
+import com.cs446.petpal.views.SignUpView
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
