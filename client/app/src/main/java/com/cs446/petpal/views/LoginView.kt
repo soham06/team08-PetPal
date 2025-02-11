@@ -35,6 +35,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.cs446.petpal.models.User
@@ -115,31 +118,31 @@ fun LoginView(loginViewModel: LoginViewModel = viewModel(), navController: NavCo
             )
 
             // Forgot Password
-            Row (
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End
-            ) {
-                Text(
-                    text = "Forgot password?",
-                    color = Color.DarkGray,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp,
-                    modifier = Modifier.clickable {
-                        // TODO: Implement forgot password navigation.
-                    }
-                )
-            }
+//            Row (
+//                modifier = Modifier.fillMaxWidth(),
+//                horizontalArrangement = Arrangement.End
+//            ) {
+//                Text(
+//                    text = "Forgot password?",
+//                    color = Color.DarkGray,
+//                    fontWeight = FontWeight.Bold,
+//                    fontSize = 18.sp,
+//                    modifier = Modifier.clickable {
+//                        // TODO: Implement forgot password navigation.
+//                    }
+//                )
+//            }
 
             // Login Button
             Button(
                 onClick = {
                      loginViewModel.loginUser(email, hashPassword(password)) { success, _ ->
                          loginSuccess = success
-                         if(success) {
-                             navController.navigate("homepage") {
-                                 popUpTo("login") { inclusive = true }
-                             }
-                         }
+//                         if(success) {
+//                             navController.navigate("homepage") {
+//                                 popUpTo("login") { inclusive = true }
+//                             }
+//                         }
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),
@@ -152,24 +155,43 @@ fun LoginView(loginViewModel: LoginViewModel = viewModel(), navController: NavCo
 
             // Show a login result message.
             loginSuccess?.let { success ->
-                Text(
-                    text = if (success) "Login Successful" else "Login Failed",
-                    color = if (success) Color.Green else Color.Red,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 15.sp
-                )
+                if (!success) {
+                    Text(
+                        text = "Login Failed",
+                        color = Color.Red,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 15.sp
+                    )
+                }
+            }
+
+            LaunchedEffect(loginSuccess) {
+                if (loginSuccess == true) {
+                    navController.navigate("homepage")
+                }
             }
 
             // Create an Account
-            Text(
-                text = "Create an account",
-                color = Color.DarkGray,
-                fontWeight = FontWeight.Bold,
-                fontSize = 18.sp,
-                modifier = Modifier.clickable {
-                    navController.navigate("signup")
-                }
-            )
+            Row {
+                Text(
+                    text = "Don't have an account? ",
+                    color = Color.DarkGray,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 18.sp
+                )
+
+                Text(
+                    text = "Sign up here",
+                    color = Color.Blue,
+                    fontWeight = FontWeight.Bold,
+                    fontStyle = FontStyle.Italic,
+                    textDecoration = TextDecoration.Underline,
+                    fontSize = 18.sp,
+                    modifier = Modifier.clickable {
+                        navController.navigate("signup")
+                    }
+                )
+            }
         }
     }
 }
