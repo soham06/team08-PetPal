@@ -52,7 +52,7 @@ fun HomepageView(homepageViewModel: HomepageViewModel = viewModel(), navControll
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        TopBar()
+        TopBar(navController)
 
         // Main Content
         Box(

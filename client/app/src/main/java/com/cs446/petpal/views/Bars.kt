@@ -13,10 +13,17 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import com.cs446.petpal.R
+import androidx.navigation.NavController
+
 
 @Composable
 fun BottomBarButton(label: String, iconRes: Int) {
@@ -36,7 +43,8 @@ fun BottomBarButton(label: String, iconRes: Int) {
 }
 
 @Composable
-fun TopBar() {
+fun TopBar(navController: NavController) {
+    var expanded by remember { mutableStateOf(false) }
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -52,7 +60,7 @@ fun TopBar() {
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             IconButton(
-                onClick = { /* Handle click */ },
+                onClick = { },
                 modifier = Modifier
                     .size(48.dp)
                     .padding(top = 12.dp)
@@ -74,18 +82,34 @@ fun TopBar() {
                     textAlign = TextAlign.Center
                 )
             }
-            IconButton(
-                onClick = { /* Handle click */ },
-                modifier = Modifier
+
+            Box(modifier = Modifier.wrapContentSize(Alignment.TopEnd)) {
+                IconButton(
+                    onClick = { expanded = true },
+                    modifier = Modifier
                     .size(48.dp)
                     .padding(top = 12.dp)
             ) {
-                Icon(
-                    painter = painterResource(R.drawable.profile),
-                    contentDescription = "Profile",
-                    modifier = Modifier.size(24.dp),
-                    tint = Color.Black
-                )
+                    Icon(
+                        painter = painterResource(R.drawable.profile),
+                        contentDescription = "Profile",
+                        modifier = Modifier.size(24.dp),
+                        tint = Color.Black
+                    )
+                }
+
+                DropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false },
+                    modifier = Modifier.width(150.dp),
+                ) {
+                    DropdownMenuItem(
+                        text = { Text("Logout") },
+                        onClick = {
+                        expanded = false
+                        navController.navigate("landing")
+                    })
+                }
             }
         }
     }
