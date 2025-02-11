@@ -29,7 +29,7 @@ fun BottomBarButton(label: String, iconRes: Int) {
                 painter = painterResource(id = iconRes),
                 contentDescription = label,
                 modifier = Modifier.size(24.dp), // Adjust size as needed
-//                tint = Color.White // Change tint color if needed
+                // tint = Color.White // Change tint color if needed
             )
             Text(label, color = Color.Black)
         }

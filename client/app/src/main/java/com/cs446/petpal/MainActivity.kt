@@ -3,12 +3,18 @@ package com.cs446.petpal
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Surface
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.cs446.petpal.ui.theme.PetPalTheme
 import com.cs446.petpal.views.LandingPageScreen
 import com.cs446.petpal.views.SignUpView
+import com.cs446.petpal.views.HomepageView
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -16,10 +22,16 @@ class MainActivity : ComponentActivity() {
         setContent {
             val navController = rememberNavController()
             PetPalTheme {
-                NavHost(navController = navController, startDestination = "landing") {
-                    composable("landing") { LandingPageScreen(navController) } // ✅ Pass `navController`
-                    composable("signup") { SignUpView() }
-                    composable("login") {}
+                Surface(
+                    color = Color.White,
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    NavHost(navController = navController, startDestination = "landing") {
+                        composable("landing") { LandingPageScreen(navController) }
+                        composable("signup") { SignUpView(navController = navController) }
+                        composable("login") {}
+                        composable("homepage") { HomepageView(navController = navController) }
+                    }
                 }
             }
         }
