@@ -45,9 +45,10 @@ import com.cs446.petpal.views.TopBar
 import com.cs446.petpal.views.BottomBar
 import com.cs446.petpal.viewmodels.HomepageViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 
 @Composable
-fun HomepageView(homepageViewModel: HomepageViewModel = viewModel()) {
+fun HomepageView(homepageViewModel: HomepageViewModel = viewModel(), navController: NavController) {
     Column(
         modifier = Modifier.fillMaxSize()
     ) {

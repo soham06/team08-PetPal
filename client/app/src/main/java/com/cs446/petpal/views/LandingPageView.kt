@@ -67,7 +67,7 @@ fun LandingPageScreen(navController: NavController) {
                     .padding(bottom = 20.dp)
             ) {
                 Button(
-                    onClick = { navController.navigate("signup") }, // ✅ Navigate to Sign Up
+                    onClick = { navController.navigate("signup") },
                     modifier = Modifier
                         .weight(1f)
                         .height(50.dp),
@@ -78,7 +78,7 @@ fun LandingPageScreen(navController: NavController) {
                 }
 
                 Button(
-                    onClick = { navController.navigate("login") }, // ✅ Navigate to Login
+                    onClick = { navController.navigate("login") },
                     modifier = Modifier
                         .weight(1f)
                         .height(50.dp),
