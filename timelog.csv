@@ -17,9 +17,12 @@ date,Rozhan,Gursimran,Bhavya,Jaskirat,Soham,Shaan,task
 2025-02-7,0,0,0,0,1,0,setting up user registeration endpoint
 2025-02-7,0,0,0,0,1,0,setting up initial tasks endpoints
 2025-02-7,0,2,0,0,0,0,refactored endpoints for register and tasks so they no longer require admin info. set up the login endpoint.
+2025-02-7,0,0,0,0,0,1,started working on login in screen
 2025-02-8,0,0,0,2,0,0,started working on sign up screen
 2025-02-9,0,0,0,3,0,0,finished majority of sign up screen
+2025-02-9,0,0,0,0,0,1,working on login front-end screen
 2025-02-10,0,1,1,1,0,0,worked on sign up screen
 2025-02-10,0,0,0,0,1,0,fixed backend connection on sign up screen
 2025-02-10,0,0,0,2,0,0,finished remaining sign up screen features after backend connection fixed
 2025-02-10,0,0,3,0,0,0,worked on homepage and created top and bottom bars
+2025-02-11,0,0,0,0,0,3,finished login front-end screen
