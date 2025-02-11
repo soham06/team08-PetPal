@@ -210,7 +210,7 @@ fun SignUpView(signUpViewModel: SignUpViewModel = viewModel(), navController: Na
             signUpSuccess?.let { success ->
                 if (!success) {
                     Text(
-                        text = "Registration Failed",
+                        text = "Sign Up Failed",
                         color = Color.Red,
                         fontWeight = FontWeight.Bold,
                         fontSize = 15.sp
