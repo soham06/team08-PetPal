@@ -16,6 +16,9 @@ import com.cs446.petpal.views.LoginView
 import com.cs446.petpal.views.LandingPageScreen
 import com.cs446.petpal.views.SignUpView
 import com.cs446.petpal.views.HomepageView
+import com.cs446.petpal.views.PetsPageView
+import com.cs446.petpal.views.CalendarPageView
+import com.cs446.petpal.views.TasksPageView
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,6 +35,9 @@ class MainActivity : ComponentActivity() {
                         composable("signup") { SignUpView(navController = navController) }
                         composable("login") { LoginView(navController = navController) }
                         composable("homepage") { HomepageView(navController = navController) }
+                        composable("calendarpage") { CalendarPageView(navController = navController) }
+                        composable("taskspage") { TasksPageView(navController = navController) }
+                        composable("petspage") { PetsPageView(navController = navController) }
                     }
                 }
             }

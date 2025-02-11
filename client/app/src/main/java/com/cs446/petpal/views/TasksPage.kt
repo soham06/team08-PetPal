@@ -43,12 +43,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.cs446.petpal.views.TopBar
 import com.cs446.petpal.views.BottomBar
-import com.cs446.petpal.viewmodels.HomepageViewModel
+import com.cs446.petpal.viewmodels.PetspageViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.cs446.petpal.viewmodels.TaskspageViewModel
 
 @Composable
-fun HomepageView(homepageViewModel: HomepageViewModel = viewModel(), navController: NavController) {
+fun TasksPageView(taskspageViewModel: TaskspageViewModel = viewModel(), navController: NavController) {
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -67,21 +68,7 @@ fun HomepageView(homepageViewModel: HomepageViewModel = viewModel(), navControll
                 verticalArrangement = Arrangement.SpaceEvenly,
             ) {
                 Text(
-                    text = "My Pets",
-                    style = MaterialTheme.typography.headlineMedium.copy(
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                )
-                Text(
-                    text = "Shared Pet Profiles",
-                    style = MaterialTheme.typography.headlineMedium.copy(
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                )
-                Text(
-                    text = "Upcoming Tasks",
+                    text = "Tasks Page",
                     style = MaterialTheme.typography.headlineMedium.copy(
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Bold
