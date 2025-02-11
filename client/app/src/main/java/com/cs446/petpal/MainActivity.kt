@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.cs446.petpal.ui.theme.PetPalTheme
+import com.cs446.petpal.views.LoginView
 import com.cs446.petpal.views.SignUpView
 
 
