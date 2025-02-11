@@ -11,7 +11,7 @@ router.get('/', (req, res) => {
 
 // user routes
 router.post('/register', registerUser);
-router.get('/login', loginUser);
+router.post('/login', loginUser);
 
 // task routes
 router.get('/tasks/:userId', getTasksForUser);
