@@ -9,5 +9,5 @@ data class User(
     val email: MutableState<String>,
     val password: MutableState<String>,
     val userType: MutableState<String>,
-//    var userId: String?,
+    var userId: String? = "",
 )
