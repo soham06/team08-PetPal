@@ -11,11 +11,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import com.cs446.petpal.R
 
 @Composable
@@ -28,8 +28,7 @@ fun BottomBarButton(label: String, iconRes: Int) {
             Icon(
                 painter = painterResource(id = iconRes),
                 contentDescription = label,
-                modifier = Modifier.size(24.dp), // Adjust size as needed
-//                tint = Color.White // Change tint color if needed
+                modifier = Modifier.size(24.dp)
             )
             Text(label, color = Color.Black)
         }
@@ -45,13 +44,50 @@ fun TopBar() {
             .background(Color(0xFFA2D9FF)),
         contentAlignment = Alignment.Center
     ) {
-        Text(
-            text = "PetPal",
-            style = MaterialTheme.typography.headlineMedium.copy(
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold
-            )
-        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            IconButton(
+                onClick = { /* Handle click */ },
+                modifier = Modifier
+                    .size(48.dp)
+                    .padding(top = 12.dp)
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.notif),
+                    contentDescription = "Profile",
+                    modifier = Modifier.size(24.dp),
+                    tint = Color.Black
+                )
+            }
+            Box(modifier = Modifier.weight(1f) .padding(top = 12.dp), contentAlignment = Alignment.Center) {
+                Text(
+                    text = "PetPal",
+                    style = MaterialTheme.typography.headlineMedium.copy(
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold
+                    ),
+                    textAlign = TextAlign.Center
+                )
+            }
+            IconButton(
+                onClick = { /* Handle click */ },
+                modifier = Modifier
+                    .size(48.dp)
+                    .padding(top = 12.dp)
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.profile),
+                    contentDescription = "Profile",
+                    modifier = Modifier.size(24.dp),
+                    tint = Color.Black
+                )
+            }
+        }
     }
 }
 
