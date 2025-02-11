@@ -215,10 +215,15 @@ fun SignUpView(signUpViewModel: SignUpViewModel = viewModel(), navController: Na
                         fontWeight = FontWeight.Bold,
                         fontSize = 15.sp
                     )
-                } else {
+                }
+            }
+
+            LaunchedEffect(signUpSuccess) {
+                if (signUpSuccess == true) {
                     navController.navigate("homepage")
                 }
             }
+
             Row {
                 Text(
                     text = "Already have an account? ",
