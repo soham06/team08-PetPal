@@ -18,7 +18,7 @@ class MainActivity : ComponentActivity() {
             PetPalTheme {
                 NavHost(navController = navController, startDestination = "landing") {
                     composable("landing") { LandingPageScreen(navController) } // ✅ Pass `navController`
-                    composable("signup") { NewSignUpView() }
+                    composable("signup") { SignUpView() }
                     composable("login") {}
                 }
             }
