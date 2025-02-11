@@ -27,14 +27,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.toSize
 import androidx.compose.ui.text.font.FontStyle
+import androidx.navigation.NavController
 import com.cs446.petpal.models.User
 import com.cs446.petpal.viewmodels.SignUpViewModel
 import java.security.MessageDigest
-//import androidx.compose.foundation.layout.windowInsetsPadding
-//import androidx.compose.foundation.layout.WindowInsets
 
 @Composable
-fun SignUpView(signUpViewModel: SignUpViewModel = viewModel()) {
+fun SignUpView(signUpViewModel: SignUpViewModel = viewModel(), navController: NavController) {
     var firstName by remember { mutableStateOf("") }
     var lastName by remember { mutableStateOf("") }
     var address by remember { mutableStateOf("") }
@@ -55,7 +54,6 @@ fun SignUpView(signUpViewModel: SignUpViewModel = viewModel()) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-//            .windowInsetsPadding(WindowInsets.statusBars)
             .background(Color(0xFFA2D9FF)),
         contentAlignment = Alignment.Center
     ) {
@@ -84,9 +82,6 @@ fun SignUpView(signUpViewModel: SignUpViewModel = viewModel()) {
                 .fillMaxWidth()
                 .background(Color.White, RoundedCornerShape(15.dp))
                 .padding(top = 4.dp, bottom = 10.dp, start = 10.dp, end = 10.dp)
-//                .padding(6.dp)
-//                .shadow(4.dp, RoundedCornerShape(15.dp))
-
             listOf(
                 "First Name" to firstName,
                 "Last Name" to lastName,
@@ -104,11 +99,6 @@ fun SignUpView(signUpViewModel: SignUpViewModel = viewModel()) {
                         }
                     },
                     label = { Text(label) },
-//                    colors = TextFieldDefaults.outlinedTextFieldColors(
-//                        containerColor = Color.White,
-//                        focusedBorderColor = Color(0xFF42A5F5),
-//                        unfocusedBorderColor = Color.LightGray
-//                    ),
                     modifier = textFieldModifier,
                     shape = RoundedCornerShape(15.dp)
                 )
@@ -218,12 +208,16 @@ fun SignUpView(signUpViewModel: SignUpViewModel = viewModel()) {
             }
 
             signUpSuccess?.let { success ->
-                Text(
-                    text = if (success) "Registration Successful" else "Registration Failed",
-                    color = if (success) Color.Green else Color.Red,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 15.sp
-                )
+                if (!success) {
+                    Text(
+                        text = "Registration Failed",
+                        color = Color.Red,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 15.sp
+                    )
+                } else {
+                    navController.navigate("homepage")
+                }
             }
             Row {
                 Text(
