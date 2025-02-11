@@ -11,10 +11,10 @@ date,Rozhan,Gursimran,Bhavya,Jaskirat,Soham,Shaan,task
 2025-01-30,0,0,0,1.5,0,0,reviewed p2 doc and made final edits and brought up concerns to group
 2025-02-03,0,3,0,0,0,0,initial project setup in android studio. firebase console setup. firebase auth setup
 2025-02-03,0,0,0,3,0,0,made class diagram
-2025-01-10,0,0,0,0,2,0,restructure codebase to follow client-server and mvvm architechure and setup backend server using Node/Express
+2025-01-10,0,0,0,0,3,0,restructure codebase to follow client-server and mvvm architechure and setup backend server using Node/Express
 2025-02-5,1,1,1,1,1,1,team meeting to finalize features for first sprint
 2025-02-6,0,1,0,0,1,0,worked on setting up firebase with node
-2025-02-7,0,0,0,0,0.5,0,setting up user registeration endpoint
+2025-02-7,0,0,0,0,1,0,setting up user registeration endpoint
 2025-02-7,0,0,0,0,1,0,setting up initial tasks endpoints
 2025-02-7,0,2,0,0,0,0,refactored endpoints for register and tasks so they no longer require admin info. set up the login endpoint.
 2025-02-10,0,1,1,1,0,0,worked on sign up screen
