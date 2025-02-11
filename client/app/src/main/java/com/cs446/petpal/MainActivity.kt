@@ -18,6 +18,7 @@ import com.cs446.petpal.views.SignUpView
 import com.cs446.petpal.views.HomepageView
 import com.cs446.petpal.views.PetsPageView
 import com.cs446.petpal.views.CalendarPageView
+import com.cs446.petpal.views.NotificationsView
 import com.cs446.petpal.views.TasksPageView
 
 class MainActivity : ComponentActivity() {
@@ -38,6 +39,7 @@ class MainActivity : ComponentActivity() {
                         composable("calendarpage") { CalendarPageView(navController = navController) }
                         composable("taskspage") { TasksPageView(navController = navController) }
                         composable("petspage") { PetsPageView(navController = navController) }
+                        composable("notifspage") { NotificationsView(navController = navController) }
                     }
                 }
             }

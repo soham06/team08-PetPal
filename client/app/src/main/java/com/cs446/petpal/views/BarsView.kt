@@ -18,7 +18,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import com.cs446.petpal.R
@@ -66,14 +65,14 @@ fun TopBar(navController: NavController) {
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             IconButton(
-                onClick = { },
+                onClick = { navController.navigate("notifsPage")},
                 modifier = Modifier
                     .size(48.dp)
                     .padding(top = 12.dp)
             ) {
                 Icon(
                     painter = painterResource(R.drawable.notif),
-                    contentDescription = "Profile",
+                    contentDescription = "Notifications",
                     modifier = Modifier.size(24.dp),
                     tint = Color.Black
                 )
