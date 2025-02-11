@@ -239,7 +239,9 @@ fun SignUpView(signUpViewModel: SignUpViewModel = viewModel(), navController: Na
                     fontStyle = FontStyle.Italic,
                     textDecoration = TextDecoration.Underline,
                     fontSize = 15.sp,
-                    modifier = Modifier.clickable { }
+                    modifier = Modifier.clickable {
+                        navController.navigate("login")
+                    }
                 )
             }
         }

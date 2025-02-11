@@ -29,7 +29,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.clickable
@@ -37,14 +36,15 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.cs446.petpal.models.User
 import com.cs446.petpal.viewmodels.LoginViewModel
 import java.security.MessageDigest
 
 
-@Preview
+
 @Composable
-fun LoginView(loginViewModel: LoginViewModel = viewModel()) {
+fun LoginView(loginViewModel: LoginViewModel = viewModel(), navController: NavController) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
@@ -95,22 +95,6 @@ fun LoginView(loginViewModel: LoginViewModel = viewModel()) {
                 shape = RoundedCornerShape(15.dp)
             )
 
-            // Forgot Password
-            Row (
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End
-            ) {
-                Text(
-                    text = "Forgot password?",
-                    color = Color.DarkGray,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp,
-                    modifier = Modifier.clickable {
-                        // TODO: Implement forgot password navigation.
-                    }
-                )
-            }
-
             // PASSWORD
             OutlinedTextField(
                 value = password,
@@ -130,13 +114,32 @@ fun LoginView(loginViewModel: LoginViewModel = viewModel()) {
                 shape = RoundedCornerShape(15.dp)
             )
 
+            // Forgot Password
+            Row (
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End
+            ) {
+                Text(
+                    text = "Forgot password?",
+                    color = Color.DarkGray,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp,
+                    modifier = Modifier.clickable {
+                        // TODO: Implement forgot password navigation.
+                    }
+                )
+            }
+
             // Login Button
             Button(
                 onClick = {
-                    // Optionally, you may want to validate that email and password are non-empty.
                      loginViewModel.loginUser(email, hashPassword(password)) { success, _ ->
-                        loginSuccess = success
-                        // TODO: Navigate to the home screen on success.
+                         loginSuccess = success
+                         if(success) {
+                             navController.navigate("homepage") {
+                                 popUpTo("login") { inclusive = true }
+                             }
+                         }
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),
@@ -164,11 +167,9 @@ fun LoginView(loginViewModel: LoginViewModel = viewModel()) {
                 fontWeight = FontWeight.Bold,
                 fontSize = 18.sp,
                 modifier = Modifier.clickable {
-                    // TODO: Navigate to the sign-up screen.
+                    navController.navigate("signup")
                 }
             )
-
-
         }
     }
 }

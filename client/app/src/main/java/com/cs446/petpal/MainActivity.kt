@@ -30,7 +30,7 @@ class MainActivity : ComponentActivity() {
                     NavHost(navController = navController, startDestination = "landing") {
                         composable("landing") { LandingPageScreen(navController) }
                         composable("signup") { SignUpView(navController = navController) }
-                        composable("login") {}
+                        composable("login") { LoginView(navController = navController) }
                         composable("homepage") { HomepageView(navController = navController) }
                     }
                 }
