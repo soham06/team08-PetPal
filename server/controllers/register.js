@@ -7,8 +7,6 @@ export async function registerUser (req, res) {
 
         const userData = req.body;
 
-        console.log(req.body)
-
         if (!userData.firstName || !userData.lastName 
             || !userData.emailAddress || !userData.password
             || !userData.userType || !userData.address) {

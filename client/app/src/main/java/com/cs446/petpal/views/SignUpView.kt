@@ -30,6 +30,8 @@ import androidx.compose.ui.text.font.FontStyle
 import com.cs446.petpal.models.User
 import com.cs446.petpal.viewmodels.SignUpViewModel
 import java.security.MessageDigest
+//import androidx.compose.foundation.layout.windowInsetsPadding
+//import androidx.compose.foundation.layout.WindowInsets
 
 @Composable
 fun SignUpView(signUpViewModel: SignUpViewModel = viewModel()) {
@@ -53,6 +55,7 @@ fun SignUpView(signUpViewModel: SignUpViewModel = viewModel()) {
     Box(
         modifier = Modifier
             .fillMaxSize()
+//            .windowInsetsPadding(WindowInsets.statusBars)
             .background(Color(0xFFA2D9FF)),
         contentAlignment = Alignment.Center
     ) {
