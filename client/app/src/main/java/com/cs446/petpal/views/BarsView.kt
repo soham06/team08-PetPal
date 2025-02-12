@@ -18,17 +18,22 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import com.cs446.petpal.R
 import androidx.navigation.NavController
 
-
 @Composable
-fun BottomBarButton(label: String, iconRes: Int) {
+fun BottomBarButton(navController: NavController, label: String, iconRes: Int) {
     IconButton(
-        onClick = { /* Handle click */ },
+        onClick = {
+            when (label) {
+                "Home" -> navController.navigate("homepage")
+                "Calendar" -> navController.navigate("calendarpage")
+                "Tasks" -> navController.navigate("taskspage")
+                "Pets" -> navController.navigate("petspage")
+            }
+        },
         modifier = Modifier.size(84.dp)
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -60,14 +65,14 @@ fun TopBar(navController: NavController) {
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             IconButton(
-                onClick = { },
+                onClick = { navController.navigate("notifsPage")},
                 modifier = Modifier
                     .size(48.dp)
                     .padding(top = 12.dp)
             ) {
                 Icon(
                     painter = painterResource(R.drawable.notif),
-                    contentDescription = "Profile",
+                    contentDescription = "Notifications",
                     modifier = Modifier.size(24.dp),
                     tint = Color.Black
                 )
@@ -116,7 +121,7 @@ fun TopBar(navController: NavController) {
 }
 
 @Composable
-fun BottomBar() {
+fun BottomBar(navController: NavController) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -129,10 +134,10 @@ fun BottomBar() {
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            BottomBarButton("Home", R.drawable.home)
-            BottomBarButton("Calendar", R.drawable.calendar)
-            BottomBarButton("Tasks", R.drawable.tasks)
-            BottomBarButton("Pets", R.drawable.pets)
+            BottomBarButton(navController,"Home", R.drawable.home)
+            BottomBarButton(navController,"Calendar", R.drawable.calendar)
+            BottomBarButton(navController,"Tasks", R.drawable.tasks)
+            BottomBarButton(navController,"Pets", R.drawable.pets)
         }
     }
 }

@@ -90,6 +90,6 @@ fun HomepageView(homepageViewModel: HomepageViewModel = viewModel(), navControll
             }
         }
 
-        BottomBar()
+        BottomBar(navController)
     }
 }
