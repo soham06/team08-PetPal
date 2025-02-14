@@ -1,7 +1,7 @@
 import express from 'express'
 import { registerUser } from '../controllers/register.js'
 import { loginUser } from '../controllers/login.js'
-import { getTasksForUser, createTaskForUser } from '../controllers/tasks.js'
+import { getTasksForUser,createTaskForUser, updateTaskForUser, deleteTaskForUser } from '../controllers/tasks.js'
 
 const router = express.Router()
 
@@ -16,6 +16,7 @@ router.post('/login', loginUser);
 // task routes
 router.get('/tasks/:userId', getTasksForUser);
 router.post('/tasks/:userId', createTaskForUser);
-// TODO: implement routes to update and delete tasks
+router.patch('/tasks/:taskId', updateTaskForUser);
+router.delete('/tasks/:taskId', deleteTaskForUser);
 
 export default router;
