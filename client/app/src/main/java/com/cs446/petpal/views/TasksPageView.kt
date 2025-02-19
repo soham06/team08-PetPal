@@ -1,6 +1,7 @@
 package com.cs446.petpal.views
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.material3.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
@@ -30,13 +31,15 @@ import com.cs446.petpal.viewmodels.TaskspageViewModel
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.material3.OutlinedTextField
-
+import com.cs446.petpal.models.Task
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 
 @Composable
 fun TasksPageView(taskspageViewModel: TaskspageViewModel = viewModel(), navController: NavController) {
     var showDialog by remember { mutableStateOf(false) }
     var userInput by remember { mutableStateOf("") }
-
+    val tasks by taskspageViewModel.tasks
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -74,12 +77,25 @@ fun TasksPageView(taskspageViewModel: TaskspageViewModel = viewModel(), navContr
                             .size(48.dp)
                             .padding(top = 12.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFA2D9FF))
-                        //contentPadding = PaddingValues(0.dp)
                     ) {
                         Text(
                             text = "",
                             color = Color.White,
                             fontSize = 24.sp
+                        )
+                    }
+                }
+                Column (
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        //.horizontalScroll(rememberScrollState())
+                ) {
+                    // Display each task description in the Row
+                    (tasks as List<Task>).forEach { task ->
+                        Text(
+                            text = task.description.value,
+                            style = MaterialTheme.typography.bodyLarge.copy(fontSize = 20.sp),
+                            modifier = Modifier.padding(8.dp)
                         )
                     }
                 }
@@ -107,7 +123,7 @@ fun TasksPageView(taskspageViewModel: TaskspageViewModel = viewModel(), navContr
                     OutlinedTextField(
                         value = userInput,
                         onValueChange = { userInput = it },
-                        label = { Text("Your Input") },
+                        label = { Text("Description") },
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
