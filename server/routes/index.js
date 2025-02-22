@@ -2,6 +2,7 @@ import express from 'express'
 import { registerUser } from '../controllers/register.js'
 import { loginUser } from '../controllers/login.js'
 import { getTasksForUser,createTaskForUser, updateTaskForUser, deleteTaskForUser } from '../controllers/tasks.js'
+import { getEventsForUser, createEventForUser, updateEventForUser, deleteEventForUser } from '../controllers/events.js'
 import { getPetsForUser, createPetForUser, updatePetForUser, deletePetForUser } from '../controllers/pets.js'
 
 const router = express.Router()
@@ -19,6 +20,12 @@ router.get('/tasks/:userId', getTasksForUser);
 router.post('/tasks/:userId', createTaskForUser);
 router.patch('/tasks/:taskId', updateTaskForUser);
 router.delete('/tasks/:taskId', deleteTaskForUser);
+
+// events routes
+router.get('/events/:userId', getEventsForUser);
+router.post('/events/:userId', createEventForUser);
+router.patch('/events/:eventId', updateEventForUser);
+router.delete('/events/:eventId', deleteEventForUser);
 
 //pet profile routes
 router.get('/pets/:userId', getPetsForUser);
