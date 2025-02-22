@@ -1,5 +1,7 @@
 import firebaseConnection from '../firebase.js'
-import { getFirestore, collection, getDoc, getDocs, query, where, addDoc, doc, serverTimestamp } from 'firebase/firestore';
+import { getFirestore, collection, getDoc, 
+         getDocs, query, where, addDoc, doc,
+         serverTimestamp, updateDoc, deleteDoc } from 'firebase/firestore';
 
 export async function getTasksForUser (req, res) {
     try {
@@ -57,8 +59,6 @@ export async function createTaskForUser (req, res) {
         const tasksTable = collection(db, "tasks")
         const newTask = await addDoc(tasksTable, taskData)
 
-        const newTaskId = newTask.id
-
         const fetchedCreatedTask = await getDoc(newTask)
         const createdTask = {
             taskId: fetchedCreatedTask.id,
@@ -70,4 +70,60 @@ export async function createTaskForUser (req, res) {
     }
 };
 
-// TODO: implement controllers to update and delete tasks
+export async function updateTaskForUser (req, res) {
+    try {
+        const db = getFirestore(firebaseConnection);
+        const { taskId } = req.params;
+
+        if (!taskId) {
+            return res.status(400).json({ message: "Invalid request params, please provide a taskId"});
+        }
+
+        const taskRef = doc(db, "tasks", taskId);
+        const taskDoc = await getDoc(taskRef);
+
+        if (!taskDoc.exists()) {
+            return res.status(404).json({ message: "This task doesn't exist"});
+        }
+
+        const taskData = req.body;
+
+        if (!taskData.description || !taskData.status) {
+            return res.status(400).json({ message: "Invalid request body, please ensure all required fields are present"});
+        }
+
+        await updateDoc(taskRef, taskData)
+
+        const fetchedUpdatedTask = await getDoc(taskRef)
+        const fetchedTask = {
+            taskId: fetchedUpdatedTask.id,
+            ...fetchedUpdatedTask.data(),
+        };
+        res.status(200).json(fetchedTask);
+    } catch (error) {
+        res.status(400).json({ message: error.message});
+    }
+};
+
+export async function deleteTaskForUser (req, res) {
+    try {
+        const db = getFirestore(firebaseConnection);
+        const { taskId } = req.params;
+
+        if (!taskId) {
+            return res.status(400).json({ message: "Invalid request params, please provide a taskId"});
+        }
+
+        const taskRef = doc(db, "tasks", taskId);
+        const taskDoc = await getDoc(taskRef);
+
+        if (!taskDoc.exists()) {
+            return res.status(404).json({ message: "This task doesn't exist"});
+        }
+
+        await deleteDoc(taskRef)
+        res.status(200).json("Successfully deleted task");
+    } catch (error) {
+        res.status(400).json({ message: error.message});
+    }
+};

@@ -51,10 +51,27 @@ The server will start at: `http://localhost:3000`
 
     {
         "description": "this is a test",
-        "status": "CLOSED"
+        "status": "OPEN"
     }
 
 `Response`: Created task for the user
+
+**`PATCH /tasks/:taskId`** - updates an existing task for a given user
+
+`Request`: 
+
+    {
+        "description": "this is a patch test",
+        "status": "CLOSED"
+    }
+
+`Response`: Updated task for the user
+
+**`DELETE /tasks/:taskId`** - deletes an existing task for a given user
+
+`Request`: No request body needed
+
+`Response`: "Successfully deleted task" if the task is deleted
 
 **`GET /pets/:userId`** - gets a list of pets for a given user
 
