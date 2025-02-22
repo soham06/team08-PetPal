@@ -56,3 +56,43 @@ The server will start at: `http://localhost:3000`
 
 `Response`: Created task for the user
 
+**`GET /pets/:userId`** - gets a list of pets for a given user
+
+`Request`: `/pets/:akhsjfbkaaacjn`
+
+`Response`: List of all pets for the given user
+
+**`POST /pets/:userId`** - creates a new pet for a given user
+
+`Request`:
+
+    {
+        "name": "joe",
+        "birthday": "nov 10",
+        "animal": "cat",
+        "gender": "m",
+        "breed": "grey"
+    }
+
+`Response`: Created pet for the user
+
+**`PATCH /pets/:petId`** - updates an existing pet for a given user
+
+`Request`:
+
+    {
+        "name": "new name",
+        "birthday": "nov 10",
+        "animal": "cat",
+        "gender": "m",
+        "breed": "white"
+    }
+
+`Response`: Updated pet for the user
+
+**`DELETE /pets/:petId`** - deletes an existing pet for a given user
+
+`Request`: No request body needed
+
+`Response`: "Successfully deleted pet" if the pet is deleted
+
