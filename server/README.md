@@ -73,6 +73,48 @@ The server will start at: `http://localhost:3000`
 
 `Response`: "Successfully deleted task" if the task is deleted
 
+**`GET /events/:userId`** - gets a list of events for a given user
+
+`Request`: `/events/:akhsjfbkaaacjn`
+
+`Response`: List of all events for the given user
+
+**`POST /events/:userId`** - creates a new event for a given user
+
+`Request`: 
+
+    {
+        "description": "test event",
+        "startDate": "March 1, 2025",
+        "endDate": "March 1, 2025",
+        "startTime": "2:00PM",
+        "endTime": "5:00PM",
+        "location": "123 Test Ave"
+    }
+
+`Response`: Created event for the user
+
+**`PATCH /events/:eventId`** - updates an existing event for a given user
+
+`Request`: 
+
+    {
+        "description": "test patching event",
+        "startDate": "March 1, 2025",
+        "endDate": "March 1, 2025",
+        "startTime": "2:00PM",
+        "endTime": "5:00PM",
+        "location": "123 Test Ave"
+    }
+
+`Response`: Updated event for the user
+
+**`DELETE /events/:eventId`** - deletes an existing event for a given user
+
+`Request`: No request body needed
+
+`Response`: "Successfully deleted event" if the event is deleted
+
 **`GET /pets/:userId`** - gets a list of pets for a given user
 
 `Request`: `/pets/:akhsjfbkaaacjn`
