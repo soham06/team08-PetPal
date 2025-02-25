@@ -71,6 +71,7 @@ fun DailyTasksView(taskspageViewModel: TaskspageViewModel = viewModel()) {
         modifier = Modifier
             .fillMaxWidth()
             .heightIn(min = 250.dp)
+            .heightIn(max = 250.dp)
             .verticalScroll(scrollState)
     )
     {
