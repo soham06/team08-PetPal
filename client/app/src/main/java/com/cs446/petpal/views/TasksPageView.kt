@@ -55,7 +55,7 @@ fun TasksPageView(taskspageViewModel: TaskspageViewModel = viewModel(), navContr
         ) {
             Column(
                 modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.SpaceEvenly,
+                verticalArrangement = Arrangement.spacedBy(132.dp),
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -70,18 +70,20 @@ fun TasksPageView(taskspageViewModel: TaskspageViewModel = viewModel(), navContr
                         modifier = Modifier
                             .align(Alignment.CenterVertically) // Vertically center the text
                             .padding(top = 12.dp)
+                            .padding(start = 8.dp)
                     )
-                    Button(
+                    IconButton(
                         onClick = { showDialog = true },
                         modifier = Modifier
                             .size(48.dp)
                             .padding(top = 12.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFA2D9FF))
+                        colors = IconButtonDefaults.iconButtonColors(containerColor = Color(0xFFA2D9FF))
                     ) {
-                        Text(
-                            text = "",
-                            color = Color.White,
-                            fontSize = 24.sp
+                        Icon(
+                            painter = painterResource(R.drawable.add),
+                            contentDescription = "Add Task",
+                            modifier = Modifier.size(24.dp),
+                            tint = Color.Black
                         )
                     }
                 }
@@ -99,14 +101,40 @@ fun TasksPageView(taskspageViewModel: TaskspageViewModel = viewModel(), navContr
                         )
                     }
                 }
-
-                Text(
-                    text = "Daily Events",
-                    style = MaterialTheme.typography.headlineMedium.copy(
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = "Daily Events",
+                        style = MaterialTheme.typography.headlineMedium.copy(
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight.Bold
+                        ),
+                        modifier = Modifier
+                            .align(Alignment.CenterVertically) // Vertically center the text
+                            .padding(top = 12.dp)
+                            .padding(start = 8.dp)
                     )
-                )
+                    IconButton(
+                        onClick = { showDialog = true },
+                        modifier = Modifier
+                            .size(48.dp)
+                            .padding(top = 12.dp),
+                        colors = IconButtonDefaults.iconButtonColors(
+                            containerColor = Color(
+                                0xFFA2D9FF
+                            )
+                        )
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.add),
+                            contentDescription = "Add Task",
+                            modifier = Modifier.size(24.dp),
+                            tint = Color.Black
+                        )
+                    }
+                }
             }
         }
 
