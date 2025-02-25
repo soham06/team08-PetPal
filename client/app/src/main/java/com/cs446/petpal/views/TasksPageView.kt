@@ -12,9 +12,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -27,6 +29,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.cs446.petpal.R
+import com.cs446.petpal.views.DailyTasksView
 import com.cs446.petpal.viewmodels.TaskspageViewModel
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -34,12 +37,11 @@ import androidx.compose.material3.OutlinedTextField
 import com.cs446.petpal.models.Task
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 
 @Composable
 fun TasksPageView(taskspageViewModel: TaskspageViewModel = viewModel(), navController: NavController) {
-    var showDialog by remember { mutableStateOf(false) }
-    var userInput by remember { mutableStateOf("") }
-    val tasks by taskspageViewModel.tasks
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -55,122 +57,13 @@ fun TasksPageView(taskspageViewModel: TaskspageViewModel = viewModel(), navContr
         ) {
             Column(
                 modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(132.dp),
+                verticalArrangement = Arrangement.Top
             ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(
-                        text = "Daily Tasks",
-                        style = MaterialTheme.typography.headlineMedium.copy(
-                            fontSize = 24.sp,
-                            fontWeight = FontWeight.Bold
-                        ),
-                        modifier = Modifier
-                            .align(Alignment.CenterVertically) // Vertically center the text
-                            .padding(top = 12.dp)
-                            .padding(start = 8.dp)
-                    )
-                    IconButton(
-                        onClick = { showDialog = true },
-                        modifier = Modifier
-                            .size(48.dp)
-                            .padding(top = 12.dp),
-                        colors = IconButtonDefaults.iconButtonColors(containerColor = Color(0xFFA2D9FF))
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.add),
-                            contentDescription = "Add Task",
-                            modifier = Modifier.size(24.dp),
-                            tint = Color.Black
-                        )
-                    }
-                }
-                Column (
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        //.horizontalScroll(rememberScrollState())
-                ) {
-                    // Display each task description in the Row
-                    (tasks as List<Task>).forEach { task ->
-                        Text(
-                            text = task.description.value,
-                            style = MaterialTheme.typography.bodyLarge.copy(fontSize = 20.sp),
-                            modifier = Modifier.padding(8.dp)
-                        )
-                    }
-                }
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(
-                        text = "Daily Events",
-                        style = MaterialTheme.typography.headlineMedium.copy(
-                            fontSize = 24.sp,
-                            fontWeight = FontWeight.Bold
-                        ),
-                        modifier = Modifier
-                            .align(Alignment.CenterVertically) // Vertically center the text
-                            .padding(top = 12.dp)
-                            .padding(start = 8.dp)
-                    )
-                    IconButton(
-                        onClick = { showDialog = true },
-                        modifier = Modifier
-                            .size(48.dp)
-                            .padding(top = 12.dp),
-                        colors = IconButtonDefaults.iconButtonColors(
-                            containerColor = Color(
-                                0xFFA2D9FF
-                            )
-                        )
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.add),
-                            contentDescription = "Add Task",
-                            modifier = Modifier.size(24.dp),
-                            tint = Color.Black
-                        )
-                    }
-                }
+                DailyTasksView(taskspageViewModel)
+                Spacer(modifier = Modifier.height(20.dp))
+                DailyEventsView(taskspageViewModel)
             }
         }
-
         BottomBar(navController)
-    }
-    if (showDialog) {
-        AlertDialog(
-            onDismissRequest = { showDialog = false },
-            title = {
-                Text(text = "Add Task")
-            },
-            text = {
-                Column {
-                    OutlinedTextField(
-                        value = userInput,
-                        onValueChange = { userInput = it },
-                        label = { Text("Description") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
-            },
-            confirmButton = {
-                Button(
-                    onClick = {
-                        showDialog = false
-                        taskspageViewModel.createTaskForUser(userInput, "OPEN") { success, _ ->
-                        }
-                              },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFD700))
-                ) {
-                    Text(
-                        text = "Ok",
-                        color = Color.Black,
-                    )
-                }
-            }
-        )
     }
 }
