@@ -53,6 +53,7 @@ class TaskspageViewModel: ViewModel() {
                             description = mutableStateOf(jsonResponse.optString("description")),
                             status = mutableStateOf(jsonResponse.optString("status")),
                         )
+                        task.taskId = jsonResponse.optString("taskId")
                         val updatedTasks = _tasks.value.toMutableList() // Create a mutable copy
                         updatedTasks.add(task!!)
                         _tasks.value = updatedTasks
@@ -70,6 +71,31 @@ class TaskspageViewModel: ViewModel() {
         }
     }
 
+    fun deleteTaskForUser(taskId: String, onResult: (Boolean, Task?) -> Unit) {
+        Log.d("TASKID", taskId)
+        viewModelScope.launch(Dispatchers.IO)
+        {
+            var successfulTaskDeleted = false
+            try {
+                val request = Request.Builder()
+                    .url("http://10.0.2.2:3000/api/tasks/$taskId") // REPLACE THIS TO ACTUALLY USE USERID
+                    .delete()
+                    .addHeader("Content-Type", "application/json")
+                    .addHeader("Accept", "application/json")
+                    .build()
+                client.newCall(request).execute().use { response ->
+                    successfulTaskDeleted = response.isSuccessful
+                    if (successfulTaskDeleted) {
+                        _tasks.value = _tasks.value.filterNot { it.taskId == taskId }
+                    }
+                }
+            }
+            catch (e: Exception) {
+                e.printStackTrace()
+                successfulTaskDeleted = false
+            }
+        }
+    }
     fun getTasksForUser() {
         viewModelScope.launch(Dispatchers.IO)
         {
@@ -94,6 +120,7 @@ class TaskspageViewModel: ViewModel() {
                                 description = mutableStateOf(taskJson.getString("description")),
                                 status = mutableStateOf(taskJson.getString("status")),
                             )
+                            task.taskId = taskJson.optString("taskId")
                             tasks.add(task)
                         }
                         _tasks.value = tasks

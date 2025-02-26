@@ -6,4 +6,5 @@ data class Task(
     val description: MutableState<String>,
     val status: MutableState<String>,
     var userId: String? = "",
+    var taskId: String = "",
 )

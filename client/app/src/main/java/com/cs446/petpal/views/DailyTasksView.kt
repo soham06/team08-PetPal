@@ -1,6 +1,8 @@
 package com.cs446.petpal.views
 
+import androidx.compose.foundation.background
 import androidx.compose.material3.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
@@ -30,15 +32,20 @@ import com.cs446.petpal.models.Task
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 
+
 @Composable
 fun DailyTasksView(taskspageViewModel: TaskspageViewModel = viewModel()) {
-    var showDialog by remember { mutableStateOf(false) }
+    var showAddDialog by remember { mutableStateOf(false) }
+    var showDelDialog by remember { mutableStateOf(false) }
+    var showEditDialog by remember { mutableStateOf(false) }
     var userInput by remember { mutableStateOf("") }
     val tasks by taskspageViewModel.tasks
     val scrollState = rememberScrollState()
-
+    var currTaskID by remember { mutableStateOf("")}
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 8.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
@@ -53,7 +60,7 @@ fun DailyTasksView(taskspageViewModel: TaskspageViewModel = viewModel()) {
                 .padding(start = 8.dp)
         )
         IconButton(
-            onClick = { showDialog = true },
+            onClick = { showAddDialog = true },
             modifier = Modifier
                 .size(48.dp)
                 .padding(top = 12.dp),
@@ -61,7 +68,7 @@ fun DailyTasksView(taskspageViewModel: TaskspageViewModel = viewModel()) {
         ) {
             Icon(
                 painter = painterResource(R.drawable.add),
-                contentDescription = "Add Task",
+                contentDescription = "Delete Task",
                 modifier = Modifier.size(24.dp),
                 tint = Color.Black
             )
@@ -77,18 +84,157 @@ fun DailyTasksView(taskspageViewModel: TaskspageViewModel = viewModel()) {
     {
         // Display each task description in the Row
         (tasks as List<Task>).forEach { task ->
-            Text(
-                text = task.description.value,
-                style = MaterialTheme.typography.bodyLarge.copy(fontSize = 20.sp),
-                modifier = Modifier.padding(8.dp)
-            )
+            val isChecked = task.status.value == "CLOSED"
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 3.dp, horizontal = 6.dp),
+                shape = RoundedCornerShape(12.dp),
+                colors = CardDefaults.cardColors(containerColor = Color(0xFFFFD700))
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Row {
+                        Checkbox(
+                            checked = isChecked,
+                            onCheckedChange = { isCheckedNew ->
+                                task.status.value = if (isCheckedNew) "CLOSED" else "OPEN" // CHANGE THIS TO DO THIS IN BACKEND
+                            }
+                        )
+                        Text(
+                            text = task.description.value,
+                            style = MaterialTheme.typography.bodyLarge.copy(fontSize = 20.sp),
+                            modifier = Modifier.padding(top = 12.dp)
+                        )
+                    }
+                    Row(
+                        modifier = Modifier
+                            .padding(top = 4.dp),
+                    ) {
+                        IconButton(
+                            onClick = { showEditDialog = true },
+                            modifier = Modifier
+                                .padding(end = 8.dp)
+                                .size(36.dp),
+                            colors = IconButtonDefaults.iconButtonColors(
+                                containerColor = Color(
+                                    0xFFFEFCF5
+                                )
+                            )
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.edit),
+                                contentDescription = "Edit Task",
+                                modifier = Modifier.size(24.dp),
+                                tint = Color.Black
+                            )
+                        }
+                        IconButton(
+                            onClick = {
+                                showDelDialog = true
+                                currTaskID = task.taskId
+                                      },
+                            modifier = Modifier
+                                .size(36.dp),
+                            colors = IconButtonDefaults.iconButtonColors(
+                                containerColor = Color(
+                                    0xFFFEFCF5
+                                )
+                            )
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.delete),
+                                contentDescription = "Delete Task",
+                                modifier = Modifier.size(24.dp),
+                                tint = Color.Black
+                            )
+                        }
+                    }
+                }
+            }
         }
     }
-
-
-    if (showDialog) {
+    if (showDelDialog) {
         AlertDialog(
-            onDismissRequest = { showDialog = false },
+            onDismissRequest = { showDelDialog = false },
+            title = {
+                Text(text = "Delete Task?")
+                    },
+            text = {
+                Text(text = "Are you sure you want to delete this task?")
+                   },
+            dismissButton = {
+                Button(
+                    onClick = {
+                        showDelDialog = false
+                              },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFD700))
+                ) {
+                    Text(
+                        text = "Cancel",
+                        color = Color.Black,
+                        )
+                    }
+                },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showDelDialog = false
+                        taskspageViewModel.deleteTaskForUser(currTaskID) { success, _ ->
+
+                        }
+                              },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFD700))
+                ) {
+                    Text(
+                        text = "Delete",
+                        color = Color.Black,
+                        )
+                    }
+                }
+            )
+        }
+        // Editing Task
+        if (showEditDialog) {
+            AlertDialog(
+                onDismissRequest = { showAddDialog = false },
+                title = {
+                    Text(text = "Add Task")
+                },
+                text = {
+                    Column {
+                        OutlinedTextField(
+                            value = userInput,
+                            onValueChange = { userInput = it },
+                            label = { Text("Description") },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+                },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            showAddDialog = false
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFD700))
+                    ) {
+                        Text(
+                            text = "Ok",
+                            color = Color.Black,
+                        )
+                    }
+                }
+            )
+        }
+
+    // Adding Task
+    if (showAddDialog) {
+        AlertDialog(
+            onDismissRequest = { showAddDialog = false },
             title = {
                 Text(text = "Add Task")
             },
@@ -105,7 +251,7 @@ fun DailyTasksView(taskspageViewModel: TaskspageViewModel = viewModel()) {
             confirmButton = {
                 Button(
                     onClick = {
-                        showDialog = false
+                        showAddDialog = false
                         taskspageViewModel.createTaskForUser(userInput, "OPEN") { success, _ ->
                         }
                     },
