@@ -102,7 +102,9 @@ fun DailyTasksView(taskspageViewModel: TaskspageViewModel = viewModel()) {
                         Checkbox(
                             checked = isChecked,
                             onCheckedChange = { isCheckedNew ->
-                                task.status.value = if (isCheckedNew) "CLOSED" else "OPEN" // CHANGE THIS TO DO THIS IN BACKEND
+                                task.status.value = if (isCheckedNew) "CLOSED" else "OPEN"
+                                taskspageViewModel.updateTaskForUser(task.taskId, task.description.value, task.status.value) { success, _ ->
+                                }
                             }
                         )
                         Text(

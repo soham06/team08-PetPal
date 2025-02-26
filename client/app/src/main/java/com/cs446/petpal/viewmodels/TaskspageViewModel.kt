@@ -72,7 +72,6 @@ class TaskspageViewModel: ViewModel() {
     }
 
     fun updateTaskForUser (taskId: String, description: String, status: String, onResult: (Boolean, Task?) -> Unit) {
-        Log.d("TASK", taskId)
         viewModelScope.launch(Dispatchers.IO)
         {
             var successfulTaskEdited = false
@@ -84,7 +83,7 @@ class TaskspageViewModel: ViewModel() {
                 }
                 val requestBody = json.toString()
                     .toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
-                // Build the POST request
+                // Build the PATCH request
                 val request = Request.Builder()
                     .url("http://10.0.2.2:3000/api/tasks/$taskId") // REPLACE THIS TO ACTUALLY USE USERID
                     .patch(requestBody)
