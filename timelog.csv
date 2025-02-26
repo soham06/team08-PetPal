@@ -33,5 +33,7 @@ date,Rozhan,Gursimran,Bhavya,Jaskirat,Soham,Shaan,task
 2025-02-11,0,0,1,0,0,0,added navigation to other tabs for future sprint + cleaned up code
 2025-02-11,0,0,1.5,0,0,0,began working on tasks frontend and adding new task function
 2025-02-11,0,0,2,0,0,0,finished post tasks and get tasks so it displays on frontend correctly
+2025-02-14,0,0,0,0,1,0,finished patch/delete tasks endpoints in server
 2025-02-20,0,1.5,0,0,0,0,created pets table in firebase and added pet profile related endpoints
 2025-02-20,0,0,0,0,1.5,0,created events table in firebase and added events related endpoints
+2025-02-25,0,0,1.5,0,0,0,made frontend changes to clean up tasks page and split code for readability
