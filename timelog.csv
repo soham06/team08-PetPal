@@ -37,3 +37,4 @@ date,Rozhan,Gursimran,Bhavya,Jaskirat,Soham,Shaan,task
 2025-02-20,0,1.5,0,0,0,0,created pets table in firebase and added pet profile related endpoints
 2025-02-20,0,0,0,0,1.5,0,created events table in firebase and added events related endpoints
 2025-02-25,0,0,1.5,0,0,0,made frontend changes to clean up tasks page and split code for readability
+2025-02-26,0,0,2,0,0,0,added edit/checkbox and delete functionality to tasks
