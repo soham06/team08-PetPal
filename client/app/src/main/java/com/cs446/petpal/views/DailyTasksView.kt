@@ -116,7 +116,10 @@ fun DailyTasksView(taskspageViewModel: TaskspageViewModel = viewModel()) {
                             .padding(top = 4.dp),
                     ) {
                         IconButton(
-                            onClick = { showEditDialog = true },
+                            onClick = {
+                                showEditDialog = true
+                                currTaskID = task.taskId
+                                      },
                             modifier = Modifier
                                 .padding(end = 8.dp)
                                 .size(36.dp),
@@ -200,8 +203,9 @@ fun DailyTasksView(taskspageViewModel: TaskspageViewModel = viewModel()) {
         }
         // Editing Task
         if (showEditDialog) {
+            userInput = ""
             AlertDialog(
-                onDismissRequest = { showAddDialog = false },
+                onDismissRequest = { showEditDialog = false },
                 title = {
                     Text(text = "Add Task")
                 },
@@ -218,7 +222,9 @@ fun DailyTasksView(taskspageViewModel: TaskspageViewModel = viewModel()) {
                 confirmButton = {
                     Button(
                         onClick = {
-                            showAddDialog = false
+                            showEditDialog = false
+                            taskspageViewModel.updateTaskForUser(currTaskID, userInput, "OPEN") { success, _ ->
+                            }
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFD700))
                     ) {
@@ -233,6 +239,7 @@ fun DailyTasksView(taskspageViewModel: TaskspageViewModel = viewModel()) {
 
     // Adding Task
     if (showAddDialog) {
+        userInput = ""
         AlertDialog(
             onDismissRequest = { showAddDialog = false },
             title = {

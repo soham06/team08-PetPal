@@ -71,6 +71,55 @@ class TaskspageViewModel: ViewModel() {
         }
     }
 
+    fun updateTaskForUser (taskId: String, description: String, status: String, onResult: (Boolean, Task?) -> Unit) {
+        Log.d("TASK", taskId)
+        viewModelScope.launch(Dispatchers.IO)
+        {
+            var successfulTaskEdited = false
+            var task: Task? = null
+            try {
+                val json = JSONObject().apply {
+                    put("description", description)
+                    put("status", status)
+                }
+                val requestBody = json.toString()
+                    .toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
+                // Build the POST request
+                val request = Request.Builder()
+                    .url("http://10.0.2.2:3000/api/tasks/$taskId") // REPLACE THIS TO ACTUALLY USE USERID
+                    .patch(requestBody)
+                    .addHeader("Content-Type", "application/json")
+                    .addHeader("Accept", "application/json")
+                    .build()
+                client.newCall(request).execute().use { response ->
+                    successfulTaskEdited = response.isSuccessful
+                    if (successfulTaskEdited) {
+                        val responseBody = response.body?.string()
+                        val jsonResponse = JSONObject(responseBody ?: "")
+                        task = Task(
+                            description = mutableStateOf(jsonResponse.optString("description")),
+                            status = mutableStateOf(jsonResponse.optString("status")),
+                        )
+                        task.taskId = jsonResponse.optString("taskId")
+                        val updatedTasks = _tasks.value.toMutableList()
+                        val taskIndex = updatedTasks.indexOfFirst { it.taskId == taskId }
+                        if (taskIndex != -1) {
+                            updatedTasks[taskIndex] = task
+                        }
+                        _tasks.value = updatedTasks
+                    }
+                    else {
+                        // Optionally log error details from response
+                        println("Editing task failed: ${response.body?.string()}")
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                successfulTaskEdited = false
+            }
+            onResult(successfulTaskEdited, task)
+        }
+    }
     fun deleteTaskForUser(taskId: String, onResult: (Boolean, Task?) -> Unit) {
         Log.d("TASKID", taskId)
         viewModelScope.launch(Dispatchers.IO)
