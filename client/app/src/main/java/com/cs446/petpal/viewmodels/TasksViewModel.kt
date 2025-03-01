@@ -11,12 +11,11 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import org.json.JSONObject
 import com.cs446.petpal.models.Task
-import com.cs446.petpal.models.User
 import org.json.JSONArray
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.State
 
-class TaskspageViewModel: ViewModel() {
+class TasksViewModel: ViewModel() {
     private val client = OkHttpClient()
     private val _tasks = mutableStateOf<List<Task>>(emptyList())
     val tasks: State<List<Task>> = _tasks

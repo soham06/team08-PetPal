@@ -7,10 +7,12 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -19,13 +21,104 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.cs446.petpal.R
-import com.cs446.petpal.viewmodels.TaskspageViewModel
+import com.cs446.petpal.viewmodels.EventsViewModel
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.material.icons.filled.CalendarToday
+import androidx.compose.material.icons.filled.AccessTime
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
+import android.app.DatePickerDialog
+import android.app.TimePickerDialog
+import android.widget.DatePicker
+import android.widget.TimePicker
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.ui.platform.LocalContext
+import com.cs446.petpal.models.Event
+import java.util.Date
 
 @Composable
-fun DailyEventsView(taskspageViewModel: TaskspageViewModel = viewModel()) {
-    var showDialog by remember { mutableStateOf(false) }
+fun DailyEventsView(eventsViewModel: EventsViewModel = viewModel()) {
+    var showAddDialog by remember { mutableStateOf(false) }
+    var showEditDialog by remember { mutableStateOf(false) }
+    var showDelDialog by remember { mutableStateOf(false) }
+    var currEventID by remember { mutableStateOf("")}
+    var userInputDescription by remember { mutableStateOf("") }
+    var userInputLocation by remember { mutableStateOf("") }
+    val calendar = Calendar.getInstance()
+    val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+    val timeFormat = SimpleDateFormat("hh:mm a", Locale.getDefault())
+    var startDate by remember { mutableStateOf(dateFormat.format(calendar.time)) }
+    var endDate by remember { mutableStateOf(dateFormat.format(calendar.time)) }
+    var startTime by remember { mutableStateOf(timeFormat.format(calendar.time)) }
+    var endTime by remember { mutableStateOf(timeFormat.format(calendar.time)) }
+    val tomorrow = Calendar.getInstance().apply { add(Calendar.DAY_OF_YEAR, 1) }
+    val context = LocalContext.current
+    val displayFormat = SimpleDateFormat("MMMM d yyyy", Locale.getDefault())
+    val events by eventsViewModel.events
+    val scrollState = rememberScrollState()
+    val startDatePickerDialog = remember {
+        DatePickerDialog(
+            context,
+            { _: DatePicker, year: Int, month: Int, dayOfMonth: Int ->
+                startDate = dateFormat.format(Calendar.getInstance().apply {
+                    set(year, month, dayOfMonth)
+                }.time)
+            },
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.DAY_OF_MONTH)
+        )
+    }
+    val endDatePickerDialog = remember {
+        DatePickerDialog(
+            context,
+            { _: DatePicker, year: Int, month: Int, dayOfMonth: Int ->
+                endDate = dateFormat.format(Calendar.getInstance().apply {
+                    set(year, month, dayOfMonth)
+                }.time)
+            },
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.DAY_OF_MONTH)
+        )
+    }
+
+    val startTimePickerDialog = remember {
+        TimePickerDialog(
+            context,
+            { _: TimePicker, hour: Int, minute: Int ->
+                startTime = timeFormat.format(Calendar.getInstance().apply {
+                    set(Calendar.HOUR_OF_DAY, hour)
+                    set(Calendar.MINUTE, minute)
+                }.time)
+            },
+            calendar.get(Calendar.HOUR_OF_DAY),
+            calendar.get(Calendar.MINUTE),
+            false // 12-hour format
+        )
+    }
+    val endTimePickerDialog = remember {
+        TimePickerDialog(
+            context,
+            { _: TimePicker, hour: Int, minute: Int ->
+                endTime = timeFormat.format(Calendar.getInstance().apply {
+                    set(Calendar.HOUR_OF_DAY, hour)
+                    set(Calendar.MINUTE, minute)
+                }.time)
+            },
+            calendar.get(Calendar.HOUR_OF_DAY),
+            calendar.get(Calendar.MINUTE),
+            false // 12-hour format
+        )
+    }
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
@@ -37,12 +130,12 @@ fun DailyEventsView(taskspageViewModel: TaskspageViewModel = viewModel()) {
                 fontWeight = FontWeight.Bold
             ),
             modifier = Modifier
-                .align(Alignment.CenterVertically) // Vertically center the text
+                .align(Alignment.CenterVertically)
                 .padding(top = 12.dp)
                 .padding(start = 8.dp)
         )
         IconButton(
-            onClick = { showDialog = true },
+            onClick = { showAddDialog = true },
             modifier = Modifier
                 .size(48.dp)
                 .padding(top = 12.dp),
@@ -60,4 +153,293 @@ fun DailyEventsView(taskspageViewModel: TaskspageViewModel = viewModel()) {
             )
         }
     }
+    Spacer(modifier = Modifier.height(8.dp))
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .heightIn(min = 330.dp)
+            .heightIn(max = 330.dp)
+            .verticalScroll(scrollState)
+    )
+    {
+        // Display each task description in the Row
+        (events as List<Event>).forEach { event ->
+            val eventStartDate = dateFormat.parse(event.startDate.value) // Parse event date
+            val eventEndDate = dateFormat.parse(event.endDate.value)
+            val formattedStartDate = when {
+                eventStartDate == null -> event.startDate.value // Fallback to raw date if parsing fails
+                isSameDay(eventStartDate, calendar.time) -> "Today"
+                isSameDay(eventStartDate, tomorrow.time) -> "Tomorrow"
+                else -> displayFormat.format(eventStartDate)
+            }
+            val formattedEndDate = when {
+                eventEndDate == null -> event.endDate.value // Fallback to raw date if parsing fails
+                isSameDay(eventEndDate, calendar.time) -> "Today"
+                isSameDay(eventEndDate, tomorrow.time) -> "Tomorrow"
+                else -> displayFormat.format(eventEndDate)
+            }
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 3.dp, horizontal = 6.dp),
+                shape = RoundedCornerShape(12.dp),
+                colors = CardDefaults.cardColors(containerColor = Color(0xFFFFD700))
+            ) {
+                Column(modifier = Modifier.padding(12.dp)) {
+                    Row (
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        Text(
+                            text = "From:",
+                            style = MaterialTheme.typography.bodyLarge.copy(
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        )
+                        Text(
+                            text = formattedStartDate,
+                            style = MaterialTheme.typography.bodyLarge.copy(
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        )
+                        Text(
+                            text = event.startTime.value,
+                            style = MaterialTheme.typography.bodyLarge.copy(
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        )
+                    }
+                    Row (
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        Text(
+                            text = "To:",
+                            style = MaterialTheme.typography.bodyLarge.copy(
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        )
+                        Text(
+                            text = formattedEndDate,
+                            style = MaterialTheme.typography.bodyLarge.copy(
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        )
+                        Text(
+                            text = event.endTime.value,
+                            style = MaterialTheme.typography.bodyLarge.copy(
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Row (
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(
+                            text = event.description.value,
+                            style = MaterialTheme.typography.bodyLarge.copy(fontSize = 16.sp)
+                        )
+                        Row(
+//                            modifier = Modifier
+//                                .padding(top = 4.dp),
+                        ) {
+                            IconButton(
+                                onClick = {
+                                    showEditDialog = true
+                                    currEventID = event.eventId
+                                },
+                                modifier = Modifier
+                                    .padding(end = 8.dp)
+                                    .size(36.dp),
+                                colors = IconButtonDefaults.iconButtonColors(
+                                    containerColor = Color(
+                                        0xFFFEFCF5
+                                    )
+                                )
+                            ) {
+                                Icon(
+                                    painter = painterResource(R.drawable.edit),
+                                    contentDescription = "Edit Task",
+                                    modifier = Modifier.size(24.dp),
+                                    tint = Color.Black
+                                )
+                            }
+                            IconButton(
+                                onClick = {
+                                    showDelDialog = true
+                                    currEventID = event.eventId
+                                },
+                                modifier = Modifier
+                                    .size(36.dp),
+                                colors = IconButtonDefaults.iconButtonColors(
+                                    containerColor = Color(
+                                        0xFFFEFCF5
+                                    )
+                                )
+                            ) {
+                                Icon(
+                                    painter = painterResource(R.drawable.delete),
+                                    contentDescription = "Delete Task",
+                                    modifier = Modifier.size(24.dp),
+                                    tint = Color.Black
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    if (showAddDialog) {
+        userInputDescription = ""
+        userInputLocation = ""
+        AlertDialog(
+            onDismissRequest = { showAddDialog = false },
+            title = {
+                Text(text = "Add Event")
+            },
+            text = {
+                Column {
+                    OutlinedTextField(
+                        value = userInputDescription,
+                        onValueChange = { userInputDescription = it },
+                        label = { Text("Description") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    OutlinedTextField(
+                        value = startDate,
+                        onValueChange = {},
+                        label = { Text("Start Date") },
+                        readOnly = true,
+                        trailingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.CalendarToday,
+                                contentDescription = "Calendar Icon",
+                                modifier = Modifier.clickable { startDatePickerDialog.show() }
+                            )
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { startDatePickerDialog.show() }
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    OutlinedTextField(
+                        value = endDate,
+                        onValueChange = {},
+                        label = { Text("End Date") },
+                        readOnly = true,
+                        trailingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.CalendarToday,
+                                contentDescription = "Calendar Icon",
+                                modifier = Modifier.clickable { endDatePickerDialog.show() }
+                            )
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { endDatePickerDialog.show() }
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                        // Start Time Picker
+                        Column(modifier = Modifier.weight(1f)) {
+                            OutlinedTextField(
+                                value = startTime,
+                                onValueChange = {},
+                                label = { Text("Start Time") },
+                                readOnly = true,
+                                trailingIcon = {
+                                    Icon(
+                                        imageVector = Icons.Default.AccessTime,
+                                        contentDescription = "Time Icon",
+                                        modifier = Modifier.clickable { startTimePickerDialog.show() }
+                                    )
+                                },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable { startTimePickerDialog.show() }
+                            )
+                        }
+
+                        // End Time Picker
+                        Column(modifier = Modifier.weight(1f)) {
+                            OutlinedTextField(
+                                value = endTime,
+                                onValueChange = {},
+                                label = { Text("End Time") },
+                                readOnly = true,
+                                trailingIcon = {
+                                    Icon(
+                                        imageVector = Icons.Default.AccessTime,
+                                        contentDescription = "Time Icon",
+                                        modifier = Modifier.clickable { endTimePickerDialog.show() }
+                                    )
+                                },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable { endTimePickerDialog.show() }
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
+                    OutlinedTextField(
+                        value = userInputLocation,
+                        onValueChange = { userInputLocation = it },
+                        label = { Text("Location") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            },
+            dismissButton = {
+                Button(
+                    onClick = {
+                        showAddDialog = false
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFD700))
+                ) {
+                    Text(
+                        text = "Cancel",
+                        color = Color.Black,
+                    )
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showAddDialog = false
+                        eventsViewModel.createEventForUser(
+                            userInputDescription,
+                            startDate,
+                            endDate,
+                            startTime,
+                            endTime,
+                            userInputLocation,
+                            ) { success, _ ->
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFD700))
+                ) {
+                    Text(
+                        text = "Ok",
+                        color = Color.Black,
+                    )
+                }
+            }
+        )
+    }
+}
+private fun isSameDay(date1: Date, date2: Date): Boolean {
+    val cal1 = Calendar.getInstance().apply { time = date1 }
+    val cal2 = Calendar.getInstance().apply { time = date2 }
+    return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
+            cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR)
 }

@@ -1,6 +1,5 @@
 package com.cs446.petpal.views
 
-import androidx.compose.foundation.background
 import androidx.compose.material3.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.Alignment
@@ -22,9 +21,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import com.cs446.petpal.R
-import com.cs446.petpal.viewmodels.TaskspageViewModel
+import com.cs446.petpal.viewmodels.TasksViewModel
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.material3.OutlinedTextField
@@ -34,12 +32,12 @@ import androidx.compose.foundation.verticalScroll
 
 
 @Composable
-fun DailyTasksView(taskspageViewModel: TaskspageViewModel = viewModel()) {
+fun DailyTasksView(tasksViewModel: TasksViewModel = viewModel()) {
     var showAddDialog by remember { mutableStateOf(false) }
     var showDelDialog by remember { mutableStateOf(false) }
     var showEditDialog by remember { mutableStateOf(false) }
     var userInput by remember { mutableStateOf("") }
-    val tasks by taskspageViewModel.tasks
+    val tasks by tasksViewModel.tasks
     val scrollState = rememberScrollState()
     var currTaskID by remember { mutableStateOf("")}
     Row(
@@ -68,7 +66,7 @@ fun DailyTasksView(taskspageViewModel: TaskspageViewModel = viewModel()) {
         ) {
             Icon(
                 painter = painterResource(R.drawable.add),
-                contentDescription = "Delete Task",
+                contentDescription = "Add Task",
                 modifier = Modifier.size(24.dp),
                 tint = Color.Black
             )
@@ -103,7 +101,7 @@ fun DailyTasksView(taskspageViewModel: TaskspageViewModel = viewModel()) {
                             checked = isChecked,
                             onCheckedChange = { isCheckedNew ->
                                 task.status.value = if (isCheckedNew) "CLOSED" else "OPEN"
-                                taskspageViewModel.updateTaskForUser(task.taskId, task.description.value, task.status.value) { success, _ ->
+                                tasksViewModel.updateTaskForUser(task.taskId, task.description.value, task.status.value) { success, _ ->
                                 }
                             }
                         )
@@ -189,7 +187,7 @@ fun DailyTasksView(taskspageViewModel: TaskspageViewModel = viewModel()) {
                 Button(
                     onClick = {
                         showDelDialog = false
-                        taskspageViewModel.deleteTaskForUser(currTaskID) { success, _ ->
+                        tasksViewModel.deleteTaskForUser(currTaskID) { success, _ ->
 
                         }
                               },
@@ -224,7 +222,7 @@ fun DailyTasksView(taskspageViewModel: TaskspageViewModel = viewModel()) {
                     Button(
                         onClick = {
                             showEditDialog = false
-                            taskspageViewModel.updateTaskForUser(currTaskID, userInput, "OPEN") { success, _ ->
+                            tasksViewModel.updateTaskForUser(currTaskID, userInput, "OPEN") { success, _ ->
                             }
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFD700))
@@ -260,7 +258,7 @@ fun DailyTasksView(taskspageViewModel: TaskspageViewModel = viewModel()) {
                 Button(
                     onClick = {
                         showAddDialog = false
-                        taskspageViewModel.createTaskForUser(userInput, "OPEN") { success, _ ->
+                        tasksViewModel.createTaskForUser(userInput, "OPEN") { success, _ ->
                         }
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFD700))
