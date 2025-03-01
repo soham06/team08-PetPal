@@ -1,7 +1,7 @@
 import firebaseConnection from '../firebase.js'
 import { getFirestore, collection, getDoc, 
          getDocs, query, where, addDoc, doc,
-         serverTimestamp, updateDoc, deleteDoc } from 'firebase/firestore';
+         serverTimestamp, updateDoc, deleteDoc, orderBy, limit } from 'firebase/firestore';
 
 export async function getEventsForUser (req, res) {
     try {
@@ -20,7 +20,18 @@ export async function getEventsForUser (req, res) {
         }
 
         const eventsTable = collection(db, "events")
-        const q = query(eventsTable, where("userId", "==", userId))
+        
+        const date = new Date();
+        const options = { year: "numeric", month: "long", day: "numeric", timeZone: "America/New_York" };
+        const curentDate = new Intl.DateTimeFormat("en-US", options).format(date);
+        console.log(curentDate);
+
+        const q = query(eventsTable, 
+            where("userId", "==", userId),
+            where("startDate", ">=", curentDate), 
+            orderBy("startDate"), 
+            orderBy("startTime"), 
+            limit(6))
         const events = await getDocs(q)
         const eventsList = events.docs.map(event => ({
             eventId: event.id,
