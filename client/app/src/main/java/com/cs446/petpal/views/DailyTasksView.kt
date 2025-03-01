@@ -205,7 +205,6 @@ fun DailyTasksView(taskspageViewModel: TaskspageViewModel = viewModel()) {
         }
         // Editing Task
         if (showEditDialog) {
-            userInput = ""
             AlertDialog(
                 onDismissRequest = { showEditDialog = false },
                 title = {
