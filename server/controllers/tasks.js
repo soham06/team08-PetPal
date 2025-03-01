@@ -20,7 +20,7 @@ export async function getTasksForUser (req, res) {
         }
 
         const tasksTable = collection(db, "tasks")
-        const q = query(tasksTable, where("userId", "==", userId))
+        const q = query(tasksTable, where("userId", "==", userId), where("status", "==", "OPEN"))
         const tasks = await getDocs(q)
         const tasksList = tasks.docs.map(task => ({
             taskId: task.id,
