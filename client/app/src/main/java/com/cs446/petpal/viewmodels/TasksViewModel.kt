@@ -1,6 +1,7 @@
 package com.cs446.petpal.viewmodels
 
 import android.util.Log
+import androidx.compose.runtime.MutableState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
@@ -19,7 +20,11 @@ class TasksViewModel: ViewModel() {
     private val client = OkHttpClient()
     private val _tasks = mutableStateOf<List<Task>>(emptyList())
     val tasks: State<List<Task>> = _tasks
+    var selectedTask: MutableState<Task?> = mutableStateOf(null)
 
+    fun setSelectedTask(task: Task) {
+        selectedTask.value = task
+    }
     init {
         getTasksForUser()
     }
@@ -84,7 +89,7 @@ class TasksViewModel: ViewModel() {
                     .toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
                 // Build the PATCH request
                 val request = Request.Builder()
-                    .url("http://10.0.2.2:3000/api/tasks/$taskId") // REPLACE THIS TO ACTUALLY USE USERID
+                    .url("http://10.0.2.2:3000/api/tasks/$taskId")
                     .patch(requestBody)
                     .addHeader("Content-Type", "application/json")
                     .addHeader("Accept", "application/json")

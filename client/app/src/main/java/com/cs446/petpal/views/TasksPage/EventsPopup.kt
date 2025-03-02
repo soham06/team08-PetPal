@@ -24,12 +24,14 @@ import java.util.Calendar
 import java.util.Locale
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.util.Log
 import android.widget.DatePicker
 import android.widget.TimePicker
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.ui.platform.LocalContext
+import com.cs446.petpal.models.Event
 
 @Composable
 fun eventsDelPopup(currEventId: String, eventsViewModel: EventsViewModel = viewModel()): Boolean {
@@ -75,18 +77,18 @@ fun eventsDelPopup(currEventId: String, eventsViewModel: EventsViewModel = viewM
     return showDelDialog
 }
 @Composable
-fun eventsAddPopup(eventsViewModel: EventsViewModel = viewModel()): Boolean {
-    var showAddDialog by remember { mutableStateOf(true) }
-    var userInputDescription by remember { mutableStateOf("") }
-    var userInputLocation by remember { mutableStateOf("") }
+fun eventsPopup(currEvent: Event?, currEventId: String?, popupType: String, eventsViewModel: EventsViewModel = viewModel()): Boolean {
+    var showDialog by remember { mutableStateOf(true) }
+    var userInputDescription by remember { mutableStateOf(currEvent?.description?.value ?: "") }
+    var userInputLocation by remember { mutableStateOf(currEvent?.location?.value ?: "") }
     val context = LocalContext.current
     val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
     val timeFormat = SimpleDateFormat("hh:mm a", Locale.getDefault())
     val calendar = Calendar.getInstance()
-    var startDate by remember { mutableStateOf(dateFormat.format(calendar.time)) }
-    var endDate by remember { mutableStateOf(dateFormat.format(calendar.time)) }
-    var startTime by remember { mutableStateOf(timeFormat.format(calendar.time)) }
-    var endTime by remember { mutableStateOf(timeFormat.format(calendar.time)) }
+    var startDate by remember { mutableStateOf(currEvent?.startDate?.value ?:dateFormat.format(calendar.time)) }
+    var endDate by remember { mutableStateOf(currEvent?.endDate?.value ?:dateFormat.format(calendar.time)) }
+    var startTime by remember { mutableStateOf(currEvent?.startTime?.value ?:timeFormat.format(calendar.time)) }
+    var endTime by remember { mutableStateOf(currEvent?.endTime?.value ?:timeFormat.format(calendar.time)) }
     val startDatePickerDialog = remember {
         DatePickerDialog(
             context,
@@ -142,10 +144,8 @@ fun eventsAddPopup(eventsViewModel: EventsViewModel = viewModel()): Boolean {
             false // 12-hour format
         )
     }
-    userInputDescription = ""
-    userInputLocation = ""
     AlertDialog(
-        onDismissRequest = { showAddDialog = false },
+        onDismissRequest = { showDialog = false },
         title = {
             Text(text = "Add Event")
         },
@@ -245,7 +245,7 @@ fun eventsAddPopup(eventsViewModel: EventsViewModel = viewModel()): Boolean {
         dismissButton = {
             Button(
                 onClick = {
-                    showAddDialog = false
+                    showDialog = false
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFD700))
             ) {
@@ -258,15 +258,31 @@ fun eventsAddPopup(eventsViewModel: EventsViewModel = viewModel()): Boolean {
         confirmButton = {
             Button(
                 onClick = {
-                    showAddDialog = false
-                    eventsViewModel.createEventForUser(
-                        userInputDescription,
-                        startDate,
-                        endDate,
-                        startTime,
-                        endTime,
-                        userInputLocation,
-                    ) { success, _ ->
+                    showDialog = false
+                    if (popupType == "ADD") {
+                        eventsViewModel.createEventForUser(
+                            userInputDescription.toString(),
+                            startDate,
+                            endDate,
+                            startTime,
+                            endTime,
+                            userInputLocation,
+                        ) { success, _ ->
+                        }
+                    }
+                    else {
+                        if (currEventId != null) {
+                            eventsViewModel.updateEventForUser(
+                                currEventId,
+                                userInputDescription.toString(),
+                                startDate,
+                                endDate,
+                                startTime,
+                                endTime,
+                                userInputLocation,
+                            ) { success, _ ->
+                            }
+                        }
                     }
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFD700))
@@ -278,5 +294,5 @@ fun eventsAddPopup(eventsViewModel: EventsViewModel = viewModel()): Boolean {
             }
         }
     )
-    return showAddDialog
+    return showDialog
 }

@@ -33,6 +33,7 @@ import androidx.compose.foundation.verticalScroll
 
 @Composable
 fun DailyTasksView(tasksViewModel: TasksViewModel = viewModel()) {
+    var currTask = tasksViewModel.selectedTask.value
     var showAddDialog by remember { mutableStateOf(false) }
     var showDelDialog by remember { mutableStateOf(false) }
     var showEditDialog by remember { mutableStateOf(false) }
@@ -118,6 +119,7 @@ fun DailyTasksView(tasksViewModel: TasksViewModel = viewModel()) {
                         IconButton(
                             onClick = {
                                 showEditDialog = true
+                                tasksViewModel.setSelectedTask(task)
                                 currTaskID = task.taskId
                                       },
                             modifier = Modifier
@@ -203,6 +205,9 @@ fun DailyTasksView(tasksViewModel: TasksViewModel = viewModel()) {
         }
         // Editing Task
         if (showEditDialog) {
+            if (currTask != null) {
+                userInput = currTask.description.value
+            }
             AlertDialog(
                 onDismissRequest = { showEditDialog = false },
                 title = {

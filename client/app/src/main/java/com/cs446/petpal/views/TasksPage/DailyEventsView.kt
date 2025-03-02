@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -24,28 +23,21 @@ import com.cs446.petpal.R
 import com.cs446.petpal.viewmodels.EventsViewModel
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.material.icons.filled.CalendarToday
-import androidx.compose.material.icons.filled.AccessTime
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
-import android.app.DatePickerDialog
-import android.app.TimePickerDialog
-import android.widget.DatePicker
-import android.widget.TimePicker
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.ui.platform.LocalContext
 import com.cs446.petpal.models.Event
 import java.util.Date
 
 @Composable
 fun DailyEventsView(eventsViewModel: EventsViewModel = viewModel()) {
+    var currEvent = eventsViewModel.selectedEvent.value
     var showAddDialog by remember { mutableStateOf(false) }
     var showEditDialog by remember { mutableStateOf(false) }
     var showDelDialog by remember { mutableStateOf(false) }
@@ -101,7 +93,7 @@ fun DailyEventsView(eventsViewModel: EventsViewModel = viewModel()) {
     )
     {
         // Display each task description in the Row
-        (events as List<Event>).forEach { event ->
+        events.forEach { event ->
             val eventStartDate = dateFormat.parse(event.startDate.value) // Parse event date
             val eventEndDate = dateFormat.parse(event.endDate.value)
             val formattedStartDate = when {
@@ -189,6 +181,8 @@ fun DailyEventsView(eventsViewModel: EventsViewModel = viewModel()) {
                             IconButton(
                                 onClick = {
                                     showEditDialog = true
+                                    currEvent = event
+                                    eventsViewModel.setSelectedEvent(event)
                                     currEventID = event.eventId
                                 },
                                 modifier = Modifier
@@ -234,10 +228,13 @@ fun DailyEventsView(eventsViewModel: EventsViewModel = viewModel()) {
         }
     }
     if (showAddDialog) {
-        showAddDialog = eventsAddPopup()
+        showAddDialog = eventsPopup(null, null,"ADD")
     }
     if (showDelDialog) {
         showDelDialog = eventsDelPopup(currEventID)
+    }
+    if (showEditDialog) {
+        showEditDialog = eventsPopup(currEvent, currEventID, "EDIT")
     }
 }
 private fun isSameDay(date1: Date, date2: Date): Boolean {

@@ -1,6 +1,7 @@
 package com.cs446.petpal.viewmodels
 
 import android.util.Log
+import androidx.compose.runtime.MutableState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
@@ -21,6 +22,11 @@ class EventsViewModel: ViewModel() {
     private val client = OkHttpClient()
     private val _events = mutableStateOf<List<Event>>(emptyList())
     val events: State<List<Event>> = _events
+    var selectedEvent: MutableState<Event?> = mutableStateOf(null)
+
+    fun setSelectedEvent(event: Event) {
+        selectedEvent.value = event
+    }
 
     init {
         getEventsForUser()
@@ -71,9 +77,9 @@ class EventsViewModel: ViewModel() {
                             location = mutableStateOf(jsonResponse.optString("location")),
                         )
                         event.eventId = jsonResponse.optString("eventId")
-                        val updatedTasks = _events.value.toMutableList() // Create a mutable copy
-                        updatedTasks.add(event!!)
-                        _events.value = updatedTasks
+                        val updatedEvents = _events.value.toMutableList() // Create a mutable copy
+                        updatedEvents.add(event!!)
+                        _events.value = updatedEvents
                     }
                     else {
                         // Optionally log error details from response
@@ -85,6 +91,73 @@ class EventsViewModel: ViewModel() {
                 successfulEventAdded = false
             }
             onResult(successfulEventAdded, event)
+        }
+    }
+
+    fun updateEventForUser(
+        currEventId: String,
+        description: String,
+        startDate: String,
+        endDate: String,
+        startTime: String,
+        endTime: String,
+        location: String,
+        onResult: (Boolean, Event?) -> Unit
+    ) {
+        viewModelScope.launch(Dispatchers.IO)
+        {
+            var successfulEventUpdated = false
+            var event: Event? = null
+            try {
+                val json = JSONObject().apply {
+                    put("description", description)
+                    put("startDate", startDate)
+                    put("endDate", endDate)
+                    put("startTime", startTime)
+                    put("endTime", endTime)
+                    put("location", location)
+                }
+                val requestBody = json.toString()
+                    .toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
+//                // Build the POST request
+                val request = Request.Builder()
+                    .url("http://10.0.2.2:3000/api/events/${currEventId}")
+                    .patch(requestBody)
+                    .addHeader("Content-Type", "application/json")
+                    .addHeader("Accept", "application/json")
+                    .build()
+                client.newCall(request).execute().use { response ->
+                    successfulEventUpdated = response.isSuccessful
+                    if (successfulEventUpdated) {
+                        val responseBody = response.body?.string()
+                        val jsonResponse = JSONObject(responseBody ?: "")
+                        event = Event(
+                            description = mutableStateOf(jsonResponse.optString("description")),
+                            startDate = mutableStateOf(jsonResponse.optString("startDate")),
+                            endDate = mutableStateOf(jsonResponse.optString("endDate")),
+                            startTime = mutableStateOf(jsonResponse.optString("startTime")),
+                            endTime = mutableStateOf(jsonResponse.optString("endTime")),
+                            location = mutableStateOf(jsonResponse.optString("location")),
+                        )
+
+                        event!!.eventId = jsonResponse.optString("eventId")
+                        val updatedEvents = _events.value.toMutableList() // Create a mutable copy
+                        val eventIndex = updatedEvents.indexOfFirst { it.eventId == currEventId}
+                        if (eventIndex != -1) {
+                            updatedEvents[eventIndex] = event!!
+                        }
+                        _events.value = updatedEvents
+                    }
+                    else {
+                        // Optionally log error details from response
+                        println("Updating event failed: ${response.body?.string()}")
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                successfulEventUpdated = false
+            }
+            onResult(successfulEventUpdated, event)
         }
     }
 
@@ -129,7 +202,7 @@ class EventsViewModel: ViewModel() {
             }
         }
     }
-//    fun updateTaskForUser (taskId: String, description: String, status: String, onResult: (Boolean, Task?) -> Unit) {
+//    fun updateTaskForUser (taskId: String, description: String, status: String, onResult: (Boolean, Event?) -> Unit) {
 //        viewModelScope.launch(Dispatchers.IO)
 //        {
 //            var successfulTaskEdited = false
