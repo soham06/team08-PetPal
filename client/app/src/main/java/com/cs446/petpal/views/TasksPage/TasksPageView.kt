@@ -1,4 +1,4 @@
-package com.cs446.petpal.views
+package com.cs446.petpal.views.TasksPage
 
 import androidx.compose.foundation.background
 import androidx.compose.ui.Alignment
@@ -17,6 +17,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.cs446.petpal.viewmodels.TasksViewModel
 import com.cs446.petpal.viewmodels.EventsViewModel
+import com.cs446.petpal.views.BottomBar
+import com.cs446.petpal.views.TopBar
 
 @Composable
 fun TasksPageView(tasksViewModel: TasksViewModel = viewModel(),

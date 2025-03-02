@@ -1,4 +1,4 @@
-package com.cs446.petpal.views
+package com.cs446.petpal.views.TasksPage
 
 import androidx.compose.material3.*
 import androidx.compose.ui.Alignment
@@ -50,75 +50,13 @@ fun DailyEventsView(eventsViewModel: EventsViewModel = viewModel()) {
     var showEditDialog by remember { mutableStateOf(false) }
     var showDelDialog by remember { mutableStateOf(false) }
     var currEventID by remember { mutableStateOf("")}
-    var userInputDescription by remember { mutableStateOf("") }
-    var userInputLocation by remember { mutableStateOf("") }
     val calendar = Calendar.getInstance()
     val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-    val timeFormat = SimpleDateFormat("hh:mm a", Locale.getDefault())
-    var startDate by remember { mutableStateOf(dateFormat.format(calendar.time)) }
-    var endDate by remember { mutableStateOf(dateFormat.format(calendar.time)) }
-    var startTime by remember { mutableStateOf(timeFormat.format(calendar.time)) }
-    var endTime by remember { mutableStateOf(timeFormat.format(calendar.time)) }
     val tomorrow = Calendar.getInstance().apply { add(Calendar.DAY_OF_YEAR, 1) }
-    val context = LocalContext.current
+
     val displayFormat = SimpleDateFormat("MMMM d yyyy", Locale.getDefault())
     val events by eventsViewModel.events
     val scrollState = rememberScrollState()
-    val startDatePickerDialog = remember {
-        DatePickerDialog(
-            context,
-            { _: DatePicker, year: Int, month: Int, dayOfMonth: Int ->
-                startDate = dateFormat.format(Calendar.getInstance().apply {
-                    set(year, month, dayOfMonth)
-                }.time)
-            },
-            calendar.get(Calendar.YEAR),
-            calendar.get(Calendar.MONTH),
-            calendar.get(Calendar.DAY_OF_MONTH)
-        )
-    }
-    val endDatePickerDialog = remember {
-        DatePickerDialog(
-            context,
-            { _: DatePicker, year: Int, month: Int, dayOfMonth: Int ->
-                endDate = dateFormat.format(Calendar.getInstance().apply {
-                    set(year, month, dayOfMonth)
-                }.time)
-            },
-            calendar.get(Calendar.YEAR),
-            calendar.get(Calendar.MONTH),
-            calendar.get(Calendar.DAY_OF_MONTH)
-        )
-    }
-
-    val startTimePickerDialog = remember {
-        TimePickerDialog(
-            context,
-            { _: TimePicker, hour: Int, minute: Int ->
-                startTime = timeFormat.format(Calendar.getInstance().apply {
-                    set(Calendar.HOUR_OF_DAY, hour)
-                    set(Calendar.MINUTE, minute)
-                }.time)
-            },
-            calendar.get(Calendar.HOUR_OF_DAY),
-            calendar.get(Calendar.MINUTE),
-            false // 12-hour format
-        )
-    }
-    val endTimePickerDialog = remember {
-        TimePickerDialog(
-            context,
-            { _: TimePicker, hour: Int, minute: Int ->
-                endTime = timeFormat.format(Calendar.getInstance().apply {
-                    set(Calendar.HOUR_OF_DAY, hour)
-                    set(Calendar.MINUTE, minute)
-                }.time)
-            },
-            calendar.get(Calendar.HOUR_OF_DAY),
-            calendar.get(Calendar.MINUTE),
-            false // 12-hour format
-        )
-    }
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
@@ -247,10 +185,7 @@ fun DailyEventsView(eventsViewModel: EventsViewModel = viewModel()) {
                             text = event.description.value,
                             style = MaterialTheme.typography.bodyLarge.copy(fontSize = 16.sp)
                         )
-                        Row(
-//                            modifier = Modifier
-//                                .padding(top = 4.dp),
-                        ) {
+                        Row {
                             IconButton(
                                 onClick = {
                                     showEditDialog = true
@@ -299,142 +234,10 @@ fun DailyEventsView(eventsViewModel: EventsViewModel = viewModel()) {
         }
     }
     if (showAddDialog) {
-        userInputDescription = ""
-        userInputLocation = ""
-        AlertDialog(
-            onDismissRequest = { showAddDialog = false },
-            title = {
-                Text(text = "Add Event")
-            },
-            text = {
-                Column {
-                    OutlinedTextField(
-                        value = userInputDescription,
-                        onValueChange = { userInputDescription = it },
-                        label = { Text("Description") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    OutlinedTextField(
-                        value = startDate,
-                        onValueChange = {},
-                        label = { Text("Start Date") },
-                        readOnly = true,
-                        trailingIcon = {
-                            Icon(
-                                imageVector = Icons.Default.CalendarToday,
-                                contentDescription = "Calendar Icon",
-                                modifier = Modifier.clickable { startDatePickerDialog.show() }
-                            )
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { startDatePickerDialog.show() }
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    OutlinedTextField(
-                        value = endDate,
-                        onValueChange = {},
-                        label = { Text("End Date") },
-                        readOnly = true,
-                        trailingIcon = {
-                            Icon(
-                                imageVector = Icons.Default.CalendarToday,
-                                contentDescription = "Calendar Icon",
-                                modifier = Modifier.clickable { endDatePickerDialog.show() }
-                            )
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { endDatePickerDialog.show() }
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                        // Start Time Picker
-                        Column(modifier = Modifier.weight(1f)) {
-                            OutlinedTextField(
-                                value = startTime,
-                                onValueChange = {},
-                                label = { Text("Start Time") },
-                                readOnly = true,
-                                trailingIcon = {
-                                    Icon(
-                                        imageVector = Icons.Default.AccessTime,
-                                        contentDescription = "Time Icon",
-                                        modifier = Modifier.clickable { startTimePickerDialog.show() }
-                                    )
-                                },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable { startTimePickerDialog.show() }
-                            )
-                        }
-
-                        // End Time Picker
-                        Column(modifier = Modifier.weight(1f)) {
-                            OutlinedTextField(
-                                value = endTime,
-                                onValueChange = {},
-                                label = { Text("End Time") },
-                                readOnly = true,
-                                trailingIcon = {
-                                    Icon(
-                                        imageVector = Icons.Default.AccessTime,
-                                        contentDescription = "Time Icon",
-                                        modifier = Modifier.clickable { endTimePickerDialog.show() }
-                                    )
-                                },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable { endTimePickerDialog.show() }
-                            )
-                        }
-                    }
-                    Spacer(modifier = Modifier.height(16.dp))
-                    OutlinedTextField(
-                        value = userInputLocation,
-                        onValueChange = { userInputLocation = it },
-                        label = { Text("Location") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
-            },
-            dismissButton = {
-                Button(
-                    onClick = {
-                        showAddDialog = false
-                    },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFD700))
-                ) {
-                    Text(
-                        text = "Cancel",
-                        color = Color.Black,
-                    )
-                }
-            },
-            confirmButton = {
-                Button(
-                    onClick = {
-                        showAddDialog = false
-                        eventsViewModel.createEventForUser(
-                            userInputDescription,
-                            startDate,
-                            endDate,
-                            startTime,
-                            endTime,
-                            userInputLocation,
-                            ) { success, _ ->
-                        }
-                    },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFD700))
-                ) {
-                    Text(
-                        text = "Ok",
-                        color = Color.Black,
-                    )
-                }
-            }
-        )
+        showAddDialog = eventsAddPopup()
+    }
+    if (showDelDialog) {
+        showDelDialog = eventsDelPopup(currEventID)
     }
 }
 private fun isSameDay(date1: Date, date2: Date): Boolean {

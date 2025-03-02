@@ -19,7 +19,7 @@ import com.cs446.petpal.views.HomepageView
 import com.cs446.petpal.views.PetsPageView
 import com.cs446.petpal.views.CalendarPageView
 import com.cs446.petpal.views.NotificationsView
-import com.cs446.petpal.views.TasksPageView
+import com.cs446.petpal.views.TasksPage.TasksPageView
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

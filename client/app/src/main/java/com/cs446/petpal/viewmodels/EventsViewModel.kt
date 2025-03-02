@@ -177,66 +177,28 @@ class EventsViewModel: ViewModel() {
 //            onResult(successfulTaskEdited, task)
 //        }
 //    }
-//    fun deleteTaskForUser(taskId: String, onResult: (Boolean, Task?) -> Unit) {
-//        Log.d("TASKID", taskId)
-//        viewModelScope.launch(Dispatchers.IO)
-//        {
-//            var successfulTaskDeleted = false
-//            try {
-//                val request = Request.Builder()
-//                    .url("http://10.0.2.2:3000/api/tasks/$taskId") // REPLACE THIS TO ACTUALLY USE USERID
-//                    .delete()
-//                    .addHeader("Content-Type", "application/json")
-//                    .addHeader("Accept", "application/json")
-//                    .build()
-//                client.newCall(request).execute().use { response ->
-//                    successfulTaskDeleted = response.isSuccessful
-//                    if (successfulTaskDeleted) {
-//                        _tasks.value = _tasks.value.filterNot { it.taskId == taskId }
-//                    }
-//                }
-//            }
-//            catch (e: Exception) {
-//                e.printStackTrace()
-//                successfulTaskDeleted = false
-//            }
-//        }
-//    }
-//    fun getEventsForUser() {
-//        viewModelScope.launch(Dispatchers.IO)
-//        {
-//            var successfulEventRetrived = false
-//            try {
-//                val request = Request.Builder()
-//                    .url("http://10.0.2.2:3000/api/tasks/PcjsCSow5nnbIFo5cowm") // REPLACE THIS TO ACTUALLY USE USERID
-//                    .get()
-//                    .addHeader("Content-Type", "application/json")
-//                    .addHeader("Accept", "application/json")
-//                    .build()
-//                client.newCall(request).execute().use { response ->
-//                    successfulEventRetrived = response.isSuccessful
-//                    if(successfulEventRetrived) {
-//                        val responseBody = response.body?.string()
-//                        val tasksArray = JSONArray(responseBody)
-//
-//                        val tasks = mutableListOf<Event>()
-//                        for (i in 0 until tasksArray.length()) {
-//                            val taskJson = tasksArray.getJSONObject(i)
-//                            val task = Event(
-//                                description = mutableStateOf(taskJson.getString("description")),
-//                                status = mutableStateOf(taskJson.getString("status")),
-//                            )
-//                            task.eventId = taskJson.optString("taskId")
-//                            tasks.add(task)
-//                        }
-//                        _events.value = tasks
-//                    }
-//                }
-//            }
-//            catch (e: Exception) {
-//                e.printStackTrace()
-//                successfulTaskRetrived = false
-//            }
-//        }
-//    }
+    fun deleteEventForUser(eventId: String, onResult: (Boolean, Event?) -> Unit) {
+        viewModelScope.launch(Dispatchers.IO)
+        {
+            var successfulEventDeleted = false
+            try {
+                val request = Request.Builder()
+                    .url("http://10.0.2.2:3000/api/events/$eventId")
+                    .delete()
+                    .addHeader("Content-Type", "application/json")
+                    .addHeader("Accept", "application/json")
+                    .build()
+                client.newCall(request).execute().use { response ->
+                    successfulEventDeleted = response.isSuccessful
+                    if (successfulEventDeleted) {
+                        _events.value = _events.value.filterNot { it.eventId == eventId }
+                    }
+                }
+            }
+            catch (e: Exception) {
+                e.printStackTrace()
+                successfulEventDeleted = false
+            }
+        }
+    }
 }

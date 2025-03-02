@@ -1,4 +1,4 @@
-package com.cs446.petpal.views
+package com.cs446.petpal.views.TasksPage
 
 import androidx.compose.material3.*
 import androidx.compose.foundation.shape.RoundedCornerShape
