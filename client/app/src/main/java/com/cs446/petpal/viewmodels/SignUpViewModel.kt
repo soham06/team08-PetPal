@@ -14,7 +14,7 @@ import com.cs446.petpal.repository.UserRepository
 import javax.inject.Inject
 
 class SignUpViewModel @Inject constructor(
-    private val userRepository: UserRepository,
+    val userRepository: UserRepository,
 ) : ViewModel() {
 
     private val client = OkHttpClient()

@@ -20,8 +20,14 @@ import com.cs446.petpal.views.PetsPageView
 import com.cs446.petpal.views.CalendarPageView
 import com.cs446.petpal.views.NotificationsView
 import com.cs446.petpal.views.TasksPageView
+import com.cs446.petpal.repository.UserRepository
+import javax.inject.Inject
 
 class MainActivity : ComponentActivity() {
+
+    @Inject
+    lateinit var userRepository: UserRepository
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
