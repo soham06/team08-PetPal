@@ -12,7 +12,9 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import org.json.JSONObject
 import com.cs446.petpal.repository.UserRepository
 import javax.inject.Inject
+import dagger.hilt.android.lifecycle.HiltViewModel
 
+@HiltViewModel
 class LoginViewModel @Inject constructor(
     val userRepository: UserRepository,
 ) : ViewModel() {

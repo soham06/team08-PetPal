@@ -21,8 +21,10 @@ import com.cs446.petpal.views.CalendarPageView
 import com.cs446.petpal.views.NotificationsView
 import com.cs446.petpal.views.TasksPage.TasksPageView
 import com.cs446.petpal.repository.UserRepository
+import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     @Inject

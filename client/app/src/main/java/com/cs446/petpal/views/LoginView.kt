@@ -38,13 +38,13 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.cs446.petpal.viewmodels.LoginViewModel
 import java.security.MessageDigest
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
-fun LoginView(loginViewModel: LoginViewModel = viewModel(), navController: NavController) {
+fun LoginView(loginViewModel: LoginViewModel = hiltViewModel(), navController: NavController) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }

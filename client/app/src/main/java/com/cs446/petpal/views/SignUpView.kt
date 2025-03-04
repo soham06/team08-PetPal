@@ -22,7 +22,6 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.toSize
@@ -30,9 +29,10 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.navigation.NavController
 import com.cs446.petpal.viewmodels.SignUpViewModel
 import java.security.MessageDigest
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
-fun SignUpView(signUpViewModel: SignUpViewModel = viewModel(), navController: NavController) {
+fun SignUpView(signUpViewModel: SignUpViewModel = hiltViewModel(), navController: NavController) {
     var firstName by remember { mutableStateOf("") }
     var lastName by remember { mutableStateOf("") }
     var address by remember { mutableStateOf("") }

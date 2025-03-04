@@ -12,7 +12,9 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 import com.cs446.petpal.repository.UserRepository
 import javax.inject.Inject
+import dagger.hilt.android.lifecycle.HiltViewModel
 
+@HiltViewModel
 class SignUpViewModel @Inject constructor(
     val userRepository: UserRepository,
 ) : ViewModel() {

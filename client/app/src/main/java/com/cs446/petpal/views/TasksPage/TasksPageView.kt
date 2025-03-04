@@ -19,9 +19,10 @@ import com.cs446.petpal.viewmodels.TasksViewModel
 import com.cs446.petpal.viewmodels.EventsViewModel
 import com.cs446.petpal.views.BottomBar
 import com.cs446.petpal.views.TopBar
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
-fun TasksPageView(tasksViewModel: TasksViewModel = viewModel(),
+fun TasksPageView(tasksViewModel: TasksViewModel = hiltViewModel(),
                   eventsViewModel: EventsViewModel = viewModel(),
                   navController: NavController) {
     Column(
