@@ -28,7 +28,6 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.toSize
 import androidx.compose.ui.text.font.FontStyle
 import androidx.navigation.NavController
-import com.cs446.petpal.models.User
 import com.cs446.petpal.viewmodels.SignUpViewModel
 import java.security.MessageDigest
 
@@ -185,15 +184,8 @@ fun SignUpView(signUpViewModel: SignUpViewModel = viewModel(), navController: Na
                 onClick = {
                     if (password == confirmPassword) {
                         val hashedPassword = hashPassword(password)
-                        val user = User(
-                            mutableStateOf(firstName),
-                            mutableStateOf(lastName),
-                            mutableStateOf(address),
-                            mutableStateOf(email),
-                            mutableStateOf(hashedPassword),
-                            mutableStateOf(userType)
-                        )
-                        signUpViewModel.registerUser(user) { success ->
+                        signUpViewModel.registerUser(firstName, lastName, address, email,
+                                                     hashedPassword, userType) { success ->
                             signUpSuccess = success
                         }
                     } else {
