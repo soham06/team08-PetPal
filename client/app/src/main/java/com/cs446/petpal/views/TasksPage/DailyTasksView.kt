@@ -211,7 +211,7 @@ fun DailyTasksView(tasksViewModel: TasksViewModel = viewModel()) {
             AlertDialog(
                 onDismissRequest = { showEditDialog = false },
                 title = {
-                    Text(text = "Add Task")
+                    Text(text = "Edit Task")
                 },
                 text = {
                     Column {
