@@ -50,7 +50,6 @@ class EventsViewModel: ViewModel() {
         location: String,
         onResult: (Boolean, Event?) -> Unit
     ) {
-        Log.d("EVENTSTARTDATE", startDate)
         viewModelScope.launch(Dispatchers.IO)
         {
             val formattedStartDay = convertDateFormat(startDate)
