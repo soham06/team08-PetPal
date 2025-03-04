@@ -1,5 +1,6 @@
 package com.cs446.petpal.views.TasksPage
 
+import android.util.Log
 import androidx.compose.material3.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
@@ -34,6 +35,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import com.cs446.petpal.models.Event
 import java.util.Date
+import java.util.TimeZone
 
 @Composable
 fun DailyEventsView(eventsViewModel: EventsViewModel = viewModel()) {
@@ -43,7 +45,7 @@ fun DailyEventsView(eventsViewModel: EventsViewModel = viewModel()) {
     var showDelDialog by remember { mutableStateOf(false) }
     var currEventID by remember { mutableStateOf("")}
     val calendar = Calendar.getInstance()
-    val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+    val dateFormat = SimpleDateFormat("MM-dd-yyyy", Locale.getDefault())
     val tomorrow = Calendar.getInstance().apply { add(Calendar.DAY_OF_YEAR, 1) }
 
     val displayFormat = SimpleDateFormat("MMMM d yyyy", Locale.getDefault())
@@ -242,4 +244,24 @@ private fun isSameDay(date1: Date, date2: Date): Boolean {
     val cal2 = Calendar.getInstance().apply { time = date2 }
     return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
             cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR)
+}
+
+
+private fun parseEventStartDate(input: String): Pair<String, String?> {
+    return if (input.contains("T")) {
+        // Parse ISO 8601 format
+        val isoFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault()).apply {
+            timeZone = TimeZone.getTimeZone("UTC")
+        }
+        val date = isoFormat.parse(input)
+
+        // Convert to desired formats
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val timeFormat = SimpleDateFormat("hh:mm a", Locale.getDefault()) // 12-hour format
+
+        dateFormat.format(date!!) to timeFormat.format(date)
+    } else {
+        // Format is "yyyy-MM-dd", only update date
+        input to null
+    }
 }

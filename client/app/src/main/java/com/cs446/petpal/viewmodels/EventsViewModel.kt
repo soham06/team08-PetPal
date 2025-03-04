@@ -15,8 +15,17 @@ import com.cs446.petpal.models.Event
 import org.json.JSONArray
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.State
-import java.sql.Date
-import java.sql.Time
+import java.text.SimpleDateFormat
+import java.util.Locale
+
+
+private fun convertDateFormat(dateStr: String): String {
+    val inputFormat = SimpleDateFormat("MM-dd-yyyy", Locale.US)
+    val outputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.US)
+
+    val date = inputFormat.parse(dateStr) ?: return ""  // Handle parsing failure
+    return outputFormat.format(date)
+}
 
 class EventsViewModel: ViewModel() {
     private val client = OkHttpClient()
@@ -41,15 +50,18 @@ class EventsViewModel: ViewModel() {
         location: String,
         onResult: (Boolean, Event?) -> Unit
     ) {
+        Log.d("EVENTSTARTDATE", startDate)
         viewModelScope.launch(Dispatchers.IO)
         {
+            val formattedStartDay = convertDateFormat(startDate)
+            val formattedEndDay = convertDateFormat(endDate)
             var successfulEventAdded = false
             var event: Event? = null
             try {
                 val json = JSONObject().apply {
                     put("description", description)
-                    put("startDate", startDate)
-                    put("endDate", endDate)
+                    put("startDate", formattedStartDay)
+                    put("endDate", formattedEndDay)
                     put("startTime", startTime)
                     put("endTime", endTime)
                     put("location", location)
@@ -77,9 +89,7 @@ class EventsViewModel: ViewModel() {
                             location = mutableStateOf(jsonResponse.optString("location")),
                         )
                         event.eventId = jsonResponse.optString("eventId")
-                        val updatedEvents = _events.value.toMutableList() // Create a mutable copy
-                        updatedEvents.add(event!!)
-                        _events.value = updatedEvents
+                        getEventsForUser()
                     }
                     else {
                         // Optionally log error details from response
@@ -106,13 +116,15 @@ class EventsViewModel: ViewModel() {
     ) {
         viewModelScope.launch(Dispatchers.IO)
         {
+            val formattedStartDay = convertDateFormat(startDate)
+            val formattedEndDay = convertDateFormat(endDate)
             var successfulEventUpdated = false
             var event: Event? = null
             try {
                 val json = JSONObject().apply {
                     put("description", description)
-                    put("startDate", startDate)
-                    put("endDate", endDate)
+                    put("startDate", formattedStartDay)
+                    put("endDate", formattedEndDay)
                     put("startTime", startTime)
                     put("endTime", endTime)
                     put("location", location)
@@ -141,12 +153,7 @@ class EventsViewModel: ViewModel() {
                         )
 
                         event!!.eventId = jsonResponse.optString("eventId")
-                        val updatedEvents = _events.value.toMutableList() // Create a mutable copy
-                        val eventIndex = updatedEvents.indexOfFirst { it.eventId == currEventId}
-                        if (eventIndex != -1) {
-                            updatedEvents[eventIndex] = event!!
-                        }
-                        _events.value = updatedEvents
+                        getEventsForUser()
                     }
                     else {
                         // Optionally log error details from response

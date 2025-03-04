@@ -107,9 +107,14 @@ class TasksViewModel: ViewModel() {
                         val updatedTasks = _tasks.value.toMutableList()
                         val taskIndex = updatedTasks.indexOfFirst { it.taskId == taskId }
                         if (taskIndex != -1) {
-                            updatedTasks[taskIndex] = task
+                            if (status == "CLOSED") {
+                                _tasks.value = _tasks.value.filterNot { it.taskId == taskId }
+                            }
+                            else {
+                                updatedTasks[taskIndex] = task
+                                _tasks.value = updatedTasks
+                            }
                         }
-                        _tasks.value = updatedTasks
                     }
                     else {
                         // Optionally log error details from response

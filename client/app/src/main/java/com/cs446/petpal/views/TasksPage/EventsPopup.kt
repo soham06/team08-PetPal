@@ -82,7 +82,7 @@ fun eventsPopup(currEvent: Event?, currEventId: String?, popupType: String, even
     var userInputDescription by remember { mutableStateOf(currEvent?.description?.value ?: "") }
     var userInputLocation by remember { mutableStateOf(currEvent?.location?.value ?: "") }
     val context = LocalContext.current
-    val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+    val dateFormat = SimpleDateFormat("MM-dd-yyyy", Locale.getDefault())
     val timeFormat = SimpleDateFormat("hh:mm a", Locale.getDefault())
     val calendar = Calendar.getInstance()
     var startDate by remember { mutableStateOf(currEvent?.startDate?.value ?:dateFormat.format(calendar.time)) }
