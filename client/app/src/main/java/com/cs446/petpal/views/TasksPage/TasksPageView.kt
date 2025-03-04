@@ -23,12 +23,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
 fun TasksPageView(tasksViewModel: TasksViewModel = hiltViewModel(),
-                  eventsViewModel: EventsViewModel = viewModel(),
+                  eventsViewModel: EventsViewModel = hiltViewModel(),
                   navController: NavController) {
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        TopBar(navController)
+        TopBar(navController = navController)
 
         // Main Content
         Box(

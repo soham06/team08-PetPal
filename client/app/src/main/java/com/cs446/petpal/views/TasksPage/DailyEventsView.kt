@@ -33,12 +33,13 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.cs446.petpal.models.Event
 import java.util.Date
 import java.util.TimeZone
 
 @Composable
-fun DailyEventsView(eventsViewModel: EventsViewModel = viewModel()) {
+fun DailyEventsView(eventsViewModel: EventsViewModel = hiltViewModel()) {
     var currEvent = eventsViewModel.selectedEvent.value
     var showAddDialog by remember { mutableStateOf(false) }
     var showEditDialog by remember { mutableStateOf(false) }

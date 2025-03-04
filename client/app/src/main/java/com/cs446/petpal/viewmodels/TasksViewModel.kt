@@ -21,7 +21,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TasksViewModel @Inject constructor(
-    userRepository: UserRepository,
+    val userRepository: UserRepository,
 ) : ViewModel() {
     private val client = OkHttpClient()
     private val _tasks = mutableStateOf<List<Task>>(emptyList())
@@ -34,6 +34,7 @@ class TasksViewModel @Inject constructor(
         selectedTask.value = task
     }
     init {
+        println("User: ${userRepository.currentUser.value}")
         getTasksForUser()
     }
 
@@ -167,7 +168,7 @@ class TasksViewModel @Inject constructor(
             var successfulTaskRetrived = false
             try {
                 val request = Request.Builder()
-                    .url("http://10.0.2.2:3000/api/tasks/$currentUserId") // REPLACE THIS TO ACTUALLY USE USERID
+                    .url("http://10.0.2.2:3000/api/tasks/$currentUserId")
                     .get()
                     .addHeader("Content-Type", "application/json")
                     .addHeader("Accept", "application/json")
