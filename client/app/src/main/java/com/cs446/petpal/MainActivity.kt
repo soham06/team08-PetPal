@@ -19,7 +19,7 @@ import com.cs446.petpal.views.HomepageView
 import com.cs446.petpal.views.PetsPageView
 import com.cs446.petpal.views.CalendarPageView
 import com.cs446.petpal.views.NotificationsView
-import com.cs446.petpal.views.TasksPageView
+import com.cs446.petpal.views.TasksPage.TasksPageView
 import com.cs446.petpal.repository.UserRepository
 import javax.inject.Inject
 
