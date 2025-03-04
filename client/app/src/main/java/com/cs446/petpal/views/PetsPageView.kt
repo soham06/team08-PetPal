@@ -9,7 +9,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.material3.Icon
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,9 +22,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.cs446.petpal.viewmodels.Pet
-import com.cs446.petpal.viewmodels.PetspageViewModel
 import com.cs446.petpal.R
+import com.cs446.petpal.models.Pet
+import com.cs446.petpal.viewmodels.PetspageViewModel
+import com.cs446.petpal.views.TasksPage.eventsPopup
 
 @Composable
 fun PetsPageView(
@@ -53,7 +54,7 @@ fun PetsPageView(
             // Pet Selection Row
             PetSelectionRow(
                 pets = pets,
-                selectedPet = petToShow?.id ?: "",
+                selectedPet = petToShow?.petId ?: "",
                 onPetSelected = { petspageViewModel.selectPet(it) },
                 modifier = Modifier.padding(start = 16.dp)
             )
@@ -101,7 +102,7 @@ fun PetsPageView(
                     ) {
                         // Pet Name
                         Text(
-                            text = petToShow?.name ?: "No Pet Selected",
+                            text = petToShow?.name?.value ?: "No Pet Selected",
                             style = MaterialTheme.typography.headlineSmall.copy(
                                 fontSize = 20.sp,
                                 fontWeight = FontWeight.Bold
@@ -119,15 +120,15 @@ fun PetsPageView(
                                 modifier = Modifier.weight(1f),
                                 verticalArrangement = Arrangement.spacedBy(10.dp)
                             ) {
-                                PetInfoRow("Gender", petToShow?.gender ?: "--", "gender_icon")
-                                PetInfoRow("Age", "${petToShow?.age ?: "--"} years", "calendar_icon")
+                                PetInfoRow("Gender", (petToShow?.gender?.value ?: "--"), "gender_icon")
+                                PetInfoRow("Age", "${petToShow?.age?.value ?: "--"} years", "calendar_icon")
                             }
                             Column(
                                 modifier = Modifier.weight(1f),
                                 verticalArrangement = Arrangement.spacedBy(10.dp)
                             ) {
-                                PetInfoRow("Birthdate", petToShow?.birthdate ?: "--", "birthday_icon")
-                                PetInfoRow("Weight", "${petToShow?.weight ?: "--"} lbs", "weight_icon")
+                                PetInfoRow("birthday", petToShow?.birthday ?: "--", "birthday_icon")
+                                PetInfoRow("Weight", "${petToShow?.weight?.value ?: "--"} lbs", "weight_icon")
                             }
                         }
                     }
@@ -154,7 +155,7 @@ fun PetsPageView(
 
         // Floating Action Button
         FloatingActionButton(
-            onClick = { /* Navigate to Add Pet Screen */ },
+            onClick = { /* Navigate to Delete Pet */ },
             containerColor = Color(0xFF64B5F6),
             modifier = Modifier
                 .align(Alignment.BottomEnd)
@@ -162,7 +163,7 @@ fun PetsPageView(
                 .size(48.dp)
         ) {
             Icon(
-                imageVector = Icons.Filled.Add,
+                imageVector = Icons.Filled.Delete,
                 contentDescription = "Add Pet",
                 tint = Color.White,
                 modifier = Modifier.size(20.dp)
@@ -179,6 +180,7 @@ fun PetSelectionRow(
     onPetSelected: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var showAddDialog by remember { mutableStateOf(false) }
     Row(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Start
@@ -188,24 +190,48 @@ fun PetSelectionRow(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
                     .padding(horizontal = 8.dp)
-                    .clickable { onPetSelected(pet.id) }
+                    .clickable { onPetSelected(pet.petId) }
             ) {
                 // Use a custom image for each pet
                 Image(
-                    painter = painterResource(id = getPetProfilePic(pet.name)),
-                    contentDescription = "Profile picture for ${pet.name}",
+                    painter = painterResource(id = getPetProfilePic(pet.name.value)),
+                    contentDescription = "Profile picture for ${pet.name.value}",
                     modifier = Modifier
                         .size(50.dp)
                         .clip(CircleShape),
                     contentScale = ContentScale.Crop
                 )
                 Text(
-                    text = pet.name,
+                    text = pet.name.value,
                     fontSize = 12.sp,
-                    fontWeight = if (selectedPet == pet.id) FontWeight.Bold else FontWeight.Normal
+                    fontWeight = if (selectedPet == pet.petId) FontWeight.Bold else FontWeight.Normal
                 )
             }
         }
+
+        Spacer(modifier = Modifier.weight(0.9f))
+
+        IconButton(
+            onClick = { showAddDialog = true },
+            modifier = Modifier
+                .size(48.dp)
+                .padding(top = 12.dp, end = 12.dp),
+            colors = IconButtonDefaults.iconButtonColors(
+                containerColor = Color(
+                    0xFFA2D9FF
+                )
+            )
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.add),
+                contentDescription = "Add Task",
+                modifier = Modifier.size(24.dp),
+                tint = Color.Black
+            )
+        }
+    }
+    if (showAddDialog) {
+        showAddDialog = petsPopup(null, null,"ADD")
     }
 }
 
@@ -289,7 +315,7 @@ fun InsuranceInfoCard(
                         Spacer(modifier = Modifier.width(6.dp))
                         Column {
                             Text(text = "Provider", fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
-                            Text(text = pet?.insuranceProvider ?: "--", fontSize = 12.sp)
+                            Text(text = pet?.insuranceProvider?.value ?: "--", fontSize = 12.sp)
                         }
                     }
                 }
@@ -309,7 +335,7 @@ fun InsuranceInfoCard(
                         Spacer(modifier = Modifier.width(6.dp))
                         Column {
                             Text(text = "Policy #", fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
-                            Text(text = pet?.policyNumber ?: "--", fontSize = 12.sp)
+                            Text(text = pet?.policyNumber?.value ?: "--", fontSize = 12.sp)
                         }
                     }
                 }
@@ -375,7 +401,7 @@ fun MedicationInfoCard(
                         Spacer(modifier = Modifier.width(6.dp))
                         Column {
                             Text(text = "Name", fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
-                            Text(text = pet?.medicationName ?: "--", fontSize = 12.sp)
+                            Text(text = pet?.medicationName?.value ?: "--", fontSize = 12.sp)
                         }
                     }
                 }
@@ -395,7 +421,7 @@ fun MedicationInfoCard(
                         Spacer(modifier = Modifier.width(6.dp))
                         Column {
                             Text(text = "Dosage", fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
-                            Text(text = pet?.medicationDosage ?: "--", fontSize = 12.sp)
+                            Text(text = pet?.medicationDosage?.value ?: "--", fontSize = 12.sp)
                         }
                     }
                 }
