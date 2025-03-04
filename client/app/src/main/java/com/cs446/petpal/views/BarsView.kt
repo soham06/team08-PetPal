@@ -90,7 +90,7 @@ fun TopBar(navController: NavController) {
 
             Box(modifier = Modifier.wrapContentSize(Alignment.TopEnd)) {
                 IconButton(
-                    onClick = { expanded = true },
+                    onClick = { navController.navigate("profilepage") },
                     modifier = Modifier
                     .size(48.dp)
                     .padding(top = 12.dp)
@@ -101,25 +101,6 @@ fun TopBar(navController: NavController) {
                         modifier = Modifier.size(24.dp),
                         tint = Color.Black
                     )
-                }
-
-                DropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false },
-                    modifier = Modifier.width(150.dp),
-                ) {
-                    DropdownMenuItem(
-                        text = { Text("Logout") },
-                        onClick = {
-                        expanded = false
-                        navController.navigate("landing")
-                    })
-                    DropdownMenuItem(
-                        text = { Text("Profile") },
-                        onClick = {
-                            expanded = false
-                            navController.navigate("profilepage")
-                        })
                 }
             }
         }
