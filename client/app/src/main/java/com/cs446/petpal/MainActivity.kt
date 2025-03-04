@@ -20,6 +20,7 @@ import com.cs446.petpal.views.PetsPageView
 import com.cs446.petpal.views.CalendarPageView
 import com.cs446.petpal.views.NotificationsView
 import com.cs446.petpal.views.TasksPage.TasksPageView
+import com.cs446.petpal.views.ProfilePageView
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,6 +41,7 @@ class MainActivity : ComponentActivity() {
                         composable("taskspage") { TasksPageView(navController = navController) }
                         composable("petspage") { PetsPageView(navController = navController) }
                         composable("notifspage") { NotificationsView(navController = navController) }
+                        composable("profilepage") { ProfilePageView(navController = navController) }
                     }
                 }
             }

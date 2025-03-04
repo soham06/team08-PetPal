@@ -114,6 +114,12 @@ fun TopBar(navController: NavController) {
                         expanded = false
                         navController.navigate("landing")
                     })
+                    DropdownMenuItem(
+                        text = { Text("Profile") },
+                        onClick = {
+                            expanded = false
+                            navController.navigate("profilepage")
+                        })
                 }
             }
         }
