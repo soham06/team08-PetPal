@@ -94,9 +94,13 @@ fun DailyTasksView(tasksViewModel: TasksViewModel = hiltViewModel()) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(8.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Row {
+                    Row(
+                        modifier = Modifier.weight(1f),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
                         Checkbox(
                             checked = isChecked,
                             onCheckedChange = { isCheckedNew ->
@@ -108,26 +112,28 @@ fun DailyTasksView(tasksViewModel: TasksViewModel = hiltViewModel()) {
                         Text(
                             text = task.description.value,
                             style = MaterialTheme.typography.bodyLarge.copy(fontSize = 20.sp),
-                            modifier = Modifier.padding(top = 12.dp)
+                            modifier = Modifier
+                                .padding(start = 8.dp)
+                                .weight(1f),
+                            maxLines = Int.MAX_VALUE,
+                            softWrap = true
                         )
                     }
+
                     Row(
-                        modifier = Modifier
-                            .padding(top = 4.dp),
+                        modifier = Modifier.padding(start = 8.dp),
                     ) {
                         IconButton(
                             onClick = {
                                 showEditDialog = true
                                 tasksViewModel.setSelectedTask(task)
                                 currTaskID = task.taskId
-                                      },
+                            },
                             modifier = Modifier
                                 .padding(end = 8.dp)
                                 .size(36.dp),
                             colors = IconButtonDefaults.iconButtonColors(
-                                containerColor = Color(
-                                    0xFFFEFCF5
-                                )
+                                containerColor = Color(0xFFFEFCF5)
                             )
                         ) {
                             Icon(
@@ -141,13 +147,10 @@ fun DailyTasksView(tasksViewModel: TasksViewModel = hiltViewModel()) {
                             onClick = {
                                 showDelDialog = true
                                 currTaskID = task.taskId
-                                      },
-                            modifier = Modifier
-                                .size(36.dp),
+                            },
+                            modifier = Modifier.size(36.dp),
                             colors = IconButtonDefaults.iconButtonColors(
-                                containerColor = Color(
-                                    0xFFFEFCF5
-                                )
+                                containerColor = Color(0xFFFEFCF5)
                             )
                         ) {
                             Icon(
