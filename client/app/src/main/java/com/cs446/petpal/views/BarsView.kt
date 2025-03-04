@@ -117,6 +117,12 @@ fun TopBar(barsViewModel: BarsViewModel = hiltViewModel(), navController: NavCon
                         barsViewModel.logOutUser()
                         navController.navigate("landing")
                     })
+                    DropdownMenuItem(
+                        text = { Text("Profile") },
+                        onClick = {
+                            expanded = false
+                            navController.navigate("profilepage")
+                        })
                 }
             }
         }

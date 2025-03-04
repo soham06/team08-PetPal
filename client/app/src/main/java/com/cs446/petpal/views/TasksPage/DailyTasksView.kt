@@ -61,7 +61,7 @@ fun DailyTasksView(tasksViewModel: TasksViewModel = hiltViewModel()) {
             onClick = { showAddDialog = true },
             modifier = Modifier
                 .size(48.dp)
-                .padding(top = 12.dp),
+                .padding(top = 12.dp, end = 12.dp),
             colors = IconButtonDefaults.iconButtonColors(containerColor = Color(0xFFA2D9FF))
         ) {
             Icon(
@@ -210,7 +210,7 @@ fun DailyTasksView(tasksViewModel: TasksViewModel = hiltViewModel()) {
             AlertDialog(
                 onDismissRequest = { showEditDialog = false },
                 title = {
-                    Text(text = "Add Task")
+                    Text(text = "Edit Task")
                 },
                 text = {
                     Column {
