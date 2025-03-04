@@ -1,7 +1,66 @@
 import firebaseConnection from '../firebase.js'
+import { DateTime } from 'luxon'
 import { getFirestore, collection, getDoc, 
          getDocs, query, where, addDoc, doc,
-         serverTimestamp, updateDoc, deleteDoc } from 'firebase/firestore';
+         serverTimestamp, updateDoc, deleteDoc, orderBy, limit } from 'firebase/firestore';
+
+function convertStringToESTDate(date, time) {
+    const [timePart, meridian] = time.split(" ");
+    let [year, month, day] = date.split("-").map(Number);
+    let [hours, minutes] = timePart.split(":").map(Number);
+
+    if (meridian === "PM" && hours !== 12) {
+        hours += 12;
+    }
+    else if (meridian === "AM" && hours === 12) {
+        hours = 0
+    }
+    const dateObj = new Date(Date.UTC(year, month - 1, day, hours, minutes)).toISOString();
+    return dateObj;
+}
+
+function convertTo12HourFormat(time24) {
+    let [hours, minutes] = time24.split(":").map(Number);
+    const ampm = hours >= 12 ? "PM" : "AM";
+    hours = hours % 12 || 12;
+    return `${hours}:${String(minutes).padStart(2, "0")} ${ampm}`;
+}
+
+function convertToEST(date) {
+    const estDateTime = DateTime.fromJSDate(date, { zone: "utc" }).setZone("America/New_York");
+    const formattedDate = estDateTime.toFormat("yyyy-MM-dd")
+    const formattedTime = convertTo12HourFormat(estDateTime.toFormat("HH:mm"))
+    const currentDate = convertStringToESTDate(formattedDate, formattedTime)
+    return currentDate
+}
+
+function convertISOToDate(isoString) {
+    const dateObj = new Date(isoString);
+    const estDate = new Intl.DateTimeFormat("en-US", {
+        timeZone: "UTC",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+    }).formatToParts(dateObj);
+    const month = estDate.find(part => part.type === "month").value;
+    const day = estDate.find(part => part.type === "day").value;
+    const year = estDate.find(part => part.type === "year").value;
+    return `${month}-${day}-${year}`;
+}
+
+function convertISOToTime(isoString) {
+    const dateObj = new Date(isoString);
+    const estTime = new Intl.DateTimeFormat("en-US", {
+        timeZone: "UTC",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+    }).formatToParts(dateObj);
+    const hours = estTime.find(part => part.type === "hour").value;
+    const minutes = estTime.find(part => part.type === "minute").value;
+    const ampm = estTime.find(part => part.type === "dayPeriod").value.toUpperCase();
+    return `${hours}:${minutes} ${ampm}`;
+}
 
 export async function getEventsForUser (req, res) {
     try {
@@ -20,11 +79,24 @@ export async function getEventsForUser (req, res) {
         }
 
         const eventsTable = collection(db, "events")
-        const q = query(eventsTable, where("userId", "==", userId))
+        
+        const currentDate = convertToEST(new Date());
+
+        const q = query(eventsTable, 
+            where("userId", "==", userId),
+            where("startDateTime", ">=", currentDate), 
+            orderBy("startDateTime"), 
+            limit(6))
         const events = await getDocs(q)
         const eventsList = events.docs.map(event => ({
             eventId: event.id,
-            ...event.data()
+            userId: event.data().userId,
+            description: event.data().description,
+            startDate: convertISOToDate(event.data().startDateTime),
+            startTime: convertISOToTime(event.data().startDateTime),
+            endDate: convertISOToDate(event.data().endDateTime),
+            endTime: convertISOToTime(event.data().endDateTime),
+            location: event.data().location,
         }));
         res.status(200).json(eventsList);
     } catch (error) {
@@ -54,10 +126,19 @@ export async function createEventForUser (req, res) {
             return res.status(400).json({ message: "Invalid request body, please ensure all required fields are present"});
         }
 
-        eventData["createdAt"] = serverTimestamp();
-        eventData["userId"] = userId;
+        const startDateTime = convertStringToESTDate(eventData.startDate, eventData.startTime);
+        const endDateTime = convertStringToESTDate(eventData.endDate, eventData.endTime);
+
+        const newEventData = {
+            userId: userId,
+            description: eventData.description,
+            startDateTime: startDateTime,
+            endDateTime: endDateTime,
+            location: eventData.location,
+            createdAt: serverTimestamp()
+        }
         const eventsTable = collection(db, "events")
-        const newEvent = await addDoc(eventsTable, eventData)
+        const newEvent = await addDoc(eventsTable, newEventData)
 
         const fetchedCreatedEvent = await getDoc(newEvent)
         const createdEvent = {
@@ -92,7 +173,18 @@ export async function updateEventForUser (req, res) {
             return res.status(400).json({ message: "Invalid request body, please ensure all required fields are present"});
         }
 
-        await updateDoc(eventRef, eventData)
+        const startDateTime = convertStringToESTDate(eventData.startDate, eventData.startTime);
+        const endDateTime = convertStringToESTDate(eventData.endDate, eventData.endTime);
+
+        const updatedEventData = {
+            description: eventData.description,
+            startDateTime: startDateTime,
+            endDateTime: endDateTime,
+            location: eventData.location,
+            createdAt: serverTimestamp()
+        }
+
+        await updateDoc(eventRef, updatedEventData)
 
         const fetchedUpdatedEvent = await getDoc(eventRef)
         const fetchedEvent = {

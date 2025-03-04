@@ -39,11 +39,11 @@ The server will start at: `http://localhost:3000`
 
 `Response`: User profile for the user
 
-**`GET /tasks/:userId`** - gets a list of tasks for a given user
+**`GET /tasks/:userId`** - gets a list of OPEN tasks for a given user
 
 `Request`: `/tasks/:akhsjfbkaaacjn`
 
-`Response`: List of all tasks for the given user
+`Response`: List of all OPEN tasks for the given user
 
 **`POST /tasks/:userId`** - creates a new task for a given user
 
