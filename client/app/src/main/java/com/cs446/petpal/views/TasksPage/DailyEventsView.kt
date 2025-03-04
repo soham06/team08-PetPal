@@ -70,7 +70,7 @@ fun DailyEventsView(eventsViewModel: EventsViewModel = viewModel()) {
             onClick = { showAddDialog = true },
             modifier = Modifier
                 .size(48.dp)
-                .padding(top = 12.dp),
+                .padding(top = 12.dp, end = 12.dp),
             colors = IconButtonDefaults.iconButtonColors(
                 containerColor = Color(
                     0xFFA2D9FF
