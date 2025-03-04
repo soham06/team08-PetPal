@@ -42,3 +42,5 @@ date,Rozhan,Gursimran,Bhavya,Jaskirat,Soham,Shaan,task
 2025-02-28,0,0,0,0,0.5,0,enhanced get endpoints for tasks and events for better UI display experience
 2025-03-01,0,0,0,0,1,0,update events date handling/storage logic
 2025-03-04,0,1.5,0,0,0,0,help debugging user repository
+2025-03-04,0,0,0,0,1.5,0,help debugging user repository
+2025-03-04,0,0,0,0,2.5,0,updated pet page structure and implemented add pet functionality
