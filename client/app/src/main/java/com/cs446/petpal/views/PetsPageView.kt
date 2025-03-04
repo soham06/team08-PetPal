@@ -23,7 +23,7 @@ fun PetsPageView(petspageViewModel: PetspageViewModel = viewModel(), navControll
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        TopBar(navController)
+        TopBar(navController = navController)
 
         // Main Content
         Box(

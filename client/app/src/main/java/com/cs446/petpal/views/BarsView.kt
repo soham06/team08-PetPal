@@ -20,8 +20,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.cs446.petpal.R
 import androidx.navigation.NavController
+import com.cs446.petpal.viewmodels.BarsViewModel
 
 @Composable
 fun BottomBarButton(navController: NavController, label: String, iconRes: Int) {
@@ -48,7 +50,7 @@ fun BottomBarButton(navController: NavController, label: String, iconRes: Int) {
 }
 
 @Composable
-fun TopBar(navController: NavController) {
+fun TopBar(barsViewModel: BarsViewModel = hiltViewModel(), navController: NavController) {
     var expanded by remember { mutableStateOf(false) }
     Box(
         modifier = Modifier
@@ -112,6 +114,7 @@ fun TopBar(navController: NavController) {
                         text = { Text("Logout") },
                         onClick = {
                         expanded = false
+                        barsViewModel.logOutUser()
                         navController.navigate("landing")
                     })
                     DropdownMenuItem(

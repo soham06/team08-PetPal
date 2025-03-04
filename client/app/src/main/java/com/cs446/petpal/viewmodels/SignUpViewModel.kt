@@ -1,30 +1,47 @@
 package com.cs446.petpal.viewmodels
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.Dispatchers
-import com.cs446.petpal.models.User
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
-class SignUpViewModel : ViewModel() {
+import com.cs446.petpal.repository.UserRepository
+import javax.inject.Inject
+import dagger.hilt.android.lifecycle.HiltViewModel
+
+@HiltViewModel
+class SignUpViewModel @Inject constructor(
+    val userRepository: UserRepository,
+) : ViewModel() {
 
     private val client = OkHttpClient()
 
-    fun registerUser(user: User, onResult: (Boolean) -> Unit) {
+    fun registerUser(firstName: String, lastName: String, address: String, email: String,
+                     hashedPassword: String, userType: String, onResult: (Boolean) -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
             var successfulRegister: Boolean
             try {
+                userRepository.createUser(
+                    mutableStateOf(firstName),
+                    mutableStateOf(lastName),
+                    mutableStateOf(address),
+                    mutableStateOf(email),
+                    mutableStateOf(hashedPassword),
+                    mutableStateOf(userType)
+                )
+
                 val json = JSONObject().apply {
-                    put("firstName", user.firstName.value)
-                    put("lastName", user.lastName.value)
-                    put("address", user.address.value)
-                    put("emailAddress", user.email.value)
-                    put("password", user.password.value)
-                    put("userType", user.userType.value)
+                    put("firstName", userRepository.currentUser.value?.firstName.toString())
+                    put("lastName", userRepository.currentUser.value?.lastName.toString())
+                    put("address", userRepository.currentUser.value?.address.toString())
+                    put("emailAddress", userRepository.currentUser.value?.email.toString())
+                    put("password", userRepository.currentUser.value?.password.toString())
+                    put("userType", userRepository.currentUser.value?.userType.toString())
                 }
 
                 val requestBody = json.toString().toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
@@ -41,9 +58,13 @@ class SignUpViewModel : ViewModel() {
                     if (successfulRegister) {
                         val responseBody = response.body?.string()
                         val jsonResponse = JSONObject(responseBody ?: "")
-                        user.userId = jsonResponse.optString("userId") // Obtain userId from the response
+
+                        // Obtain userId from the response
+                        val userId = jsonResponse.optString("userId")
+                        userRepository.setUserId(userId)
+
                         println("Response: $jsonResponse")
-                        // TODO: implement navigation to homepage here
+                        println("User: ${userRepository.currentUser.value}")
                     } else {
                         val errorBody = response.body?.string()
                         println("Error Response: $errorBody")

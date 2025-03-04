@@ -23,7 +23,7 @@ fun CalendarPageView(calendarViewModel: CalendarpageViewModel = viewModel(), nav
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        TopBar(navController)
+        TopBar(navController = navController)
 
         // Main Content
         Box(
