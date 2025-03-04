@@ -147,7 +147,7 @@ fun eventsPopup(currEvent: Event?, currEventId: String?, popupType: String, even
     AlertDialog(
         onDismissRequest = { showDialog = false },
         title = {
-            Text(text = "Add Event")
+            Text(text = if (popupType == "ADD") "Add Event" else "Edit Event")
         },
         text = {
             Column {
