@@ -127,7 +127,7 @@ fun PetsPageView(
                                 modifier = Modifier.weight(1f),
                                 verticalArrangement = Arrangement.spacedBy(10.dp)
                             ) {
-                                PetInfoRow("birthday", petToShow?.birthday ?: "--", "birthday_icon")
+                                PetInfoRow("Birthday", petToShow?.birthday ?: "--", "birthday_icon")
                                 PetInfoRow("Weight", "${petToShow?.weight?.value ?: "--"} lbs", "weight_icon")
                             }
                         }
