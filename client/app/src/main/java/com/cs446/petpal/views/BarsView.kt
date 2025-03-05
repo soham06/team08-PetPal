@@ -92,7 +92,7 @@ fun TopBar(barsViewModel: BarsViewModel = hiltViewModel(), navController: NavCon
 
             Box(modifier = Modifier.wrapContentSize(Alignment.TopEnd)) {
                 IconButton(
-                    onClick = { expanded = true },
+                    onClick = { navController.navigate("profilepage") },
                     modifier = Modifier
                     .size(48.dp)
                     .padding(top = 12.dp)
@@ -103,26 +103,6 @@ fun TopBar(barsViewModel: BarsViewModel = hiltViewModel(), navController: NavCon
                         modifier = Modifier.size(24.dp),
                         tint = Color.Black
                     )
-                }
-
-                DropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false },
-                    modifier = Modifier.width(150.dp),
-                ) {
-                    DropdownMenuItem(
-                        text = { Text("Logout") },
-                        onClick = {
-                        expanded = false
-                        barsViewModel.logOutUser()
-                        navController.navigate("landing")
-                    })
-                    DropdownMenuItem(
-                        text = { Text("Profile") },
-                        onClick = {
-                            expanded = false
-                            navController.navigate("profilepage")
-                        })
                 }
             }
         }
