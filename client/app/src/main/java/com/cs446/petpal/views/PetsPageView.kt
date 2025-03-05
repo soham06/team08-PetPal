@@ -480,4 +480,3 @@ fun getPetProfilePic(petName: String): Int {
         else -> R.drawable.profile_pic_default
     }
 }
-chihuahua
