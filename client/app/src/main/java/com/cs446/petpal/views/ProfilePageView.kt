@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -29,19 +28,23 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.cs446.petpal.R
 import com.cs446.petpal.viewmodels.ProfilePageViewModel
 
 
 @Composable
-fun ProfilePageView(profilePageViewModel: ProfilePageViewModel = viewModel(), navController: NavController) {
+fun ProfilePageView(profilePageViewModel: ProfilePageViewModel = hiltViewModel(), navController: NavController) {
+    // User Values
+    val firstName = profilePageViewModel.firstName
+    val lastName = profilePageViewModel.lastName
+    val address = profilePageViewModel.address
+    val email = profilePageViewModel.email
+    val userType = profilePageViewModel.userType
+
     Box(
         // Blue Background
         modifier = Modifier
@@ -100,11 +103,11 @@ fun ProfilePageView(profilePageViewModel: ProfilePageViewModel = viewModel(), na
 
             // User Type Text
             Text(
-                text = "User Type",
+                text = userType,
                 style = MaterialTheme.typography.headlineMedium.copy(
                     fontSize = 30.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color.White
+                    color = Color.White,
                 )
             )
 
@@ -115,7 +118,7 @@ fun ProfilePageView(profilePageViewModel: ProfilePageViewModel = viewModel(), na
 
             // FIRST NAME FIELD
             OutlinedTextField(
-                value = "FirstName",
+                value = firstName,
                 onValueChange = {  },
                 label = { Text("First Name") },
                 modifier = textFieldModifier,
@@ -124,7 +127,7 @@ fun ProfilePageView(profilePageViewModel: ProfilePageViewModel = viewModel(), na
             )
             // LAST NAME FIELD
             OutlinedTextField(
-                value = "LastName",
+                value = lastName,
                 onValueChange = {  },
                 label = { Text("Last Name") },
                 modifier = textFieldModifier,
@@ -133,7 +136,7 @@ fun ProfilePageView(profilePageViewModel: ProfilePageViewModel = viewModel(), na
             )
             // ADDRESS FIELD
             OutlinedTextField(
-                value = "Address",
+                value = address,
                 onValueChange = {  },
                 label = { Text("Address") },
                 modifier = textFieldModifier,
@@ -142,7 +145,7 @@ fun ProfilePageView(profilePageViewModel: ProfilePageViewModel = viewModel(), na
             )
             // EMAIL FIELD
             OutlinedTextField(
-                value = "Email",
+                value = email,
                 onValueChange = {  },
                 label = { Text("Email") },
                 modifier = textFieldModifier,
