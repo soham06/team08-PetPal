@@ -31,10 +31,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.ui.platform.LocalContext
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.cs446.petpal.models.Event
 
 @Composable
-fun eventsDelPopup(currEventId: String, eventsViewModel: EventsViewModel = viewModel()): Boolean {
+fun eventsDelPopup(currEventId: String, eventsViewModel: EventsViewModel = hiltViewModel()): Boolean {
     var showDelDialog by remember { mutableStateOf(true) }
     AlertDialog(
         onDismissRequest = { showDelDialog = false },
@@ -77,7 +78,7 @@ fun eventsDelPopup(currEventId: String, eventsViewModel: EventsViewModel = viewM
     return showDelDialog
 }
 @Composable
-fun eventsPopup(currEvent: Event?, currEventId: String?, popupType: String, eventsViewModel: EventsViewModel = viewModel()): Boolean {
+fun eventsPopup(currEvent: Event?, currEventId: String?, popupType: String, eventsViewModel: EventsViewModel = hiltViewModel()): Boolean {
     var showDialog by remember { mutableStateOf(true) }
     var userInputDescription by remember { mutableStateOf(currEvent?.description?.value ?: "") }
     var userInputLocation by remember { mutableStateOf(currEvent?.location?.value ?: "") }
@@ -147,7 +148,7 @@ fun eventsPopup(currEvent: Event?, currEventId: String?, popupType: String, even
     AlertDialog(
         onDismissRequest = { showDialog = false },
         title = {
-            Text(text = "Add Event")
+            Text(text = if (popupType == "ADD") "Add Event" else "Edit Event")
         },
         text = {
             Column {

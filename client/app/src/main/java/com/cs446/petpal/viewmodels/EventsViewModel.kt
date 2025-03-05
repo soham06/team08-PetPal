@@ -17,6 +17,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.State
 import java.text.SimpleDateFormat
 import java.util.Locale
+import com.cs446.petpal.repository.UserRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
 
 private fun convertDateFormat(dateStr: String): String {
@@ -27,17 +30,23 @@ private fun convertDateFormat(dateStr: String): String {
     return outputFormat.format(date)
 }
 
-class EventsViewModel: ViewModel() {
+@HiltViewModel
+class EventsViewModel @Inject constructor(
+    val userRepository: UserRepository,
+) : ViewModel() {
     private val client = OkHttpClient()
     private val _events = mutableStateOf<List<Event>>(emptyList())
     val events: State<List<Event>> = _events
     var selectedEvent: MutableState<Event?> = mutableStateOf(null)
+
+    var currentUserId: String = userRepository.currentUser.value?.userId.toString();
 
     fun setSelectedEvent(event: Event) {
         selectedEvent.value = event
     }
 
     init {
+        println("User: ${userRepository.currentUser.value}")
         getEventsForUser()
     }
 
@@ -69,7 +78,7 @@ class EventsViewModel: ViewModel() {
                     .toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
 //                // Build the POST request
                 val request = Request.Builder()
-                    .url("http://10.0.2.2:3000/api/events/PcjsCSow5nnbIFo5cowm") // REPLACE THIS TO ACTUALLY USE USERID
+                    .url("http://10.0.2.2:3000/api/events/$currentUserId")
                     .post(requestBody)
                     .addHeader("Content-Type", "application/json")
                     .addHeader("Accept", "application/json")
@@ -173,7 +182,7 @@ class EventsViewModel: ViewModel() {
             var successfulEventRetrived = false
             try {
                 val request = Request.Builder()
-                    .url("http://10.0.2.2:3000/api/events/PcjsCSow5nnbIFo5cowm") // REPLACE THIS TO ACTUALLY USE USERID
+                    .url("http://10.0.2.2:3000/api/events/$currentUserId")
                     .get()
                     .addHeader("Content-Type", "application/json")
                     .addHeader("Accept", "application/json")

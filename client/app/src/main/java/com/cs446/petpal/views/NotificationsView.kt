@@ -24,7 +24,7 @@ fun NotificationsView(notificationsViewModel: NotificationsViewModel = viewModel
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        TopBar(navController)
+        TopBar(navController = navController)
 
         // Main Content
         Box(

@@ -19,15 +19,16 @@ import com.cs446.petpal.viewmodels.TasksViewModel
 import com.cs446.petpal.viewmodels.EventsViewModel
 import com.cs446.petpal.views.BottomBar
 import com.cs446.petpal.views.TopBar
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
-fun TasksPageView(tasksViewModel: TasksViewModel = viewModel(),
-                  eventsViewModel: EventsViewModel = viewModel(),
+fun TasksPageView(tasksViewModel: TasksViewModel = hiltViewModel(),
+                  eventsViewModel: EventsViewModel = hiltViewModel(),
                   navController: NavController) {
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        TopBar(navController)
+        TopBar(navController = navController)
 
         // Main Content
         Box(

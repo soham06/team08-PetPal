@@ -5,7 +5,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -29,10 +28,10 @@ import androidx.compose.material3.OutlinedTextField
 import com.cs446.petpal.models.Task
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
-fun DailyTasksView(tasksViewModel: TasksViewModel = viewModel()) {
+fun DailyTasksView(tasksViewModel: TasksViewModel = hiltViewModel()) {
     var currTask = tasksViewModel.selectedTask.value
     var showAddDialog by remember { mutableStateOf(false) }
     var showDelDialog by remember { mutableStateOf(false) }
@@ -62,7 +61,7 @@ fun DailyTasksView(tasksViewModel: TasksViewModel = viewModel()) {
             onClick = { showAddDialog = true },
             modifier = Modifier
                 .size(48.dp)
-                .padding(top = 12.dp),
+                .padding(top = 12.dp, end = 12.dp),
             colors = IconButtonDefaults.iconButtonColors(containerColor = Color(0xFFA2D9FF))
         ) {
             Icon(
@@ -95,9 +94,13 @@ fun DailyTasksView(tasksViewModel: TasksViewModel = viewModel()) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(8.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Row {
+                    Row(
+                        modifier = Modifier.weight(1f),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
                         Checkbox(
                             checked = isChecked,
                             onCheckedChange = { isCheckedNew ->
@@ -109,26 +112,28 @@ fun DailyTasksView(tasksViewModel: TasksViewModel = viewModel()) {
                         Text(
                             text = task.description.value,
                             style = MaterialTheme.typography.bodyLarge.copy(fontSize = 20.sp),
-                            modifier = Modifier.padding(top = 12.dp)
+                            modifier = Modifier
+                                .padding(start = 8.dp)
+                                .weight(1f),
+                            maxLines = Int.MAX_VALUE,
+                            softWrap = true
                         )
                     }
+
                     Row(
-                        modifier = Modifier
-                            .padding(top = 4.dp),
+                        modifier = Modifier.padding(start = 8.dp),
                     ) {
                         IconButton(
                             onClick = {
                                 showEditDialog = true
                                 tasksViewModel.setSelectedTask(task)
                                 currTaskID = task.taskId
-                                      },
+                            },
                             modifier = Modifier
                                 .padding(end = 8.dp)
                                 .size(36.dp),
                             colors = IconButtonDefaults.iconButtonColors(
-                                containerColor = Color(
-                                    0xFFFEFCF5
-                                )
+                                containerColor = Color(0xFFFEFCF5)
                             )
                         ) {
                             Icon(
@@ -142,13 +147,10 @@ fun DailyTasksView(tasksViewModel: TasksViewModel = viewModel()) {
                             onClick = {
                                 showDelDialog = true
                                 currTaskID = task.taskId
-                                      },
-                            modifier = Modifier
-                                .size(36.dp),
+                            },
+                            modifier = Modifier.size(36.dp),
                             colors = IconButtonDefaults.iconButtonColors(
-                                containerColor = Color(
-                                    0xFFFEFCF5
-                                )
+                                containerColor = Color(0xFFFEFCF5)
                             )
                         ) {
                             Icon(
@@ -211,7 +213,7 @@ fun DailyTasksView(tasksViewModel: TasksViewModel = viewModel()) {
             AlertDialog(
                 onDismissRequest = { showEditDialog = false },
                 title = {
-                    Text(text = "Add Task")
+                    Text(text = "Edit Task")
                 },
                 text = {
                     Column {

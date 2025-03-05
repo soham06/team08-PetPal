@@ -20,8 +20,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.cs446.petpal.R
 import androidx.navigation.NavController
+import com.cs446.petpal.viewmodels.BarsViewModel
 
 @Composable
 fun BottomBarButton(navController: NavController, label: String, iconRes: Int) {
@@ -48,7 +50,7 @@ fun BottomBarButton(navController: NavController, label: String, iconRes: Int) {
 }
 
 @Composable
-fun TopBar(navController: NavController) {
+fun TopBar(barsViewModel: BarsViewModel = hiltViewModel(), navController: NavController) {
     var expanded by remember { mutableStateOf(false) }
     Box(
         modifier = Modifier
@@ -90,7 +92,7 @@ fun TopBar(navController: NavController) {
 
             Box(modifier = Modifier.wrapContentSize(Alignment.TopEnd)) {
                 IconButton(
-                    onClick = { expanded = true },
+                    onClick = { navController.navigate("profilepage") },
                     modifier = Modifier
                     .size(48.dp)
                     .padding(top = 12.dp)
@@ -101,19 +103,6 @@ fun TopBar(navController: NavController) {
                         modifier = Modifier.size(24.dp),
                         tint = Color.Black
                     )
-                }
-
-                DropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false },
-                    modifier = Modifier.width(150.dp),
-                ) {
-                    DropdownMenuItem(
-                        text = { Text("Logout") },
-                        onClick = {
-                        expanded = false
-                        navController.navigate("landing")
-                    })
                 }
             }
         }
