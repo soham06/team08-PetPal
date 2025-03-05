@@ -8,10 +8,4 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 @HiltViewModel
 class BarsViewModel @Inject constructor(
     val userRepository: UserRepository,
-) : ViewModel() {
-
-    fun logOutUser() {
-        userRepository.resetUser()
-        println("User: ${userRepository.currentUser.value}")
-    }
-}
+) : ViewModel() {}

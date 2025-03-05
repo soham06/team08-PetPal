@@ -156,6 +156,7 @@ fun ProfilePageView(profilePageViewModel: ProfilePageViewModel = hiltViewModel()
             // LOGOUT
             Button(
                 onClick = {
+                    profilePageViewModel.logOutUser()
                     navController.navigate("landing")
                 },
                 modifier = Modifier.fillMaxWidth(),

@@ -8,7 +8,7 @@ import com.cs446.petpal.repository.UserRepository
 @HiltViewModel
 class ProfilePageViewModel @Inject constructor(
     val userRepository: UserRepository,
-    ) : ViewModel() {
+) : ViewModel() {
     val firstName: String
         get() = userRepository.currentUser.value?.firstName?.value ?: ""
     val lastName: String
@@ -19,4 +19,10 @@ class ProfilePageViewModel @Inject constructor(
         get() = userRepository.currentUser.value?.email?.value ?: ""
     val userType: String
         get() = userRepository.currentUser.value?.userType?.value ?: ""
+
+
+    fun logOutUser() {
+        userRepository.resetUser()
+        println("User: ${userRepository.currentUser.value}")
     }
+}
