@@ -21,8 +21,16 @@ import com.cs446.petpal.views.CalendarPageView
 import com.cs446.petpal.views.NotificationsView
 import com.cs446.petpal.views.TasksPage.TasksPageView
 import com.cs446.petpal.views.ProfilePageView
+import com.cs446.petpal.repository.UserRepository
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    @Inject
+    lateinit var userRepository: UserRepository
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {

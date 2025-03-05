@@ -15,17 +15,26 @@ import com.cs446.petpal.models.Task
 import org.json.JSONArray
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.State
+import com.cs446.petpal.repository.UserRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class TasksViewModel: ViewModel() {
+@HiltViewModel
+class TasksViewModel @Inject constructor(
+    val userRepository: UserRepository,
+) : ViewModel() {
     private val client = OkHttpClient()
     private val _tasks = mutableStateOf<List<Task>>(emptyList())
     val tasks: State<List<Task>> = _tasks
     var selectedTask: MutableState<Task?> = mutableStateOf(null)
 
+    var currentUserId: String = userRepository.currentUser.value?.userId.toString();
+
     fun setSelectedTask(task: Task) {
         selectedTask.value = task
     }
     init {
+        println("User: ${userRepository.currentUser.value}")
         getTasksForUser()
     }
 
@@ -43,7 +52,7 @@ class TasksViewModel: ViewModel() {
                     .toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
                 // Build the POST request
                 val request = Request.Builder()
-                    .url("http://10.0.2.2:3000/api/tasks/PcjsCSow5nnbIFo5cowm") // REPLACE THIS TO ACTUALLY USE USERID
+                    .url("http://10.0.2.2:3000/api/tasks/$currentUserId")
                     .post(requestBody)
                     .addHeader("Content-Type", "application/json")
                     .addHeader("Accept", "application/json")
@@ -135,7 +144,7 @@ class TasksViewModel: ViewModel() {
             var successfulTaskDeleted = false
             try {
                 val request = Request.Builder()
-                    .url("http://10.0.2.2:3000/api/tasks/$taskId") // REPLACE THIS TO ACTUALLY USE USERID
+                    .url("http://10.0.2.2:3000/api/tasks/$taskId")
                     .delete()
                     .addHeader("Content-Type", "application/json")
                     .addHeader("Accept", "application/json")
@@ -159,7 +168,7 @@ class TasksViewModel: ViewModel() {
             var successfulTaskRetrived = false
             try {
                 val request = Request.Builder()
-                    .url("http://10.0.2.2:3000/api/tasks/PcjsCSow5nnbIFo5cowm") // REPLACE THIS TO ACTUALLY USE USERID
+                    .url("http://10.0.2.2:3000/api/tasks/$currentUserId")
                     .get()
                     .addHeader("Content-Type", "application/json")
                     .addHeader("Accept", "application/json")

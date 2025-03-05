@@ -1,5 +1,6 @@
 package com.cs446.petpal.viewmodels
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
@@ -9,9 +10,14 @@ import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import org.json.JSONObject
-import com.cs446.petpal.models.User
+import com.cs446.petpal.repository.UserRepository
+import javax.inject.Inject
+import dagger.hilt.android.lifecycle.HiltViewModel
 
-class LoginViewModel : ViewModel() {
+@HiltViewModel
+class LoginViewModel @Inject constructor(
+    val userRepository: UserRepository,
+) : ViewModel() {
 
     private val client = OkHttpClient()
 
@@ -19,10 +25,9 @@ class LoginViewModel : ViewModel() {
      * Calls the login endpoint with the provided email and hashed password.
      * Returns a Boolean indicating success and an optional User instance on success.
      */
-    fun loginUser(email: String, password: String, onResult: (Boolean, User?) -> Unit) {
+    fun loginUser(email: String, password: String, onResult: (Boolean) -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
-            var successfulLogin = false
-            var user: User? = null
+            var successfulLogin: Boolean
             try {
                 // Build JSON payload
                 val json = JSONObject().apply {
@@ -46,17 +51,27 @@ class LoginViewModel : ViewModel() {
                     if (successfulLogin) {
                         val responseBody = response.body?.string()
                         val jsonResponse = JSONObject(responseBody ?: "")
+
                         // Create a User instance from the JSON response.
-                        // Adjust the field names as per your API response.
-                        user = User(
-                            firstName = androidx.compose.runtime.mutableStateOf(jsonResponse.optString("firstName")),
-                            lastName = androidx.compose.runtime.mutableStateOf(jsonResponse.optString("lastName")),
-                            address = androidx.compose.runtime.mutableStateOf(jsonResponse.optString("address")),
-                            email = androidx.compose.runtime.mutableStateOf(jsonResponse.optString("emailAddress")),
-                            password = androidx.compose.runtime.mutableStateOf(""), // Not needed after login
-                            userType = androidx.compose.runtime.mutableStateOf(jsonResponse.optString("userType"))
+                        val retFirstName = jsonResponse.optString("firstName")
+                        val retLastName = jsonResponse.optString("lastName")
+                        val retAddress = jsonResponse.optString("address")
+                        val retEmail = jsonResponse.optString("emailAddress")
+                        val retHashedPassword = jsonResponse.optString("password")
+                        val retUserType = jsonResponse.optString("userType")
+                        val retUserId = jsonResponse.optString("userId")
+                        userRepository.createUser(
+                            mutableStateOf(retFirstName),
+                            mutableStateOf(retLastName),
+                            mutableStateOf(retAddress),
+                            mutableStateOf(retEmail),
+                            mutableStateOf(retHashedPassword),
+                            mutableStateOf(retUserType)
                         )
-                        user.userId = jsonResponse.optString("userId")
+                        userRepository.setUserId(retUserId)
+
+                        println("Response: $jsonResponse")
+                        println("User: ${userRepository.currentUser.value}")
                     } else {
                         // Optionally log error details from response
                         println("Login error: ${response.body?.string()}")
@@ -66,7 +81,7 @@ class LoginViewModel : ViewModel() {
                 e.printStackTrace()
                 successfulLogin = false
             }
-            onResult(successfulLogin, user)
+            onResult(successfulLogin)
         }
     }
 }
