@@ -30,7 +30,6 @@ class PetspageViewModel : ViewModel() {
     private val _selectedPet = MutableStateFlow<Pet?>(null)
     val selectedPet: StateFlow<Pet?> = _selectedPet
 
-    // -- Existing fetchPetsFromServer (unchanged) --
     fun fetchPetsFromServer(userId: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -89,7 +88,6 @@ class PetspageViewModel : ViewModel() {
         }
     }
 
-    // -- Existing createPetForUser (unchanged) --
     fun createPetForUser(
         name: String,
         animal: String,
@@ -165,7 +163,6 @@ class PetspageViewModel : ViewModel() {
         }
     }
 
-    // -- NEW: updatePetForUser function --
     fun updatePetForUser(
         petId: String,
         name: String,
@@ -245,8 +242,6 @@ class PetspageViewModel : ViewModel() {
             onResult(success, updatedPet)
         }
     }
-
-
     fun selectPet(petId: String) {
         _selectedPet.value = _petsList.value.find { it.petId == petId }
     }

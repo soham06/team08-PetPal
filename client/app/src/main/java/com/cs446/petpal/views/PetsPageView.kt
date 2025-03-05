@@ -31,14 +31,14 @@ fun PetsPageView(
     petspageViewModel: PetspageViewModel = viewModel(),
     navController: NavController
 ) {
-    // 1) Collect the flows from the ViewModel
+    //Collect the flows from the ViewModel
     val pets by petspageViewModel.petsList.collectAsState()
     val selectedPet by petspageViewModel.selectedPet.collectAsState()
 
     // Hardcoded user ID for now
     val testUserID = "CgL0tQ81vTFMGn2DyA9M"
 
-    // 2) Trigger network fetch once on screen load
+    //Trigger network fetch once on screen load
     LaunchedEffect(Unit) {
         petspageViewModel.fetchPetsFromServer(testUserID)
     }
@@ -75,8 +75,6 @@ fun PetsPageView(
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp)
                 ) {
-                    // NEW: Use the pet's custom profile pic if a pet is selected,
-                    // otherwise fallback to profile_pic_main.
                     Image(
                         painter = painterResource(
                             id = if (petToShow != null) getPetProfilePic(petToShow.name.value)
@@ -93,22 +91,18 @@ fun PetsPageView(
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                // Pet Info Card (with "Edit" text)
+                // Pet Info Card
                 PetInfoCard(petToShow = petToShow, petspageViewModel = petspageViewModel)
 
                 Spacer(modifier = Modifier.height(8.dp))
 
                 // Insurance Info Card
-                InsuranceInfoCard(petToShow) {
-                    // Handle insurance edit if needed
-                }
+                InsuranceInfoCard(petToShow)
 
                 Spacer(modifier = Modifier.height(8.dp))
 
                 // Medication Info Card
-                MedicationInfoCard(petToShow) {
-                    // Handle medication edit if needed
-                }
+                MedicationInfoCard(petToShow)
             }
 
             // Bottom Bar
@@ -140,7 +134,7 @@ fun PetsPageView(
     }
 }
 
-// PetInfoCard with "Edit" text remains as before
+// PetInfoCard
 @Composable
 fun PetInfoCard(
     petToShow: Pet?,
@@ -193,13 +187,15 @@ fun PetInfoCard(
                     modifier = Modifier.weight(1f),
                     verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
+                    PetInfoRow("Animal", petToShow?.animal ?: "--", "animal_icon")
                     PetInfoRow("Gender", petToShow?.gender?.value ?: "--", "gender_icon")
-                    PetInfoRow("Age", "${petToShow?.age?.value ?: "--"} years", "calendar_icon")
+                    PetInfoRow("Breed", petToShow?.breed ?: "--", "breed_icon")
                 }
                 Column(
                     modifier = Modifier.weight(1f),
                     verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
+                    PetInfoRow("Age", "${petToShow?.age?.value ?: "--"} years", "calendar_icon")
                     PetInfoRow("Birthday", petToShow?.birthday ?: "--", "birthday_icon")
                     PetInfoRow("Weight", "${petToShow?.weight?.value ?: "--"} lbs", "weight_icon")
                 }
@@ -293,7 +289,7 @@ fun PetInfoRow(label: String, value: String, iconRes: String) {
             painter = painterResource(id = getIconPlaceholder(iconRes)),
             contentDescription = label,
             modifier = Modifier
-                .size(38.dp)
+                .size(30.dp)
                 .padding(end = 8.dp),
             contentScale = ContentScale.Fit
         )
@@ -308,7 +304,6 @@ fun PetInfoRow(label: String, value: String, iconRes: String) {
 @Composable
 fun InsuranceInfoCard(
     pet: Pet?,
-    onEditClick: () -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -329,11 +324,6 @@ fun InsuranceInfoCard(
                     text = "Insurance",
                     style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
                 )
-                Text(
-                    text = "Edit",
-                    style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.primary),
-                    modifier = Modifier.clickable { onEditClick() }
-                )
             }
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -352,7 +342,7 @@ fun InsuranceInfoCard(
                         Image(
                             painter = painterResource(id = getIconPlaceholder("insurance_icon")),
                             contentDescription = "Provider",
-                            modifier = Modifier.size(38.dp),
+                            modifier = Modifier.size(30.dp),
                             contentScale = ContentScale.Fit
                         )
                         Spacer(modifier = Modifier.width(6.dp))
@@ -370,7 +360,7 @@ fun InsuranceInfoCard(
                         Image(
                             painter = painterResource(id = getIconPlaceholder("policy_icon")),
                             contentDescription = "Policy #",
-                            modifier = Modifier.size(38.dp),
+                            modifier = Modifier.size(0.dp),
                             contentScale = ContentScale.Fit
                         )
                         Spacer(modifier = Modifier.width(6.dp))
@@ -389,7 +379,6 @@ fun InsuranceInfoCard(
 @Composable
 fun MedicationInfoCard(
     pet: Pet?,
-    onEditClick: () -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -410,11 +399,6 @@ fun MedicationInfoCard(
                     text = "Medication",
                     style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
                 )
-                Text(
-                    text = "Edit",
-                    style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.primary),
-                    modifier = Modifier.clickable { onEditClick() }
-                )
             }
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -433,7 +417,7 @@ fun MedicationInfoCard(
                         Image(
                             painter = painterResource(id = getIconPlaceholder("medication_icon")),
                             contentDescription = "Medication Name",
-                            modifier = Modifier.size(38.dp),
+                            modifier = Modifier.size(30.dp),
                             contentScale = ContentScale.Fit
                         )
                         Spacer(modifier = Modifier.width(6.dp))
@@ -473,6 +457,8 @@ fun getIconPlaceholder(iconName: String): Int {
         "calendar_icon" -> R.drawable.ic_age
         "birthday_icon" -> R.drawable.ic_birthday
         "weight_icon" -> R.drawable.ic_weight
+        "animal_icon" -> R.drawable.ic_animal
+        "breed_icon" -> R.drawable.ic_breed
         "insurance_icon" -> R.drawable.ic_insurance
         "policy_icon" -> R.drawable.ic_policy
         "medication_icon" -> R.drawable.ic_medication
