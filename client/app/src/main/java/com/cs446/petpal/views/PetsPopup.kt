@@ -182,21 +182,24 @@ fun petsPopup(currPet: Pet?, currPetId: String?, popupType: String, petsViewMode
                         ) { success, _ -> }
                     }
                     else {
-                        // TODO: uncomment this once the Edit function is implemented
-                        /* if (currPetId != null) {
+                        if (currPetId != null) {
                             petsViewModel.updatePetForUser(
-                                currPetId
-                                userInputName,
-                                userInputGender,
-                                userInputbirthday,
-                                userInputAge,
-                                userInputWeight,
-                                userInputInsuranceProvider,
-                                userInputInsurancePolicyNumber,
-                                userInputMedicationName,
-                                userInputMedicationDosage
-                            ) { success, _ -> }
-                        } */
+                                petId = currPetId,
+                                name = userInputName,
+                                animal = userInputAnimal,
+                                breed = userInputBreed,
+                                gender = userInputGender,
+                                birthday = userInputbirthday,
+                                age = userInputAge,
+                                weight = userInputWeight,
+                                insuranceProvider = userInputInsuranceProvider,
+                                insurancePolicyNumber = userInputInsurancePolicyNumber,
+                                medicationName = userInputMedicationName,
+                                medicationDosage = userInputMedicationDosage
+                            ) { success, _ ->
+                                // Optionally handle success or error
+                            }
+                        }
                     }
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFD700))

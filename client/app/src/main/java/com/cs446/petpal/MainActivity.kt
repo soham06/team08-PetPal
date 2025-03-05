@@ -31,7 +31,7 @@ class MainActivity : ComponentActivity() {
                     color = Color.White,
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    NavHost(navController = navController, startDestination = "landing") {
+                    NavHost(navController = navController, startDestination = "petspage") {
                         composable("landing") { LandingPageScreen(navController) }
                         composable("signup") { SignUpView(navController = navController) }
                         composable("login") { LoginView(navController = navController) }

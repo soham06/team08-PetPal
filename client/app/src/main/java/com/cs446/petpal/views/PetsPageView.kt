@@ -25,7 +25,6 @@ import androidx.navigation.NavController
 import com.cs446.petpal.R
 import com.cs446.petpal.models.Pet
 import com.cs446.petpal.viewmodels.PetspageViewModel
-import com.cs446.petpal.views.TasksPage.eventsPopup
 
 @Composable
 fun PetsPageView(
@@ -35,13 +34,16 @@ fun PetsPageView(
     // 1) Collect the flows from the ViewModel
     val pets by petspageViewModel.petsList.collectAsState()
     val selectedPet by petspageViewModel.selectedPet.collectAsState()
+
+    // Hardcoded user ID for now
     val testUserID = "CgL0tQ81vTFMGn2DyA9M"
+
     // 2) Trigger network fetch once on screen load
     LaunchedEffect(Unit) {
-        // Replace with the real userId once you have it
         petspageViewModel.fetchPetsFromServer(testUserID)
     }
 
+    // Show the selected pet or default to the first
     val petToShow = selectedPet ?: pets.firstOrNull()
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -67,14 +69,19 @@ fun PetsPageView(
                     .weight(1f),
                 horizontalAlignment = Alignment.Start
             ) {
-                // Pet Image section in PetsPageView
+                // Main Pet Image Section
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp)
                 ) {
+                    // NEW: Use the pet's custom profile pic if a pet is selected,
+                    // otherwise fallback to profile_pic_main.
                     Image(
-                        painter = painterResource(id = R.drawable.profile_pic_main),
+                        painter = painterResource(
+                            id = if (petToShow != null) getPetProfilePic(petToShow.name.value)
+                            else R.drawable.profile_pic_main
+                        ),
                         contentDescription = "Pet Profile Picture",
                         modifier = Modifier
                             .fillMaxWidth()
@@ -84,55 +91,10 @@ fun PetsPageView(
                     )
                 }
 
-
                 Spacer(modifier = Modifier.height(12.dp))
 
-                // Pet Info Card
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White),
-                    elevation = CardDefaults.cardElevation(4.dp)
-                ) {
-                    Column(
-                        modifier = Modifier.padding(12.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        // Pet Name
-                        Text(
-                            text = petToShow?.name?.value ?: "No Pet Selected",
-                            style = MaterialTheme.typography.headlineSmall.copy(
-                                fontSize = 20.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                        )
-
-                        // Info rows
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(start = 10.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Column(
-                                modifier = Modifier.weight(1f),
-                                verticalArrangement = Arrangement.spacedBy(10.dp)
-                            ) {
-                                PetInfoRow("Gender", (petToShow?.gender?.value ?: "--"), "gender_icon")
-                                PetInfoRow("Age", "${petToShow?.age?.value ?: "--"} years", "calendar_icon")
-                            }
-                            Column(
-                                modifier = Modifier.weight(1f),
-                                verticalArrangement = Arrangement.spacedBy(10.dp)
-                            ) {
-                                PetInfoRow("Birthday", petToShow?.birthday ?: "--", "birthday_icon")
-                                PetInfoRow("Weight", "${petToShow?.weight?.value ?: "--"} lbs", "weight_icon")
-                            }
-                        }
-                    }
-                }
+                // Pet Info Card (with "Edit" text)
+                PetInfoCard(petToShow = petToShow, petspageViewModel = petspageViewModel)
 
                 Spacer(modifier = Modifier.height(8.dp))
 
@@ -153,9 +115,15 @@ fun PetsPageView(
             BottomBar(navController)
         }
 
-        // Floating Action Button
+        // Floating Action Button (Delete Pet)
         FloatingActionButton(
-            onClick = { /* Navigate to Delete Pet */ },
+            onClick = {
+                petToShow?.petId?.let { petId ->
+                    petspageViewModel.deletePetForUser(petId) { success ->
+                        // Optionally handle success/error
+                    }
+                }
+            },
             containerColor = Color(0xFF64B5F6),
             modifier = Modifier
                 .align(Alignment.BottomEnd)
@@ -164,7 +132,7 @@ fun PetsPageView(
         ) {
             Icon(
                 imageVector = Icons.Filled.Delete,
-                contentDescription = "Add Pet",
+                contentDescription = "Delete Pet",
                 tint = Color.White,
                 modifier = Modifier.size(20.dp)
             )
@@ -172,7 +140,84 @@ fun PetsPageView(
     }
 }
 
-// Pet Selection Row
+// PetInfoCard with "Edit" text remains as before
+@Composable
+fun PetInfoCard(
+    petToShow: Pet?,
+    petspageViewModel: PetspageViewModel
+) {
+    var showEditDialog by remember { mutableStateOf(false) }
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.cardElevation(4.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(12.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            // Row with Pet Name and "Edit" text
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = petToShow?.name?.value ?: "No Pet Selected",
+                    style = MaterialTheme.typography.headlineSmall.copy(
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                )
+                if (petToShow != null) {
+                    Text(
+                        text = "Edit",
+                        color = MaterialTheme.colorScheme.primary,
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.clickable { showEditDialog = true }
+                    )
+                }
+            }
+
+            // Info rows (Gender, Age, Birthday, Weight)
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 10.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    PetInfoRow("Gender", petToShow?.gender?.value ?: "--", "gender_icon")
+                    PetInfoRow("Age", "${petToShow?.age?.value ?: "--"} years", "calendar_icon")
+                }
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    PetInfoRow("Birthday", petToShow?.birthday ?: "--", "birthday_icon")
+                    PetInfoRow("Weight", "${petToShow?.weight?.value ?: "--"} lbs", "weight_icon")
+                }
+            }
+        }
+    }
+
+    if (showEditDialog && petToShow != null) {
+        showEditDialog = petsPopup(
+            currPet = petToShow,
+            currPetId = petToShow.petId,
+            popupType = "EDIT",
+            petsViewModel = petspageViewModel
+        )
+    }
+}
+
+// Pet Selection Row (unchanged)
 @Composable
 fun PetSelectionRow(
     pets: List<Pet>,
@@ -192,7 +237,6 @@ fun PetSelectionRow(
                     .padding(horizontal = 8.dp)
                     .clickable { onPetSelected(pet.petId) }
             ) {
-                // Use a custom image for each pet
                 Image(
                     painter = painterResource(id = getPetProfilePic(pet.name.value)),
                     contentDescription = "Profile picture for ${pet.name.value}",
@@ -217,26 +261,28 @@ fun PetSelectionRow(
                 .size(48.dp)
                 .padding(top = 12.dp, end = 12.dp),
             colors = IconButtonDefaults.iconButtonColors(
-                containerColor = Color(
-                    0xFFA2D9FF
-                )
+                containerColor = Color(0xFFA2D9FF)
             )
         ) {
             Icon(
                 painter = painterResource(R.drawable.add),
-                contentDescription = "Add Task",
+                contentDescription = "Add Pet",
                 modifier = Modifier.size(24.dp),
                 tint = Color.Black
             )
         }
     }
     if (showAddDialog) {
-        showAddDialog = petsPopup(null, null,"ADD")
+        showAddDialog = petsPopup(
+            currPet = null,
+            currPetId = null,
+            popupType = "ADD",
+            petsViewModel = viewModel() // or pass the same petspageViewModel
+        )
     }
 }
 
-
-// Pet Info Row - using Image to preserve icon color
+// Pet Info Row (unchanged)
 @Composable
 fun PetInfoRow(label: String, value: String, iconRes: String) {
     Row(
@@ -258,7 +304,7 @@ fun PetInfoRow(label: String, value: String, iconRes: String) {
     }
 }
 
-// Insurance Info Card
+// Insurance Info Card (unchanged)
 @Composable
 fun InsuranceInfoCard(
     pet: Pet?,
@@ -275,7 +321,6 @@ fun InsuranceInfoCard(
         Column(
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
         ) {
-            // Header
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
@@ -293,14 +338,12 @@ fun InsuranceInfoCard(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Info Row
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 10.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                // Left Column
                 Column(
                     modifier = Modifier.weight(1f),
                     verticalArrangement = Arrangement.spacedBy(10.dp)
@@ -319,8 +362,6 @@ fun InsuranceInfoCard(
                         }
                     }
                 }
-
-                // Right Column
                 Column(
                     modifier = Modifier.weight(1f),
                     verticalArrangement = Arrangement.spacedBy(10.dp)
@@ -344,7 +385,7 @@ fun InsuranceInfoCard(
     }
 }
 
-// Medication Info Card
+// Medication Info Card (unchanged)
 @Composable
 fun MedicationInfoCard(
     pet: Pet?,
@@ -361,7 +402,6 @@ fun MedicationInfoCard(
         Column(
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
         ) {
-            // Header
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
@@ -379,14 +419,12 @@ fun MedicationInfoCard(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Info Row
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 10.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                // Left Column
                 Column(
                     modifier = Modifier.weight(1f),
                     verticalArrangement = Arrangement.spacedBy(10.dp)
@@ -405,8 +443,6 @@ fun MedicationInfoCard(
                         }
                     }
                 }
-
-                // Right Column
                 Column(
                     modifier = Modifier.weight(1f),
                     verticalArrangement = Arrangement.spacedBy(10.dp)
@@ -430,7 +466,7 @@ fun MedicationInfoCard(
     }
 }
 
-// Icon placeholders
+// Icon placeholders (unchanged)
 fun getIconPlaceholder(iconName: String): Int {
     return when (iconName) {
         "gender_icon" -> R.drawable.ic_gender
@@ -444,7 +480,8 @@ fun getIconPlaceholder(iconName: String): Int {
         else -> R.drawable.ic_default
     }
 }
-//temp function for profile pics
+
+// Temp function for profile pics (unchanged)
 fun getPetProfilePic(petName: String): Int {
     return when (petName) {
         "Toby" -> R.drawable.pet_toby
