@@ -1,11 +1,12 @@
 package com.cs446.petpal.views
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.material3.Icon
 import androidx.compose.material.icons.Icons
@@ -20,36 +21,36 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.cs446.petpal.R
 import com.cs446.petpal.models.Pet
-import com.cs446.petpal.viewmodels.PetspageViewModel
+import com.cs446.petpal.viewmodels.PetsPageViewModel
 
 @Composable
 fun PetsPageView(
-    petspageViewModel: PetspageViewModel = viewModel(),
+    petspageViewModel: PetsPageViewModel = hiltViewModel(),
     navController: NavController
 ) {
     //Collect the flows from the ViewModel
     val pets by petspageViewModel.petsList.collectAsState()
     val selectedPet by petspageViewModel.selectedPet.collectAsState()
 
-    // Hardcoded user ID for now
-    val testUserID = "CgL0tQ81vTFMGn2DyA9M"
-
     //Trigger network fetch once on screen load
     LaunchedEffect(Unit) {
-        petspageViewModel.fetchPetsFromServer(testUserID)
+        petspageViewModel.fetchPetsFromServer()
     }
 
     // Show the selected pet or default to the first
     val petToShow = selectedPet ?: pets.firstOrNull()
 
+    val scrollState = rememberScrollState()
+
     Box(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.fillMaxSize()) {
             // Top Bar
-            TopBar(navController)
+            TopBar(navController = navController)
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -66,7 +67,8 @@ fun PetsPageView(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f),
+                    .weight(1f)
+                    .verticalScroll(scrollState),
                 horizontalAlignment = Alignment.Start
             ) {
                 // Main Pet Image Section
@@ -103,6 +105,8 @@ fun PetsPageView(
 
                 // Medication Info Card
                 MedicationInfoCard(petToShow)
+
+                Spacer(modifier = Modifier.height(16.dp))
             }
 
             // Bottom Bar
@@ -138,7 +142,7 @@ fun PetsPageView(
 @Composable
 fun PetInfoCard(
     petToShow: Pet?,
-    petspageViewModel: PetspageViewModel
+    petspageViewModel: PetsPageViewModel
 ) {
     var showEditDialog by remember { mutableStateOf(false) }
 
@@ -476,3 +480,4 @@ fun getPetProfilePic(petName: String): Int {
         else -> R.drawable.profile_pic_default
     }
 }
+chihuahua

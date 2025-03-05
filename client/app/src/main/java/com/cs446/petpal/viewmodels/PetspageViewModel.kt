@@ -7,6 +7,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cs446.petpal.models.Pet
+import com.cs446.petpal.repository.UserRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,8 +19,12 @@ import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONArray
 import org.json.JSONObject
+import javax.inject.Inject
 
-class PetspageViewModel : ViewModel() {
+@HiltViewModel()
+class PetsPageViewModel @Inject constructor(
+    val userRepository: UserRepository,
+) : ViewModel() {
 
     private val client = OkHttpClient()
 
@@ -30,17 +36,19 @@ class PetspageViewModel : ViewModel() {
     private val _selectedPet = MutableStateFlow<Pet?>(null)
     val selectedPet: StateFlow<Pet?> = _selectedPet
 
-    fun fetchPetsFromServer(userId: String) {
+    var currentUserId: String = userRepository.currentUser.value?.userId.toString();
+
+    fun fetchPetsFromServer() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val request = Request.Builder()
-                    .url("http://10.0.2.2:3000/api/pets/$userId")
+                    .url("http://10.0.2.2:3000/api/pets/$currentUserId")
                     .get()
                     .build()
 
                 client.newCall(request).execute().use { response ->
                     if (!response.isSuccessful) {
-                        Log.e("PetspageViewModel", "Error fetching pets: ${response.code}")
+                        Log.e("PetsPageViewModel", "Error fetching pets: ${response.code}")
                         return@use
                     }
                     val responseBody = response.body?.string() ?: "[]"
@@ -105,7 +113,6 @@ class PetspageViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             var successfulPetAdded = false
             var pet: Pet? = null
-            val currentUserID = "CgL0tQ81vTFMGn2DyA9M"
             try {
                 val json = JSONObject().apply {
                     put("name", name)
@@ -124,7 +131,7 @@ class PetspageViewModel : ViewModel() {
                     .toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
 
                 val request = Request.Builder()
-                    .url("http://10.0.2.2:3000/api/pets/$currentUserID")
+                    .url("http://10.0.2.2:3000/api/pets/$currentUserId")
                     .post(requestBody)
                     .addHeader("Content-Type", "application/json")
                     .addHeader("Accept", "application/json")
@@ -150,7 +157,7 @@ class PetspageViewModel : ViewModel() {
                             medicationDosage = mutableStateOf(jsonResponse.optString("medicationDosage", "--"))
                         )
                         // Refresh pet list
-                        fetchPetsFromServer(currentUserID)
+                        fetchPetsFromServer()
                     } else {
                         println("Adding pet failed: ${response.body?.string()}")
                     }
@@ -229,10 +236,9 @@ class PetspageViewModel : ViewModel() {
                             medicationDosage = mutableStateOf(jsonResponse.optString("medicationDosage", medicationDosage))
                         )
 
-                        val currentUserID = "CgL0tQ81vTFMGn2DyA9M"
-                        fetchPetsFromServer(currentUserID)
+                        fetchPetsFromServer()
                     } else {
-                        Log.e("PetspageViewModel", "Failed to update pet: ${response.code}")
+                        Log.e("PetsPageViewModel", "Failed to update pet: ${response.code}")
                     }
                 }
             } catch (e: Exception) {
@@ -258,8 +264,7 @@ class PetspageViewModel : ViewModel() {
                 client.newCall(request).execute().use { response ->
                     val success = response.isSuccessful
                     if (success) {
-                        val currentUserID = "CgL0tQ81vTFMGn2DyA9M"
-                        fetchPetsFromServer(currentUserID)
+                        fetchPetsFromServer()
                     }
                     onResult(success)
                 }

@@ -19,11 +19,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.cs446.petpal.models.Pet
-import com.cs446.petpal.viewmodels.PetspageViewModel
+import com.cs446.petpal.viewmodels.PetsPageViewModel
 
 @Composable
-fun petsPopup(currPet: Pet?, currPetId: String?, popupType: String, petsViewModel: PetspageViewModel = viewModel()): Boolean {
+fun petsPopup(currPet: Pet?, currPetId: String?, popupType: String, petsViewModel: PetsPageViewModel = hiltViewModel()): Boolean {
     var showDialog by remember { mutableStateOf(true) }
     var userInputName by remember { mutableStateOf(currPet?.name?.value ?: "") }
     var userInputGender by remember { mutableStateOf(currPet?.gender?.value ?: "") }
