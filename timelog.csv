@@ -49,11 +49,15 @@ date,Rozhan,Gursimran,Bhavya,Jaskirat,Soham,Shaan,task
 2025-03-01,0,0,0,0,1,0,update events date handling/storage logic
 2025-03-01,2.5,0,0,0,0,0, working on pet profile screen
 2025-03-02,2,0,0,0,0,0, finished front-end on pet profile screen
+2025-03-02,0,0,0,1.5,0,0,looked into design patterns from lecture and started implementing singleton to have a single User class instance
+2025-03-03,0,0,0,1.5,0,0,worked on using the singleton User class in login and register modelViews but ran into errors with user repository
 2025-03-04,0,1.5,0,0,0,0,help debugging user repository
 2025-03-04,0,0,0,0,1.5,0,help debugging user repository
+2025-03-04,0,0,0,1.5,0,0,user repository error fixed and implemented singleton User class in events tasks and logout modelViews
 2025-03-04,0,0,0,0,2.5,0,updated pet page structure and implemented add pet functionality
 2025-03-04,0,0,0,0,0,2.5,finished UI and navigation for user profile
 2025-03-04,0,0,0,0,0,1,added user details for profile
 2025-03-04,3,0,0,0,0,0, added delete and edit functionality to pet profile
-2025-02-11,0.5,0.5,0.5,0.5,0.5,0.5,meeting to discuss P4 demo and review app functionality
+2025-03-04,0,0,0,0.5,0,0,helped approve PRs and gave feedback to teammates
+2025-03-04,0.5,0.5,0.5,0.5,0.5,0.5,meeting to discuss P4 demo and review app functionality
 2025-03-04,0,0,0,0,1,0,integrate user repository with pets page and small bug fixes
