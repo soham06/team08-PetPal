@@ -41,7 +41,7 @@ The server will start at: `http://localhost:3000`
 
 **`GET /tasks/:userId`** - gets a list of OPEN tasks for a given user
 
-`Request`: `/tasks/:akhsjfbkaaacjn`
+`Request`: `/tasks/akhsjfbkaaacjn`
 
 `Response`: List of all OPEN tasks for the given user
 
@@ -75,7 +75,7 @@ The server will start at: `http://localhost:3000`
 
 **`GET /events/:userId`** - gets a list of events for a given user
 
-`Request`: `/events/:akhsjfbkaaacjn`
+`Request`: `/events/akhsjfbkaaacjn`
 
 `Response`: List of all events for the given user
 
@@ -117,7 +117,7 @@ The server will start at: `http://localhost:3000`
 
 **`GET /pets/:userId`** - gets a list of pets for a given user
 
-`Request`: `/pets/:akhsjfbkaaacjn`
+`Request`: `/pets/akhsjfbkaaacjn`
 
 `Response`: List of all pets for the given user
 
@@ -154,4 +154,30 @@ The server will start at: `http://localhost:3000`
 `Request`: No request body needed
 
 `Response`: "Successfully deleted pet" if the pet is deleted
+
+**`GET /pets/share/:userId`** - gets a list of shared pets for a given user
+
+`Request`: `/pets/share/akhsjfbkaaacjn`
+
+`Response`: List of all shared pets for the given user
+
+**`PATCH /pets/share/:petId`** - shared an existing pet profile to another user
+
+`Request`:
+
+    {
+        "emailAddress": "test@gmail.com"
+    }
+
+`Response`: Updated pet for the user
+
+**`DELETE /pets/share/:petId`** - unshared an existing pet with a given user
+
+`Request`:
+
+    {
+        "emailAddress": "test@gmail.com"
+    }
+
+`Response`: "Successfully unshared pet" if the pet is unshared with users
 
