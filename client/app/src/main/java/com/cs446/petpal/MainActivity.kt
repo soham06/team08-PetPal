@@ -22,6 +22,7 @@ import com.cs446.petpal.views.NotificationsView
 import com.cs446.petpal.views.TasksPage.TasksPageView
 import com.cs446.petpal.views.ProfilePageView
 import com.cs446.petpal.repository.UserRepository
+import com.cs446.petpal.views.Marketplace.MarketplaceView
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -50,6 +51,7 @@ class MainActivity : ComponentActivity() {
                         composable("petspage") { PetsPageView(navController = navController) }
                         composable("notifspage") { NotificationsView(navController = navController) }
                         composable("profilepage") { ProfilePageView(navController = navController) }
+                        composable("marketplace") { MarketplaceView(navController = navController) }
                     }
                 }
             }
