@@ -42,7 +42,7 @@ router.delete('/pets/share/:petId', unsharePetWithUser)
 // pet postings routes
 router.get('/postings/:userId', getPostingsForUser)
 router.post('/postings/:userId', createPostingForUser)
-router.patch('/postings/:userId', updatePostForUser)
-router.delete('/postings/:userId', deletePostForUser)
+router.patch('/postings/:postId', updatePostForUser)
+router.delete('/postings/:postId', deletePostForUser)
 
 export default router;
