@@ -62,3 +62,4 @@ date,Rozhan,Gursimran,Bhavya,Jaskirat,Soham,Shaan,task
 2025-03-04,0.5,0.5,0.5,0.5,0.5,0.5,meeting to discuss P4 demo and review app functionality
 2025-03-04,0,0,0,0,1,0,integrate user repository with pets page and small bug fixes
 2025-03-11,0,0,0,0,1,0,finish setting up sharing pet profiles server endpoints
+2025-03-13,0,0,1,0,0,0,added routes for pet postings
