@@ -1,6 +1,6 @@
 import express from 'express'
 import { registerUser } from '../controllers/register.js'
-import { loginUser } from '../controllers/login.js'
+import { loginUser, getUserDetailsById } from '../controllers/login.js'
 import { getTasksForUser,createTaskForUser, updateTaskForUser, deleteTaskForUser } from '../controllers/tasks.js'
 import { getEventsForUser, createEventForUser, updateEventForUser, deleteEventForUser } from '../controllers/events.js'
 import { getPetsForUser, createPetForUser, updatePetForUser, deletePetForUser, sharePetWithUser, unsharePetWithUser, getSharedPetsForUser } from '../controllers/pets.js'
@@ -15,6 +15,7 @@ router.get('/', (req, res) => {
 // user routes
 router.post('/register', registerUser);
 router.post('/login', loginUser);
+router.get('/users/:userId', getUserDetailsById);
 
 // task routes
 router.get('/tasks/:userId', getTasksForUser);

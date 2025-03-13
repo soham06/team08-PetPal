@@ -10,8 +10,10 @@ import com.cs446.petpal.models.Pet
 import com.cs446.petpal.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
@@ -28,9 +30,16 @@ class PetsPageViewModel @Inject constructor(
 
     private val client = OkHttpClient()
 
-    // List of pets that drives the UI
-    private val _petsList = MutableStateFlow<List<Pet>>(emptyList())
-    val petsList: StateFlow<List<Pet>> = _petsList
+    // List of my pets that drives the UI
+    private val _myPetsList = MutableStateFlow<List<Pet>>(emptyList())
+    val myPetsList: StateFlow<List<Pet>> = _myPetsList
+
+    // List of shared pets that drives the UI
+    private val _sharedPetsList = MutableStateFlow<List<Pet>>(emptyList())
+    val sharedPetsList: StateFlow<List<Pet>> = _sharedPetsList
+
+    // List of all pets that drives the UI
+    private var _allPetsList = MutableStateFlow<List<Pet>>(emptyList())
 
     // Currently selected pet
     private val _selectedPet = MutableStateFlow<Pet?>(null)
@@ -38,7 +47,20 @@ class PetsPageViewModel @Inject constructor(
 
     var currentUserId: String = userRepository.currentUser.value?.userId.toString();
 
-    fun fetchPetsFromServer() {
+    fun fetchAllPetsFromServer() {
+        fetchMyPetsFromServer()
+        fetchSharedPetsFromServer()
+        GlobalScope.launch {
+            combine(_myPetsList, _sharedPetsList) { list1, list2 ->
+                list1 + list2
+            }.collect { combinedList ->
+                _allPetsList.value = combinedList
+            }
+        }
+        println(_allPetsList.value)
+    }
+
+    fun fetchMyPetsFromServer() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val request = Request.Builder()
@@ -69,6 +91,18 @@ class PetsPageViewModel @Inject constructor(
                         val policyNumber = obj.optString("policyNumber", "--")
                         val medicationName = obj.optString("medicationName", "--")
                         val medicationDosage = obj.optString("medicationDosage", "--")
+                        val sharedUsersAsJsonArray = obj.optJSONArray("sharedUsers")
+                        var sharedUsers:Array<String> = emptyArray()
+
+                        if (sharedUsersAsJsonArray != null) {
+                            if (sharedUsersAsJsonArray.length() > 0) {
+                                for (i in 0 until sharedUsersAsJsonArray.length()) {
+                                    val user = sharedUsersAsJsonArray.optString(i)
+                                    sharedUsers += user
+                                }
+                            }
+                        }
+
 
                         val pet = Pet(
                             petId = id,
@@ -82,13 +116,83 @@ class PetsPageViewModel @Inject constructor(
                             insuranceProvider = mutableStateOf(insuranceProvider),
                             policyNumber = mutableStateOf(policyNumber),
                             medicationName = mutableStateOf(medicationName),
-                            medicationDosage = mutableStateOf(medicationDosage)
+                            medicationDosage = mutableStateOf(medicationDosage),
+                            sharedUsers = mutableStateOf(sharedUsers)
                         )
                         petList.add(pet)
                     }
 
-                    _petsList.value = petList
+                    _myPetsList.value = petList
                     _selectedPet.value = petList.firstOrNull()
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun fetchSharedPetsFromServer() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val request = Request.Builder()
+                    .url("http://10.0.2.2:3000/api/pets/share/$currentUserId")
+                    .get()
+                    .build()
+
+                client.newCall(request).execute().use { response ->
+                    if (!response.isSuccessful) {
+                        Log.e("PetsPageViewModel", "Error fetching shared pets: ${response.code}")
+                        return@use
+                    }
+                    val responseBody = response.body?.string() ?: "[]"
+                    val jsonArray = JSONArray(responseBody)
+                    val petList = mutableListOf<Pet>()
+
+                    for (i in 0 until jsonArray.length()) {
+                        val obj = jsonArray.getJSONObject(i)
+                        val id = obj.optString("petId", "")
+                        val name = obj.optString("name", "No Name")
+                        val animal = obj.optString("animal", "--")
+                        val breed = obj.optString("breed", "--")
+                        val gender = obj.optString("gender", "--")
+                        val birthday = obj.optString("birthday", "--")
+                        val age = obj.optInt("age", 0)
+                        val weight = obj.optDouble("weight", 0.0)
+                        val insuranceProvider = obj.optString("insuranceProvider", "--")
+                        val policyNumber = obj.optString("policyNumber", "--")
+                        val medicationName = obj.optString("medicationName", "--")
+                        val medicationDosage = obj.optString("medicationDosage", "--")
+                        val sharedUsersAsJsonArray = obj.optJSONArray("sharedUsers")
+                        var sharedUsers:Array<String> = emptyArray()
+
+                        if (sharedUsersAsJsonArray != null) {
+                            if (sharedUsersAsJsonArray.length() > 0) {
+                                for (i in 0 until sharedUsersAsJsonArray.length()) {
+                                    val user = sharedUsersAsJsonArray.optString(i)
+                                    sharedUsers += user
+                                }
+                            }
+                        }
+
+                        val pet = Pet(
+                            petId = id,
+                            name = mutableStateOf(name),
+                            animal = animal,
+                            breed = breed,
+                            gender = if (gender == "m") mutableStateOf("Male") else mutableStateOf("Female"),
+                            age = mutableIntStateOf(age),
+                            birthday = birthday,
+                            weight = mutableDoubleStateOf(weight),
+                            insuranceProvider = mutableStateOf(insuranceProvider),
+                            policyNumber = mutableStateOf(policyNumber),
+                            medicationName = mutableStateOf(medicationName),
+                            medicationDosage = mutableStateOf(medicationDosage),
+                            sharedUsers = mutableStateOf(sharedUsers)
+                        )
+                        petList.add(pet)
+                    }
+
+                    _sharedPetsList.value = petList
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -156,8 +260,7 @@ class PetsPageViewModel @Inject constructor(
                             medicationName = mutableStateOf(jsonResponse.optString("medicationName", "--")),
                             medicationDosage = mutableStateOf(jsonResponse.optString("medicationDosage", "--"))
                         )
-                        // Refresh pet list
-                        fetchPetsFromServer()
+                        fetchAllPetsFromServer()
                     } else {
                         println("Adding pet failed: ${response.body?.string()}")
                     }
@@ -209,7 +312,6 @@ class PetsPageViewModel @Inject constructor(
                 // Build PATCH or PUT request (depends on your server)
                 val request = Request.Builder()
                     .url("http://10.0.2.2:3000/api/pets/$petId")
-                    // .put(...) or .patch(...) depending on your backend
                     .patch(requestBody)
                     .addHeader("Content-Type", "application/json")
                     .addHeader("Accept", "application/json")
@@ -236,7 +338,7 @@ class PetsPageViewModel @Inject constructor(
                             medicationDosage = mutableStateOf(jsonResponse.optString("medicationDosage", medicationDosage))
                         )
 
-                        fetchPetsFromServer()
+                        fetchAllPetsFromServer()
                     } else {
                         Log.e("PetsPageViewModel", "Failed to update pet: ${response.code}")
                     }
@@ -248,8 +350,18 @@ class PetsPageViewModel @Inject constructor(
             onResult(success, updatedPet)
         }
     }
+
     fun selectPet(petId: String) {
-        _selectedPet.value = _petsList.value.find { it.petId == petId }
+        _selectedPet.value = _allPetsList.value.find { it.petId == petId }
+    }
+
+    fun isSharedPetProfile(): Boolean {
+        if (_selectedPet.value?.sharedUsers != null) {
+            if (_selectedPet.value?.sharedUsers?.value?.contains(currentUserId) == true) {
+                return true
+            }
+        }
+        return false
     }
 
     fun deletePetForUser(petId: String, onResult: (Boolean) -> Unit) {
@@ -264,7 +376,7 @@ class PetsPageViewModel @Inject constructor(
                 client.newCall(request).execute().use { response ->
                     val success = response.isSuccessful
                     if (success) {
-                        fetchPetsFromServer()
+                        fetchAllPetsFromServer()
                     }
                     onResult(success)
                 }
@@ -275,6 +387,110 @@ class PetsPageViewModel @Inject constructor(
         }
     }
 
+    fun sharePetToUser(
+        petId: String,
+        emailAddress: String,
+        onResult: (Boolean, Pet?) -> Unit
+    ) {
+        viewModelScope.launch(Dispatchers.IO) {
+            var success: Boolean
+            try {
+                val json = JSONObject().apply {
+                    put("emailAddress", emailAddress)
+                }
+                val requestBody = json.toString()
+                    .toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
+
+                val request = Request.Builder()
+                    .url("http://10.0.2.2:3000/api/pets/share/$petId")
+                    .patch(requestBody)
+                    .addHeader("Content-Type", "application/json")
+                    .addHeader("Accept", "application/json")
+                    .build()
+
+                client.newCall(request).execute().use { response ->
+                    success = response.isSuccessful
+                    if (success) {
+                        fetchAllPetsFromServer()
+                    } else {
+                        Log.e("PetsPageViewModel", "Failed to share pet: ${response.code}")
+                        success = false
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                success = false
+            }
+            onResult(success, _selectedPet.value)
+        }
+    }
+
+    fun unsharePetToUser(
+        petId: String,
+        emailAddress: String,
+        onResult: (Boolean) -> Unit
+    ) {
+        viewModelScope.launch(Dispatchers.IO) {
+            var success: Boolean
+            try {
+                val json = JSONObject().apply {
+                    put("emailAddress", emailAddress)
+                }
+                val requestBody = json.toString()
+                    .toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
+
+                val request = Request.Builder()
+                    .url("http://10.0.2.2:3000/api/pets/share/$petId")
+                    .delete(requestBody)
+                    .addHeader("Content-Type", "application/json")
+                    .addHeader("Accept", "application/json")
+                    .build()
+
+                client.newCall(request).execute().use { response ->
+                    success = response.isSuccessful
+                    if (success) {
+                        fetchAllPetsFromServer()
+                    } else {
+                        Log.e("PetsPageViewModel", "Failed to unshare pet: ${response.code}")
+                        success = false
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                success = false
+            }
+            onResult(success)
+        }
+    }
+
+
+    fun getUserEmailAddress(userId: String, onResult: (Boolean, String) -> Unit) {
+        viewModelScope.launch(Dispatchers.IO) {
+            var userEmailAddress: String = ""
+            var success: Boolean = false
+            try {
+                val request = Request.Builder()
+                    .url("http://10.0.2.2:3000/api/users/$userId")
+                    .get()
+                    .build()
+
+                client.newCall(request).execute().use { response ->
+                    if (response.isSuccessful) {
+                        val responseBody = response.body?.string()
+                        val jsonResponse = JSONObject(responseBody ?: "")
+                        userEmailAddress = jsonResponse.optString("emailAddress")
+                        success = true
+                    } else {
+                        success = false
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                success = false
+            }
+            onResult(success, userEmailAddress)
+        }
+    }
 }
 
 
