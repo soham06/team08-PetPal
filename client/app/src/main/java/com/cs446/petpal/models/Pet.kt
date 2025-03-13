@@ -14,5 +14,6 @@ data class Pet(
     val insuranceProvider: MutableState<String>,
     val policyNumber: MutableState<String>,
     val medicationName: MutableState<String>,
-    val medicationDosage: MutableState<String>
+    val medicationDosage: MutableState<String>,
+    val sharedUsers: MutableState<Array<String>>? = null
 )

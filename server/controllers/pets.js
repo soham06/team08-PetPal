@@ -152,6 +152,11 @@ export async function sharePetWithUser (req, res) {
         const usersRef = collection(db, "users");
         const q = query(usersRef, where("emailAddress", "==", userData.emailAddress));
         const user = await getDocs(q);
+
+        if (user.docs.length == 0) {
+            return res.status(404).json({ message: "User does not exist"});
+        }
+
         const userId = user.docs.map(doc => ({
             userId: doc.id,
             ...doc.data()
