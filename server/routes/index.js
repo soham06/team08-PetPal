@@ -4,6 +4,7 @@ import { loginUser } from '../controllers/login.js'
 import { getTasksForUser,createTaskForUser, updateTaskForUser, deleteTaskForUser } from '../controllers/tasks.js'
 import { getEventsForUser, createEventForUser, updateEventForUser, deleteEventForUser } from '../controllers/events.js'
 import { getPetsForUser, createPetForUser, updatePetForUser, deletePetForUser, sharePetWithUser, unsharePetWithUser, getSharedPetsForUser } from '../controllers/pets.js'
+import { getPostingsForUser, createPostingForUser, updatePostForUser, deletePostForUser } from '../controllers/postings.js'
 
 const router = express.Router()
 
@@ -37,5 +38,11 @@ router.delete('/pets/:petId', deletePetForUser)
 router.get('/pets/share/:userId', getSharedPetsForUser)
 router.patch('/pets/share/:petId', sharePetWithUser)
 router.delete('/pets/share/:petId', unsharePetWithUser)
+
+// pet postings routes
+router.get('/postings/:userId', getPostingsForUser)
+router.get('/postings/:userId', createPostingForUser)
+router.get('/postings/:userId', updatePostForUser)
+router.get('/postings/:userId', deletePostForUser)
 
 export default router;
