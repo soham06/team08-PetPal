@@ -1,9 +1,10 @@
 import express from 'express'
 import { registerUser } from '../controllers/register.js'
-import { loginUser } from '../controllers/login.js'
+import { loginUser, getUserDetailsById } from '../controllers/login.js'
 import { getTasksForUser,createTaskForUser, updateTaskForUser, deleteTaskForUser } from '../controllers/tasks.js'
 import { getEventsForUser, createEventForUser, updateEventForUser, deleteEventForUser } from '../controllers/events.js'
 import { getPetsForUser, createPetForUser, updatePetForUser, deletePetForUser, sharePetWithUser, unsharePetWithUser, getSharedPetsForUser } from '../controllers/pets.js'
+import { getPostingsForUser, createPostingForUser, updatePostForUser, deletePostForUser } from '../controllers/postings.js'
 
 const router = express.Router()
 
@@ -14,6 +15,7 @@ router.get('/', (req, res) => {
 // user routes
 router.post('/register', registerUser);
 router.post('/login', loginUser);
+router.get('/users/:userId', getUserDetailsById);
 
 // task routes
 router.get('/tasks/:userId', getTasksForUser);
@@ -37,5 +39,11 @@ router.delete('/pets/:petId', deletePetForUser)
 router.get('/pets/share/:userId', getSharedPetsForUser)
 router.patch('/pets/share/:petId', sharePetWithUser)
 router.delete('/pets/share/:petId', unsharePetWithUser)
+
+// pet postings routes
+router.get('/postings/:userId', getPostingsForUser)
+router.post('/postings/:userId', createPostingForUser)
+router.patch('/postings/:postId', updatePostForUser)
+router.delete('/postings/:postId', deletePostForUser)
 
 export default router;

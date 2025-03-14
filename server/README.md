@@ -181,3 +181,42 @@ The server will start at: `http://localhost:3000`
 
 `Response`: "Successfully unshared pet" if the pet is unshared with users
 
+**`GET /postings/:userId`** - gets a list of pet postings for a given user
+
+`Request`: `/postings/akhsjfbkaaacjn`
+
+`Response`: List of pet postings for a given user
+
+**`POST /postings/:userId`** - creates a new pet posting from a given user
+
+`Request`:
+
+    {
+        "city": "Waterloo",
+        "description": "this is a new post",
+        "email": "test@gmail.com",
+        "name": "joe",
+        "phone": "123-456-7890"
+    }
+
+`Response`: Created pet posting for the user
+
+**`PATCH /postings/:postId`** - updates an existing posting for a given user
+
+`Request`:
+
+    {
+        "city": "Waterloo",
+        "description": "this is a patch test",
+        "email": "test@gmail.com",
+        "name": "joe",
+        "phone": "123-456-7890"
+    }
+
+`Response`: Updated posting for the user
+
+**`DELETE /postings/:postId`** - deletes an existing post for a given user
+
+`Request`: No request body needed
+
+`Response`: "Successfully deleted post" if the task is deleted
