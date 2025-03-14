@@ -36,13 +36,15 @@ class SignUpViewModel @Inject constructor(
                 )
 
                 val json = JSONObject().apply {
-                    put("firstName", userRepository.currentUser.value?.firstName.toString())
-                    put("lastName", userRepository.currentUser.value?.lastName.toString())
-                    put("address", userRepository.currentUser.value?.address.toString())
-                    put("emailAddress", userRepository.currentUser.value?.email.toString())
-                    put("password", userRepository.currentUser.value?.password.toString())
-                    put("userType", userRepository.currentUser.value?.userType.toString())
+                    put("firstName", userRepository.currentUser.value?.firstName?.value)
+                    put("lastName", userRepository.currentUser.value?.lastName?.value)
+                    put("address", userRepository.currentUser.value?.address?.value)
+                    put("emailAddress", userRepository.currentUser.value?.email?.value)
+                    put("password", userRepository.currentUser.value?.password?.value)
+                    put("userType", userRepository.currentUser.value?.userType?.value)
                 }
+
+                println("json object: $json")
 
                 val requestBody = json.toString().toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
                 val request = Request.Builder()
