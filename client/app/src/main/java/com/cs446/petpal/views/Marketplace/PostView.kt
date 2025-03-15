@@ -1,68 +1,102 @@
 package com.cs446.petpal.views.Marketplace
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.cs446.petpal.R
 import com.cs446.petpal.models.Post
 
 @Composable
-fun PostCard(post: Post, modifier: Modifier = Modifier) {
+fun PostCard(
+    post: Post,
+    modifier: Modifier = Modifier,
+    editable: Boolean = false, // Controls visibility of edit/delete buttons.
+    onEdit: () -> Unit = {},
+    onDelete: () -> Unit = {}
+) {
     Card(
         modifier = modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp, horizontal = 4.dp),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color(0xCC1C1C1C) // Dark grey with transparency.
+            containerColor = Color(0xCC1C1C1C)
         ),
-        border = BorderStroke(1.dp, Color(0x66FFFFFF)), // Subtle white border.
+        border = BorderStroke(1.dp, Color(0x66FFFFFF))
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            // Post Name as the title
-            Text(
-                text = post.name.value,
-                style = MaterialTheme.typography.titleMedium.copy(
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp
+            // Top Row: Title with optional action buttons.
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = post.name.value,
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp
+                    )
                 )
-            )
+                if (editable) {
+                    Row {
+                        IconButton(
+                            onClick = { onEdit() },
+                            colors = IconButtonDefaults.iconButtonColors(
+                                containerColor = Color(0xFFA2D9FF)
+                            )
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.edit),
+                                contentDescription = "Edit Post",
+                                tint = Color.Black
+                            )
+                        }
+                        IconButton(
+                            onClick = { onDelete() },
+                            colors = IconButtonDefaults.iconButtonColors(
+                                containerColor = Color(0xFFA2D9FF)
+                            )
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.delete),
+                                contentDescription = "Delete Post",
+                                tint = Color.Black
+                            )
+                        }
+                    }
+                }
+            }
             Spacer(modifier = Modifier.height(4.dp))
-            // City information
+            // City
             Text(
                 text = "City: ${post.city.value}",
                 style = MaterialTheme.typography.bodyMedium.copy(color = Color.White)
             )
             Spacer(modifier = Modifier.height(2.dp))
-            // Phone information
+            // Phone
             Text(
                 text = "Phone: ${post.phone.value}",
                 style = MaterialTheme.typography.bodyMedium.copy(color = Color.White)
             )
             Spacer(modifier = Modifier.height(2.dp))
-            // Email information
+            // Email
             Text(
                 text = "Email: ${post.email.value}",
                 style = MaterialTheme.typography.bodyMedium.copy(color = Color.White)
             )
             Spacer(modifier = Modifier.height(8.dp))
-            // Description label and content
+            // Description label and content.
             Text(
                 text = "Description:",
                 style = MaterialTheme.typography.bodyLarge.copy(

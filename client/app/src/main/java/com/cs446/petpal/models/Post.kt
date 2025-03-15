@@ -7,5 +7,6 @@ data class Post(
     val city: MutableState<String>,
     val phone: MutableState<String>,
     val email: MutableState<String>,
-    val description: MutableState<String>
+    val description: MutableState<String>,
+    var postId: String? = null
 )
