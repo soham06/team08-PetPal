@@ -157,13 +157,17 @@ export async function sharePetWithUser (req, res) {
             return res.status(404).json({ message: "User does not exist"});
         }
 
-        const userId = user.docs.map(doc => ({
+        const fetchedUserData = user.docs.map(doc => ({
             userId: doc.id,
             ...doc.data()
-        }))[0].userId;
+        }))[0];
+
+        if (userData.emailAddress === fetchedUserData.emailAddress) {
+            return res.status(400).json({ message: "Can't share profile with yourself!"});
+        }
 
         await updateDoc(petRef, {
-            sharedUsers: arrayUnion(userId)
+            sharedUsers: arrayUnion(fetchedUserData.userId)
         })
 
         const fetchedUpdatedPet = await getDoc(petRef)

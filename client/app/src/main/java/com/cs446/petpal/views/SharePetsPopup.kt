@@ -40,8 +40,8 @@ fun sharePetsPopup(currPet: Pet?, currPetId: String?, petsViewModel: PetsPageVie
     var sharePetSuccess by remember { mutableStateOf<Boolean?>(null) }
     var unsharePetSuccess by remember { mutableStateOf<Boolean?>(null) }
     val userEmails = remember { mutableStateOf(mapOf<String, String>()) }
-    var showShareMessage by remember { mutableStateOf(true) }
-    var showUnshareMessage by remember { mutableStateOf(true) }
+    var showShareMessage by remember { mutableStateOf(false) }
+    var showUnshareMessage by remember { mutableStateOf(false) }
 
     AlertDialog(
         onDismissRequest = { showDialog = false },
@@ -77,6 +77,7 @@ fun sharePetsPopup(currPet: Pet?, currPetId: String?, petsViewModel: PetsPageVie
                                     emailAddress = userInputEmail,
                                 ) { success, _ ->
                                     sharePetSuccess = success
+                                    showShareMessage = true
                                 }
                             }
                         },
@@ -91,8 +92,8 @@ fun sharePetsPopup(currPet: Pet?, currPetId: String?, petsViewModel: PetsPageVie
                 }
                 Spacer(modifier = Modifier.height(16.dp))
 
-                LaunchedEffect(sharePetSuccess) {
-                    if (sharePetSuccess != null) {
+                LaunchedEffect(showShareMessage) {
+                    if (showShareMessage) {
                         delay(2000)
                         showShareMessage = false
                     }
@@ -159,6 +160,7 @@ fun sharePetsPopup(currPet: Pet?, currPetId: String?, petsViewModel: PetsPageVie
                                                     emailAddress = email,
                                                 ) { success ->
                                                     unsharePetSuccess = success
+                                                    showUnshareMessage = true
                                                 }
                                             }
                                         },
@@ -181,8 +183,8 @@ fun sharePetsPopup(currPet: Pet?, currPetId: String?, petsViewModel: PetsPageVie
                     }
                 }
 
-                LaunchedEffect(unsharePetSuccess) {
-                    if (unsharePetSuccess != null) {
+                LaunchedEffect(showUnshareMessage) {
+                    if (showUnshareMessage) {
                         delay(2000)
                         showUnshareMessage = false
                     }
