@@ -1,8 +1,11 @@
 package com.cs446.petpal.views
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -26,6 +29,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import coil3.compose.AsyncImage
 import com.cs446.petpal.R
 import com.cs446.petpal.models.Pet
 import com.cs446.petpal.viewmodels.PetsPageViewModel
@@ -120,6 +124,12 @@ fun PetsPageView(
                 MedicationInfoCard(petToShow)
 
                 Spacer(modifier = Modifier.height(16.dp))
+
+                // if (!petsPageViewModel.isSharedPetProfile()) {
+                val images = listOf(R.drawable.dog_play, R.drawable.dog_drink, R.drawable.dog_eat, R.drawable.dog_bath)
+                ImageGallery(images)
+
+                Spacer(modifier = Modifier.height(16.dp))
             }
 
             // Bottom Bar
@@ -128,18 +138,20 @@ fun PetsPageView(
 
         if (!petsPageViewModel.isSharedPetProfile()) {
             Box(
-                modifier = Modifier.fillMaxSize().padding(end = 16.dp, bottom = 95.dp),
+                modifier = Modifier.fillMaxSize().padding(end = 6.dp, bottom = 100.dp),
                 contentAlignment = Alignment.BottomEnd
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(8.dp), // Adjust spacing
+                    // verticalAlignment = Arrangement.spacedBy(8.dp) ,
+                    // horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     // Floating Action Button (Manage Pet Sharing)
                     FloatingActionButton(
                         onClick = { showSharePetDialog = true },
                         containerColor = Color(0xFF64B5F6),
-                        modifier = Modifier.size(48.dp)
+                        modifier = Modifier.size(38.dp)
                     ) {
                         Icon(
                             imageVector = Icons.Filled.ManageAccounts,
@@ -158,7 +170,7 @@ fun PetsPageView(
                             }
                         },
                         containerColor = Color(0xFF64B5F6),
-                        modifier = Modifier.size(48.dp)
+                        modifier = Modifier.size(35.dp)
                     ) {
                         Icon(
                             imageVector = Icons.Filled.Delete,
@@ -335,54 +347,6 @@ fun MyPetSelectionRow(
         )
     }
 }
-
-// My Pet Selection Row
-/*@Composable
-fun SharedPetSelectionRow(
-    pets: List<Pet>,
-    selectedPet: String,
-    onPetSelected: (String) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Start
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            // modifier = Modifier.padding(horizontal = 4.dp)
-        ) {
-            Text(
-                text = "Shared With Me",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(horizontal = 6.dp)
-            )
-            pets.forEach { pet ->
-                Column(
-                    horizontalAlignment = Alignment.Start,
-                    modifier = Modifier.clickable { onPetSelected(pet.petId) }
-                ) {
-                    Image(
-                        painter = painterResource(id = getPetProfilePic(pet.name.value)),
-                        contentDescription = "Profile picture for ${pet.name.value}",
-                        modifier = Modifier
-                            .size(50.dp)
-                            .clip(CircleShape),
-                        contentScale = ContentScale.Crop
-                    )
-                    Text(
-                        text = pet.name.value,
-                        fontSize = 12.sp,
-                        fontWeight = if (selectedPet == pet.petId) FontWeight.Bold else FontWeight.Normal
-                    )
-                }
-            }
-        }
-
-        //Spacer(modifier = Modifier.weight(0.9f))
-    }
-}*/
 
 // My Pet Selection Row
 @Composable
@@ -599,6 +563,57 @@ fun MedicationInfoCard(
                 }
             }
         }
+    }
+}
+
+@Composable
+fun ImageGallery(images: List<Int>) {
+    var showAddPhotoDialog by remember { mutableStateOf(false) }
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.cardElevation(4.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = "Photo Gallery",
+                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
+                )
+                Text(
+                    text = "Add Image",
+                    color = MaterialTheme.colorScheme.primary,
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.clickable { showAddPhotoDialog = true }
+                )
+            }
+
+            // Spacer(modifier = Modifier.height(8.dp))
+
+            LazyRow {
+                items(images) { imageRes ->
+                    Image(
+                        painter = painterResource(id = imageRes),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .size(100.dp)
+                            .clip(RoundedCornerShape(8.dp))
+                    )
+                }
+            }
+        }
+    }
+    if (showAddPhotoDialog) {
+        showAddPhotoDialog = imageUploadScreen()
     }
 }
 
