@@ -29,9 +29,9 @@ fun PostCard(
             .padding(vertical = 8.dp, horizontal = 4.dp),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color(0xCC1C1C1C)
+            containerColor = Color(0xFFA2D9FF)// Color(0xCC1C1C1C)
         ),
-        border = BorderStroke(1.dp, Color(0x66FFFFFF))
+        border = BorderStroke(1.dp, Color(0xCC1C1C1C))
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             // Top Row: Title with optional action buttons.
@@ -43,7 +43,7 @@ fun PostCard(
                 Text(
                     text = post.name.value,
                     style = MaterialTheme.typography.titleMedium.copy(
-                        color = Color.White,
+                        color = Color.Black,
                         fontWeight = FontWeight.Bold,
                         fontSize = 20.sp
                     )
@@ -53,7 +53,7 @@ fun PostCard(
                         IconButton(
                             onClick = { onEdit() },
                             colors = IconButtonDefaults.iconButtonColors(
-                                containerColor = Color(0xFFA2D9FF)
+                                containerColor = Color(0xFFFFD700)
                             )
                         ) {
                             Icon(
@@ -65,7 +65,7 @@ fun PostCard(
                         IconButton(
                             onClick = { onDelete() },
                             colors = IconButtonDefaults.iconButtonColors(
-                                containerColor = Color(0xFFA2D9FF)
+                                containerColor = Color(0xFFFFD700)
                             )
                         ) {
                             Icon(
@@ -81,33 +81,33 @@ fun PostCard(
             // City
             Text(
                 text = "City: ${post.city.value}",
-                style = MaterialTheme.typography.bodyMedium.copy(color = Color.White)
+                style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black)
             )
             Spacer(modifier = Modifier.height(2.dp))
             // Phone
             Text(
                 text = "Phone: ${post.phone.value}",
-                style = MaterialTheme.typography.bodyMedium.copy(color = Color.White)
+                style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black)
             )
             Spacer(modifier = Modifier.height(2.dp))
             // Email
             Text(
                 text = "Email: ${post.email.value}",
-                style = MaterialTheme.typography.bodyMedium.copy(color = Color.White)
+                style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black)
             )
             Spacer(modifier = Modifier.height(8.dp))
             // Description label and content.
             Text(
                 text = "Description:",
                 style = MaterialTheme.typography.bodyLarge.copy(
-                    color = Color.White,
+                    color = Color.Black,
                     fontWeight = FontWeight.Bold
                 )
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = post.description.value,
-                style = MaterialTheme.typography.bodyMedium.copy(color = Color.White)
+                style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black)
             )
         }
     }
