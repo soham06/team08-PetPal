@@ -38,7 +38,7 @@ import com.cs446.petpal.viewmodels.ProfilePageViewModel
 
 @Composable
 fun ProfilePageView(profilePageViewModel: ProfilePageViewModel = hiltViewModel(), navController: NavController) {
-    // User Values
+
     val firstName = profilePageViewModel.firstName
     val lastName = profilePageViewModel.lastName
     val address = profilePageViewModel.address
@@ -46,7 +46,6 @@ fun ProfilePageView(profilePageViewModel: ProfilePageViewModel = hiltViewModel()
     val userType = profilePageViewModel.userType
 
     Box(
-        // Blue Background
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFFA2D9FF)),
@@ -59,7 +58,7 @@ fun ProfilePageView(profilePageViewModel: ProfilePageViewModel = hiltViewModel()
                 .fillMaxWidth()
                 .padding(start = 24.dp, end = 24.dp, top = 0.dp, bottom = 24.dp)
         ){
-            // Close Screen
+
             Row (
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.End

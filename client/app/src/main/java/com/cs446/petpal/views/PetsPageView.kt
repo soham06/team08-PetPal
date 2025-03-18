@@ -33,7 +33,8 @@ import com.cs446.petpal.viewmodels.PetsPageViewModel
 @Composable
 fun PetsPageView(
     petsPageViewModel: PetsPageViewModel = hiltViewModel(),
-    navController: NavController
+    navController: NavController,
+    petId: String?
 ) {
     //Collect the flows from the ViewModel
     val myPets by petsPageViewModel.myPetsList.collectAsState()
@@ -43,6 +44,10 @@ fun PetsPageView(
     //Trigger network fetch once on screen load
     LaunchedEffect(Unit) {
         petsPageViewModel.fetchAllPetsFromServer()
+    }
+
+    LaunchedEffect(key1 = petId) {
+        petId?.let { petsPageViewModel.selectPet(it) }
     }
 
     // Show the selected pet or default to the first
