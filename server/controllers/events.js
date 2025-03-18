@@ -3,6 +3,8 @@ import { DateTime } from 'luxon'
 import { getFirestore, collection, getDoc, 
          getDocs, query, where, addDoc, doc,
          serverTimestamp, updateDoc, deleteDoc, orderBy, limit } from 'firebase/firestore';
+import { getMessaging } from 'firebase-admin/messaging'
+
 
 function convertStringToESTDate(date, time) {
     const [timePart, meridian] = time.split(" ");
@@ -135,7 +137,9 @@ export async function createEventForUser (req, res) {
             startDateTime: startDateTime,
             endDateTime: endDateTime,
             location: eventData.location,
-            createdAt: serverTimestamp()
+            createdAt: serverTimestamp(),
+            notificationSent: false,
+            registrationToken: eventData.registrationToken
         }
         const eventsTable = collection(db, "events")
         const newEvent = await addDoc(eventsTable, newEventData)
@@ -181,7 +185,9 @@ export async function updateEventForUser (req, res) {
             startDateTime: startDateTime,
             endDateTime: endDateTime,
             location: eventData.location,
-            createdAt: serverTimestamp()
+            createdAt: serverTimestamp(),
+            notificationSent: false,
+            registrationToken: eventData.registrationToken
         }
 
         await updateDoc(eventRef, updatedEventData)
@@ -219,3 +225,56 @@ export async function deleteEventForUser (req, res) {
         res.status(400).json({ message: error.message});
     }
 };
+
+export const sendNotifications = async () => {
+    try {
+        const db = getFirestore();
+
+        const messaging = getMessaging();
+
+        const eventsTable = collection(db, "events")
+        const q = query(eventsTable, where("notificationSent", "==", false))
+        const events = await getDocs(q)
+
+        const timeNow = new Date()
+        const oneHourLater = new Date(timeNow.getTime() + 60 * 60 * 1000);
+
+        const estTimeNow = convertToEST(timeNow)
+        const estOneHourLater = convertToEST(oneHourLater)
+
+        if (events.empty) {
+            return
+        }
+
+
+        events.forEach(async (eventDoc) => {
+            const event = eventDoc.data()
+            const { registrationToken, description, startDateTime } = event;
+
+            const eventTime = (new Date(startDateTime)).toISOString()
+
+            if (eventTime >= estTimeNow && eventTime <= estOneHourLater) {
+                if (!registrationToken) {
+                    return;
+                }
+
+                const message = {
+                    notification: {
+                        title: "Upcoming Event",
+                        body: description,
+                    },
+                    token: registrationToken
+                };
+
+                try {
+                    await messaging.send(message)
+                    await updateDoc(doc(db, "events", eventDoc.id), { notificationSent: true });
+                } catch (error) {
+                    console.error("Error fetching events:", error);
+                }
+            }
+        })
+    } catch(error) {
+        console.error("Error, sending notifications failed", error)
+    }
+}
