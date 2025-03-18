@@ -27,12 +27,13 @@ import androidx.navigation.NavController
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.cs446.petpal.R
 import androidx.compose.foundation.Image
+import android.util.Log
 
 import com.cs446.petpal.viewmodels.HomepagePetsViewModel
 
 @Composable
 fun HomepageView(homepagePetsViewModel: HomepagePetsViewModel = hiltViewModel(), navController: NavController) {
-    // Retrieve pet lists and upcoming events from the ViewModel
+
     val myPets by homepagePetsViewModel.myPetsList.collectAsState()
     val sharedPets by homepagePetsViewModel.sharedPetsList.collectAsState()
     val upcomingEvents by homepagePetsViewModel.upcomingEvents.collectAsState()
@@ -42,7 +43,6 @@ fun HomepageView(homepagePetsViewModel: HomepagePetsViewModel = hiltViewModel(),
     ) {
 
         TopBar(navController = navController)
-
 
         Box(
             modifier = Modifier
@@ -75,7 +75,8 @@ fun HomepageView(homepagePetsViewModel: HomepagePetsViewModel = hiltViewModel(),
                     }
                     PetListItem(
                         petName = pet.name.value,
-                        onClick = { navController.navigate("petspage/${pet.petId}") },
+                        onClick = { Log.d("HomepageView", "Clicked pet: ${pet.petId}")
+                            navController.navigate("petspage/${pet.petId}") },
                         petImageResId = petImageRes
                     )
                 }
@@ -93,13 +94,14 @@ fun HomepageView(homepagePetsViewModel: HomepagePetsViewModel = hiltViewModel(),
                 }
                 itemsIndexed(sharedPets) { index, pet ->
                     val petImageRes = when (index) {
-                        0 -> R.drawable.pet_max
+                        0 -> R.drawable.pet_toby
                         1 -> R.drawable.pet_luna
-                        else -> R.drawable.pet_max
+                        else -> R.drawable.pet_toby
                     }
                     PetListItem(
                         petName = pet.name.value,
-                        onClick = { navController.navigate("petspage/${pet.petId}") },
+                        onClick = { Log.d("HomepageView", "Clicked pet: ${pet.petId}")
+                            navController.navigate("petspage/${pet.petId}") },
                         petImageResId = petImageRes
                     )
                 }
@@ -122,8 +124,6 @@ fun HomepageView(homepagePetsViewModel: HomepagePetsViewModel = hiltViewModel(),
                 }
             }
         }
-
-        // Footer (Bottom Bar)
         BottomBar(navController)
     }
 }
@@ -167,7 +167,6 @@ fun PetListItem(
                 fontWeight = FontWeight.SemiBold
             )
             Spacer(modifier = Modifier.weight(1f))
-            // Arrow icon for navigation
             Icon(
                 imageVector = Icons.Filled.ArrowForward,
                 contentDescription = "Go to Pet Profile",
@@ -179,6 +178,10 @@ fun PetListItem(
 
 @Composable
 fun EventListItem(event: com.cs446.petpal.models.Event) {
+    val formattedDate = remember(event.startDate.value) {
+        parseDateToMonthDay(event.startDate.value)
+    }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -192,31 +195,54 @@ fun EventListItem(event: com.cs446.petpal.models.Event) {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp),
-            verticalAlignment = Alignment.CenterVertically
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.Top
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.ic_event), // Replace with your logo resource
-                contentDescription = "Event Logo",
-                modifier = Modifier.size(40.dp),
-                contentScale = ContentScale.Crop
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Column(
-                modifier = Modifier.weight(1f)
+            Row(
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = event.description.value,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold
+                Image(
+                    painter = painterResource(id = R.drawable.ic_event),
+                    contentDescription = "Event Icon",
+                    modifier = Modifier.size(40.dp),
+                    contentScale = ContentScale.Crop
                 )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = "${event.startDate.value} ${event.startTime.value}",
-                    fontSize = 14.sp,
-                    color = Color.Gray
-                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Column {
+                    Text(
+                        text = event.description.value,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = event.startTime.value,
+                        fontSize = 14.sp,
+                        color = Color.Gray
+                    )
+                }
             }
+            Text(
+                text = formattedDate,
+                fontSize = 14.sp,
+                color = Color.Gray
+            )
         }
+    }
+}
+
+fun parseDateToMonthDay(dateStr: String): String {
+    return try {
+        val inputFormat = java.text.SimpleDateFormat("MM-dd-yyyy", java.util.Locale.US)
+        val outputFormat = java.text.SimpleDateFormat("MMMM d", java.util.Locale.US) // "March 25"
+        val date = inputFormat.parse(dateStr)
+        if (date != null) {
+            outputFormat.format(date)
+        } else {
+            dateStr
+        }
+    } catch (e: Exception) {
+        dateStr
     }
 }
 
@@ -379,6 +405,10 @@ fun PetListItem(petName: String, onClick: () -> Unit) {
 
 @Composable
 fun EventListItem(event: com.cs446.petpal.models.Event) {
+    val formattedDate = remember(event.startDate.value) {
+        parseDateToMonthDay(event.startDate.value)
+    }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -392,33 +422,54 @@ fun EventListItem(event: com.cs446.petpal.models.Event) {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp),
-            verticalAlignment = Alignment.CenterVertically
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.Top
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.ic_event), // Replace with your logo
-                contentDescription = "Event Logo",
-                modifier = Modifier
-                    .size(40.dp),
-                contentScale = ContentScale.Crop
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            // Column for event name and start date/time
-            Column(
-                modifier = Modifier.weight(1f)
+            Row(
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = event.description.value,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold
+                Image(
+                    painter = painterResource(id = R.drawable.ic_event),
+                    contentDescription = "Event Icon",
+                    modifier = Modifier.size(40.dp),
+                    contentScale = ContentScale.Crop
                 )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = "${event.startDate.value} ${event.startTime.value}",
-                    fontSize = 14.sp,
-                    color = Color.Gray
-                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Column {
+                    Text(
+                        text = event.description.value,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = event.startTime.value,
+                        fontSize = 14.sp,
+                        color = Color.Gray
+                    )
+                }
             }
+            Text(
+                text = formattedDate,
+                fontSize = 14.sp,
+                color = Color.Gray
+            )
         }
+    }
+}
+
+fun parseDateToMonthDay(dateStr: String): String {
+    return try {
+        val inputFormat = java.text.SimpleDateFormat("MM-dd-yyyy", java.util.Locale.US)
+        val outputFormat = java.text.SimpleDateFormat("MMMM d", java.util.Locale.US) // "March 25"
+        val date = inputFormat.parse(dateStr)
+        if (date != null) {
+            outputFormat.format(date)
+        } else {
+            dateStr
+        }
+    } catch (e: Exception) {
+        dateStr
     }
 }
 */

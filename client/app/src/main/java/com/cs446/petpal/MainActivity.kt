@@ -40,13 +40,14 @@ class MainActivity : ComponentActivity() {
                     color = Color.White,
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    NavHost(navController = navController, startDestination = "homepage") {
+                    NavHost(navController = navController, startDestination = "landing") {
                         composable("landing") { LandingPageScreen(navController) }
                         composable("signup") { SignUpView(navController = navController) }
                         composable("login") { LoginView(navController = navController) }
                         composable("homepage") { HomepageView(navController = navController) }
                         composable("calendarpage") { CalendarPageView(navController = navController) }
                         composable("taskspage") { TasksPageView(navController = navController) }
+                        composable("petspage") { PetsPageView(navController = navController, petId = null) }
                         composable("petspage/{petId}") { backStackEntry ->
                             val petId = backStackEntry.arguments?.getString("petId")
                             PetsPageView(navController = navController, petId = petId)}

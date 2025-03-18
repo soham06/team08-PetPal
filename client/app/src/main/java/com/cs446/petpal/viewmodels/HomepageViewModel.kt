@@ -52,7 +52,6 @@ class HomepagePetsViewModel @Inject constructor(
     val upcomingEvents: StateFlow<List<Event>> = _upcomingEvents
 
     init {
-        // Fetch pets and upcoming events at initialization
         fetchAllPetsFromServer()
         fetchUpcomingEvents()
     }
@@ -271,7 +270,6 @@ class HomepagePetsViewModel @Inject constructor(
         }
     }
 
-    // Helper to parse date/time into a timestamp
     // Adjust if your server uses a different format, e.g. "MM-dd-yyyy h:mma"
     private fun parseEventTimestamp(dateStr: String, timeStr: String): Long {
         return try {

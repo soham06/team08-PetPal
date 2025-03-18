@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import android.util.Log
 import com.cs446.petpal.R
 import com.cs446.petpal.models.Pet
 import com.cs446.petpal.viewmodels.PetsPageViewModel
@@ -36,35 +37,33 @@ fun PetsPageView(
     navController: NavController,
     petId: String?
 ) {
-    //Collect the flows from the ViewModel
+    // Collect the flows from the ViewModel
     val myPets by petsPageViewModel.myPetsList.collectAsState()
     val sharedPets by petsPageViewModel.sharedPetsList.collectAsState()
     val selectedPet by petsPageViewModel.selectedPet.collectAsState()
 
-    //Trigger network fetch once on screen load
     LaunchedEffect(Unit) {
         petsPageViewModel.fetchAllPetsFromServer()
     }
-
-    LaunchedEffect(key1 = petId) {
-        petId?.let { petsPageViewModel.selectPet(it) }
+    LaunchedEffect(key1 = petId, key2 = myPets) {
+        if (!myPets.isNullOrEmpty() && petId != null) {
+            Log.d("PetsPageView", "Selecting pet with petId: $petId")
+            petsPageViewModel.selectPet(petId)
+        }
     }
 
-    // Show the selected pet or default to the first
     val petToShow = selectedPet ?: myPets.firstOrNull()
 
     val scrollState = rememberScrollState()
-
     var showSharePetDialog by remember { mutableStateOf(false) }
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.fillMaxSize()) {
-            // Top Bar
             TopBar(navController = navController)
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // My Pet Selection Row
+
             MyPetSelectionRow(
                 pets = myPets,
                 selectedPet = petToShow?.petId ?: "",
@@ -89,7 +88,6 @@ fun PetsPageView(
                     .verticalScroll(scrollState),
                 horizontalAlignment = Alignment.Start
             ) {
-                // Main Pet Image Section
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -126,19 +124,19 @@ fun PetsPageView(
 
                 Spacer(modifier = Modifier.height(16.dp))
             }
-
-            // Bottom Bar
             BottomBar(navController)
         }
 
         if (!petsPageViewModel.isSharedPetProfile()) {
             Box(
-                modifier = Modifier.fillMaxSize().padding(end = 16.dp, bottom = 95.dp),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(end = 16.dp, bottom = 95.dp),
                 contentAlignment = Alignment.BottomEnd
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(8.dp), // Adjust spacing
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     // Floating Action Button (Manage Pet Sharing)
                     FloatingActionButton(
@@ -176,6 +174,7 @@ fun PetsPageView(
             }
         }
     }
+
     if (showSharePetDialog && petToShow != null) {
         showSharePetDialog = sharePetsPopup(
             currPet = selectedPet,
@@ -184,6 +183,7 @@ fun PetsPageView(
         )
     }
 }
+
 
 // PetInfoCard
 @Composable
