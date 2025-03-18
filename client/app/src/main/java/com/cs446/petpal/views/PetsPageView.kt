@@ -125,7 +125,8 @@ fun PetsPageView(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                val images = listOf(R.drawable.pet_toby, R.drawable.pet_max, R.drawable.pet_luna, R.drawable.profile_pic_main)
+                // if (!petsPageViewModel.isSharedPetProfile()) {
+                val images = listOf(R.drawable.dog_play, R.drawable.dog_drink, R.drawable.dog_eat, R.drawable.dog_bath)
                 ImageGallery(images)
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -137,18 +138,20 @@ fun PetsPageView(
 
         if (!petsPageViewModel.isSharedPetProfile()) {
             Box(
-                modifier = Modifier.fillMaxSize().padding(end = 16.dp, bottom = 95.dp),
+                modifier = Modifier.fillMaxSize().padding(end = 6.dp, bottom = 100.dp),
                 contentAlignment = Alignment.BottomEnd
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(8.dp), // Adjust spacing
+                    // verticalAlignment = Arrangement.spacedBy(8.dp) ,
+                    // horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     // Floating Action Button (Manage Pet Sharing)
                     FloatingActionButton(
                         onClick = { showSharePetDialog = true },
                         containerColor = Color(0xFF64B5F6),
-                        modifier = Modifier.size(48.dp)
+                        modifier = Modifier.size(38.dp)
                     ) {
                         Icon(
                             imageVector = Icons.Filled.ManageAccounts,
@@ -167,7 +170,7 @@ fun PetsPageView(
                             }
                         },
                         containerColor = Color(0xFF64B5F6),
-                        modifier = Modifier.size(48.dp)
+                        modifier = Modifier.size(35.dp)
                     ) {
                         Icon(
                             imageVector = Icons.Filled.Delete,
@@ -593,7 +596,7 @@ fun ImageGallery(images: List<Int>) {
                 )
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            // Spacer(modifier = Modifier.height(8.dp))
 
             LazyRow {
                 items(images) { imageRes ->
@@ -604,32 +607,14 @@ fun ImageGallery(images: List<Int>) {
                             .padding(8.dp)
                             .size(100.dp)
                             .clip(RoundedCornerShape(8.dp))
-                            .background(Color.Gray)
                     )
                 }
-                /* item {
-                    AsyncImage(
-                        model = "https://fastly.picsum.photos/id/972/200/300.jpg?hmac=UMf5f6BV9GkLiz0Xz9kMwm1riiTtlpIG2jt0WrxZ51Q",
-                        contentDescription = "Translated description of what the image contains"
-                    )
-                } */
             }
         }
     }
     if (showAddPhotoDialog) {
         showAddPhotoDialog = imageUploadScreen()
     }
-}
-
-@Preview
-@Composable
-fun LoadingImageFromInternetCoil() {
-    // [START android_compose_images_load_internet_coil]
-    AsyncImage(
-        model = "https://example.com/image.jpg",
-        contentDescription = "Translated description of what the image contains"
-    )
-    // [END android_compose_images_load_internet_coil]
 }
 
 // Icon placeholders (unchanged)
