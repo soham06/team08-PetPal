@@ -273,7 +273,7 @@ fun MyPetSelectionRow(
         horizontalArrangement = Arrangement.Start
     ) {
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
+            horizontalAlignment = Alignment.Start,
             modifier = Modifier.padding(horizontal = 4.dp)
         ) {
             Text(
@@ -281,28 +281,32 @@ fun MyPetSelectionRow(
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier
-                    .padding(horizontal = 8.dp)
+                    .padding(horizontal = 8.dp, vertical = 4.dp)
             )
-            pets.forEach { pet ->
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier
-                        .padding(horizontal = 8.dp)
-                        .clickable { onPetSelected(pet.petId) }
-                ) {
-                    Image(
-                        painter = painterResource(id = getPetProfilePic(pet.name.value)),
-                        contentDescription = "Profile picture for ${pet.name.value}",
+            Row(
+                horizontalArrangement = Arrangement.Start,
+            ) {
+                pets.forEach { pet ->
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier
-                            .size(50.dp)
-                            .clip(CircleShape),
-                        contentScale = ContentScale.Crop
-                    )
-                    Text(
-                        text = pet.name.value,
-                        fontSize = 12.sp,
-                        fontWeight = if (selectedPet == pet.petId) FontWeight.Bold else FontWeight.Normal
-                    )
+                            .padding(horizontal = 8.dp)
+                            .clickable { onPetSelected(pet.petId) }
+                    ) {
+                        Image(
+                            painter = painterResource(id = getPetProfilePic(pet.name.value)),
+                            contentDescription = "Profile picture for ${pet.name.value}",
+                            modifier = Modifier
+                                .size(50.dp)
+                                .clip(CircleShape),
+                            contentScale = ContentScale.Crop
+                        )
+                        Text(
+                            text = pet.name.value,
+                            fontSize = 12.sp,
+                            fontWeight = if (selectedPet == pet.petId) FontWeight.Bold else FontWeight.Normal
+                        )
+                    }
                 }
             }
         }
@@ -337,54 +341,6 @@ fun MyPetSelectionRow(
 }
 
 // My Pet Selection Row
-/*@Composable
-fun SharedPetSelectionRow(
-    pets: List<Pet>,
-    selectedPet: String,
-    onPetSelected: (String) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Start
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            // modifier = Modifier.padding(horizontal = 4.dp)
-        ) {
-            Text(
-                text = "Shared With Me",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(horizontal = 6.dp)
-            )
-            pets.forEach { pet ->
-                Column(
-                    horizontalAlignment = Alignment.Start,
-                    modifier = Modifier.clickable { onPetSelected(pet.petId) }
-                ) {
-                    Image(
-                        painter = painterResource(id = getPetProfilePic(pet.name.value)),
-                        contentDescription = "Profile picture for ${pet.name.value}",
-                        modifier = Modifier
-                            .size(50.dp)
-                            .clip(CircleShape),
-                        contentScale = ContentScale.Crop
-                    )
-                    Text(
-                        text = pet.name.value,
-                        fontSize = 12.sp,
-                        fontWeight = if (selectedPet == pet.petId) FontWeight.Bold else FontWeight.Normal
-                    )
-                }
-            }
-        }
-
-        //Spacer(modifier = Modifier.weight(0.9f))
-    }
-}*/
-
-// My Pet Selection Row
 @Composable
 fun SharedPetSelectionRow(
     pets: List<Pet>,
@@ -393,35 +349,44 @@ fun SharedPetSelectionRow(
     modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = modifier.fillMaxWidth().padding(horizontal = 16.dp),
+        modifier = modifier.fillMaxWidth().padding(start = 4.dp),
         horizontalArrangement = Arrangement.Start
     ) {
         Column(
             horizontalAlignment = Alignment.Start,
+            modifier = Modifier.padding(horizontal = 4.dp)
         ) {
             Text(
                 text = "Shared Pets",
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
+                modifier = Modifier
+                    .padding(horizontal = 8.dp, vertical = 4.dp)
             )
-            pets.forEach { pet ->
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.clickable { onPetSelected(pet.petId) }
-                ) {
-                    Image(
-                        painter = painterResource(id = getPetProfilePic(pet.name.value)),
-                        contentDescription = "Profile picture for ${pet.name.value}",
+            Row(
+                horizontalArrangement = Arrangement.Start,
+            ) {
+                pets.forEach { pet ->
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier
-                            .size(50.dp)
-                            .clip(CircleShape),
-                        contentScale = ContentScale.Crop
-                    )
-                    Text(
-                        text = pet.name.value,
-                        fontSize = 12.sp,
-                        fontWeight = if (selectedPet == pet.petId) FontWeight.Bold else FontWeight.Normal
-                    )
+                            .padding(horizontal = 8.dp)
+                            .clickable { onPetSelected(pet.petId) }
+                    ) {
+                        Image(
+                            painter = painterResource(id = getPetProfilePic(pet.name.value)),
+                            contentDescription = "Profile picture for ${pet.name.value}",
+                            modifier = Modifier
+                                .size(50.dp)
+                                .clip(CircleShape),
+                            contentScale = ContentScale.Crop
+                        )
+                        Text(
+                            text = pet.name.value,
+                            fontSize = 12.sp,
+                            fontWeight = if (selectedPet == pet.petId) FontWeight.Bold else FontWeight.Normal
+                        )
+                    }
                 }
             }
         }

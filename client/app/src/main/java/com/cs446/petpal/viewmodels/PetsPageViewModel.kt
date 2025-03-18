@@ -43,9 +43,10 @@ class PetsPageViewModel @Inject constructor(
 
     // Currently selected pet
     private val _selectedPet = MutableStateFlow<Pet?>(null)
-    val selectedPet: StateFlow<Pet?> = _selectedPet
+    var selectedPet: StateFlow<Pet?> = _selectedPet
 
     var currentUserId: String = userRepository.currentUser.value?.userId.toString();
+    var currentUserEmail: String = userRepository.currentUser.value?.email?.value.toString();
 
     fun fetchAllPetsFromServer() {
         fetchMyPetsFromServer()
@@ -393,6 +394,11 @@ class PetsPageViewModel @Inject constructor(
         onResult: (Boolean, Pet?) -> Unit
     ) {
         viewModelScope.launch(Dispatchers.IO) {
+            if (emailAddress == currentUserEmail) {
+                onResult(false, _selectedPet.value)
+                return@launch
+            }
+
             var success: Boolean
             try {
                 val json = JSONObject().apply {
