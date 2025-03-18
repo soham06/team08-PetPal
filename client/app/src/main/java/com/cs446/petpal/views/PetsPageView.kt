@@ -52,7 +52,8 @@ fun PetsPageView(
         }
     }
 
-    val petToShow = selectedPet ?: myPets.firstOrNull()
+    val petToShow = selectedPet ?: if (myPets.isNotEmpty()) myPets.firstOrNull() else sharedPets.firstOrNull()
+
 
     val scrollState = rememberScrollState()
     var showSharePetDialog by remember { mutableStateOf(false) }
