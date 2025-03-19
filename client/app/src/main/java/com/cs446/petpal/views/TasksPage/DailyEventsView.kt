@@ -1,11 +1,9 @@
 package com.cs446.petpal.views.TasksPage
 
-import android.util.Log
 import androidx.compose.material3.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -34,13 +32,11 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.cs446.petpal.models.Event
 import java.util.Date
-import java.util.TimeZone
 
 @Composable
 fun DailyEventsView(eventsViewModel: EventsViewModel = hiltViewModel()) {
-    var currEvent = eventsViewModel.selectedEvent.value
+    val selectedEvent by eventsViewModel.selectedEvent
     var showAddDialog by remember { mutableStateOf(false) }
     var showEditDialog by remember { mutableStateOf(false) }
     var showDelDialog by remember { mutableStateOf(false) }
@@ -184,7 +180,6 @@ fun DailyEventsView(eventsViewModel: EventsViewModel = hiltViewModel()) {
                             IconButton(
                                 onClick = {
                                     showEditDialog = true
-                                    currEvent = event
                                     eventsViewModel.setSelectedEvent(event)
                                     currEventID = event.eventId
                                 },
@@ -237,9 +232,10 @@ fun DailyEventsView(eventsViewModel: EventsViewModel = hiltViewModel()) {
         showDelDialog = eventsDelPopup(currEventID)
     }
     if (showEditDialog) {
-        showEditDialog = eventsPopup(currEvent, currEventID, "EDIT")
+        showEditDialog = eventsPopup(selectedEvent, currEventID, "EDIT")
     }
 }
+
 private fun isSameDay(date1: Date, date2: Date): Boolean {
     val cal1 = Calendar.getInstance().apply { time = date1 }
     val cal2 = Calendar.getInstance().apply { time = date2 }
@@ -248,21 +244,21 @@ private fun isSameDay(date1: Date, date2: Date): Boolean {
 }
 
 
-private fun parseEventStartDate(input: String): Pair<String, String?> {
-    return if (input.contains("T")) {
-        // Parse ISO 8601 format
-        val isoFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault()).apply {
-            timeZone = TimeZone.getTimeZone("UTC")
-        }
-        val date = isoFormat.parse(input)
-
-        // Convert to desired formats
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        val timeFormat = SimpleDateFormat("hh:mm a", Locale.getDefault()) // 12-hour format
-
-        dateFormat.format(date!!) to timeFormat.format(date)
-    } else {
-        // Format is "yyyy-MM-dd", only update date
-        input to null
-    }
-}
+//private fun parseEventStartDate(input: String): Pair<String, String?> {
+//    return if (input.contains("T")) {
+//        // Parse ISO 8601 format
+//        val isoFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault()).apply {
+//            timeZone = TimeZone.getTimeZone("UTC")
+//        }
+//        val date = isoFormat.parse(input)
+//
+//        // Convert to desired formats
+//        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+//        val timeFormat = SimpleDateFormat("hh:mm a", Locale.getDefault()) // 12-hour format
+//
+//        dateFormat.format(date!!) to timeFormat.format(date)
+//    } else {
+//        // Format is "yyyy-MM-dd", only update date
+//        input to null
+//    }
+//}
