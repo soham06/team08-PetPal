@@ -1,8 +1,11 @@
 package com.cs446.petpal.views
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -26,6 +29,8 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import android.util.Log
+import coil3.compose.AsyncImage
 import com.cs446.petpal.R
 import com.cs446.petpal.models.Pet
 import com.cs446.petpal.viewmodels.PetsPageViewModel
@@ -33,33 +38,37 @@ import com.cs446.petpal.viewmodels.PetsPageViewModel
 @Composable
 fun PetsPageView(
     petsPageViewModel: PetsPageViewModel = hiltViewModel(),
-    navController: NavController
+    navController: NavController,
+    petId: String?
 ) {
-    //Collect the flows from the ViewModel
+    // Collect the flows from the ViewModel
     val myPets by petsPageViewModel.myPetsList.collectAsState()
     val sharedPets by petsPageViewModel.sharedPetsList.collectAsState()
     val selectedPet by petsPageViewModel.selectedPet.collectAsState()
 
-    //Trigger network fetch once on screen load
     LaunchedEffect(Unit) {
         petsPageViewModel.fetchAllPetsFromServer()
     }
+    LaunchedEffect(key1 = petId, key2 = myPets) {
+        if (!myPets.isNullOrEmpty() && petId != null) {
+            Log.d("PetsPageView", "Selecting pet with petId: $petId")
+            petsPageViewModel.selectPet(petId)
+        }
+    }
 
-    // Show the selected pet or default to the first
-    val petToShow = selectedPet ?: myPets.firstOrNull()
+    val petToShow = selectedPet ?: if (myPets.isNotEmpty()) myPets.firstOrNull() else sharedPets.firstOrNull()
+
 
     val scrollState = rememberScrollState()
-
     var showSharePetDialog by remember { mutableStateOf(false) }
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.fillMaxSize()) {
-            // Top Bar
             TopBar(navController = navController)
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // My Pet Selection Row
+
             MyPetSelectionRow(
                 pets = myPets,
                 selectedPet = petToShow?.petId ?: "",
@@ -84,7 +93,6 @@ fun PetsPageView(
                     .verticalScroll(scrollState),
                 horizontalAlignment = Alignment.Start
             ) {
-                // Main Pet Image Section
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -120,26 +128,30 @@ fun PetsPageView(
                 MedicationInfoCard(petToShow)
 
                 Spacer(modifier = Modifier.height(16.dp))
-            }
 
-            // Bottom Bar
+                // if (!petsPageViewModel.isSharedPetProfile()) {
+                val images = listOf(R.drawable.dog_play, R.drawable.dog_drink, R.drawable.dog_eat, R.drawable.dog_bath)
+                ImageGallery(images)
+
+                Spacer(modifier = Modifier.height(16.dp))
+            }
             BottomBar(navController)
         }
 
         if (!petsPageViewModel.isSharedPetProfile()) {
             Box(
-                modifier = Modifier.fillMaxSize().padding(end = 16.dp, bottom = 95.dp),
+                modifier = Modifier.fillMaxSize().padding(end = 6.dp, bottom = 100.dp),
                 contentAlignment = Alignment.BottomEnd
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(8.dp), // Adjust spacing
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     // Floating Action Button (Manage Pet Sharing)
                     FloatingActionButton(
                         onClick = { showSharePetDialog = true },
                         containerColor = Color(0xFF64B5F6),
-                        modifier = Modifier.size(48.dp)
+                        modifier = Modifier.size(38.dp)
                     ) {
                         Icon(
                             imageVector = Icons.Filled.ManageAccounts,
@@ -158,7 +170,7 @@ fun PetsPageView(
                             }
                         },
                         containerColor = Color(0xFF64B5F6),
-                        modifier = Modifier.size(48.dp)
+                        modifier = Modifier.size(35.dp)
                     ) {
                         Icon(
                             imageVector = Icons.Filled.Delete,
@@ -171,6 +183,7 @@ fun PetsPageView(
             }
         }
     }
+
     if (showSharePetDialog && petToShow != null) {
         showSharePetDialog = sharePetsPopup(
             currPet = selectedPet,
@@ -179,6 +192,7 @@ fun PetsPageView(
         )
     }
 }
+
 
 // PetInfoCard
 @Composable
@@ -564,6 +578,55 @@ fun MedicationInfoCard(
                 }
             }
         }
+    }
+}
+
+@Composable
+fun ImageGallery(images: List<Int>) {
+    var showAddPhotoDialog by remember { mutableStateOf(false) }
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.cardElevation(4.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = "Photo Gallery",
+                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
+                )
+                Text(
+                    text = "Add Image",
+                    color = MaterialTheme.colorScheme.primary,
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.clickable { showAddPhotoDialog = true }
+                )
+            }
+
+            LazyRow {
+                items(images) { imageRes ->
+                    Image(
+                        painter = painterResource(id = imageRes),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .size(100.dp)
+                            .clip(RoundedCornerShape(8.dp))
+                    )
+                }
+            }
+        }
+    }
+    if (showAddPhotoDialog) {
+        showAddPhotoDialog = imageUploadScreen()
     }
 }
 
