@@ -47,7 +47,10 @@ class MainActivity : ComponentActivity() {
                         composable("homepage") { HomepageView(navController = navController) }
                         composable("calendarpage") { CalendarPageView(navController = navController) }
                         composable("taskspage") { TasksPageView(navController = navController) }
-                        composable("petspage") { PetsPageView(navController = navController) }
+                        composable("petspage") { PetsPageView(navController = navController, petId = null) }
+                        composable("petspage/{petId}") { backStackEntry ->
+                            val petId = backStackEntry.arguments?.getString("petId")
+                            PetsPageView(navController = navController, petId = petId)}
                         composable("notifspage") { NotificationsView(navController = navController) }
                         composable("profilepage") { ProfilePageView(navController = navController) }
                     }
