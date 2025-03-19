@@ -1,5 +1,6 @@
 package com.cs446.petpal.observer
 
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import com.cs446.petpal.models.Event
 import kotlinx.coroutines.*
@@ -40,7 +41,7 @@ class EventSubject(private val userId: String) {
         return outputFormat.format(date)
     }
 
-    fun fetchEvents() {
+    fun fetchEvents(registrationToken: State<String>) {
         CoroutineScope(Dispatchers.IO).launch {
             var successfulEventRetrieved = false
             try {
@@ -68,13 +69,17 @@ class EventSubject(private val userId: String) {
                                     startTime = mutableStateOf(eventJson.getString("startTime")),
                                     endTime = mutableStateOf(eventJson.getString("endTime")),
                                     location = mutableStateOf(eventJson.getString("location")),
-                                    eventId = eventJson.optString("eventId")
+                                    eventId = eventJson.optString("eventId"),
+                                    notificationSent = false,
+                                    registrationToken = registrationToken.value
                                 )
                                 withContext(Dispatchers.Main) {
                                     events.add(event)
                                 }
                             }
-                            notifyObservers()
+                            withContext(Dispatchers.Main) {
+                                notifyObservers()
+                            }
                         }
                     }
                 }
@@ -92,6 +97,7 @@ class EventSubject(private val userId: String) {
         startTime: String,
         endTime: String,
         location: String,
+        registrationToken: State<String>,
         onResult: (Boolean, Event?) -> Unit
     ) {
         CoroutineScope(Dispatchers.IO).launch {
@@ -108,10 +114,11 @@ class EventSubject(private val userId: String) {
                     put("startTime", startTime)
                     put("endTime", endTime)
                     put("location", location)
+                    put("registrationToken", registrationToken.value)
                 }
                 val requestBody = json.toString()
                     .toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
-//                // Build the POST request
+                // Build the POST request
                 val request = Request.Builder()
                     .url("http://10.0.2.2:3000/api/events/$userId")
                     .post(requestBody)
@@ -132,7 +139,9 @@ class EventSubject(private val userId: String) {
                                 startTime = mutableStateOf(jsonResponse.optString("startTime")),
                                 endTime = mutableStateOf(jsonResponse.optString("endTime")),
                                 location = mutableStateOf(jsonResponse.optString("location")),
-                                eventId = jsonResponse.optString("eventId")
+                                eventId = jsonResponse.optString("eventId"),
+                                notificationSent = false,
+                                registrationToken = registrationToken.value
                             )
                             events.add(event)
                             withContext(Dispatchers.Main) {
@@ -162,6 +171,7 @@ class EventSubject(private val userId: String) {
         startTime: String,
         endTime: String,
         location: String,
+        registrationToken: State<String>,
         onResult: (Boolean, Event?) -> Unit
     ) {
         CoroutineScope(Dispatchers.IO).launch {
@@ -178,11 +188,12 @@ class EventSubject(private val userId: String) {
                     put("startTime", startTime)
                     put("endTime", endTime)
                     put("location", location)
+                    put("registrationToken", registrationToken.value)
                 }
                 val requestBody = json.toString()
                     .toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
 
-//                // Build the PATCH request
+                // Build the PATCH request
                 val request = Request.Builder()
                     .url("http://10.0.2.2:3000/api/events/${eventId}")
                     .patch(requestBody)
@@ -203,10 +214,12 @@ class EventSubject(private val userId: String) {
                                 startTime = mutableStateOf(jsonResponse.optString("startTime")),
                                 endTime = mutableStateOf(jsonResponse.optString("endTime")),
                                 location = mutableStateOf(jsonResponse.optString("location")),
-                                eventId = jsonResponse.optString("eventId")
+                                eventId = jsonResponse.optString("eventId"),
+                                notificationSent = false,
+                                registrationToken = registrationToken.value
                             )
                             withContext(Dispatchers.Main) {
-                                fetchEvents() // Refresh events after update
+                                fetchEvents(registrationToken) // Refresh events after update
                             }
                         } else {
                             // Optionally log error details from response
