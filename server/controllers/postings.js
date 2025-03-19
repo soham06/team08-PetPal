@@ -32,6 +32,22 @@ export async function getPostingsForUser (req, res) {
     }
 };
 
+
+export async function getAllPostings(req, res) {
+    try {
+        const db = getFirestore(firebaseConnection);
+        const postingsTable = collection(db, "postings");
+        const postsSnapshot = await getDocs(postingsTable);
+        const postsList = postsSnapshot.docs.map(post => ({
+            postId: post.id,
+            ...post.data()
+        }));
+        res.status(200).json(postsList);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+
 export async function createPostingForUser (req, res) {
     try {
         const db = getFirestore(firebaseConnection);

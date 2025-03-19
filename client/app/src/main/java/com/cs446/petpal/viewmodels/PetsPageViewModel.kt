@@ -46,6 +46,7 @@ class PetsPageViewModel @Inject constructor(
     val selectedPet: StateFlow<Pet?> = _selectedPet
 
     var currentUserId: String = userRepository.currentUser.value?.userId.toString();
+    var currentUserEmail: String = userRepository.currentUser.value?.email?.value.toString();
 
     fun fetchAllPetsFromServer() {
         fetchMyPetsFromServer()
@@ -193,6 +194,9 @@ class PetsPageViewModel @Inject constructor(
                     }
 
                     _sharedPetsList.value = petList
+                    if (_myPetsList.value.isEmpty()) {
+                        _selectedPet.value = petList.firstOrNull()
+                    }
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -356,6 +360,8 @@ class PetsPageViewModel @Inject constructor(
     }
 
     fun isSharedPetProfile(): Boolean {
+        println("HIIIIII")
+        println(selectedPet.value)
         if (_selectedPet.value?.sharedUsers != null) {
             if (_selectedPet.value?.sharedUsers?.value?.contains(currentUserId) == true) {
                 return true
@@ -393,6 +399,11 @@ class PetsPageViewModel @Inject constructor(
         onResult: (Boolean, Pet?) -> Unit
     ) {
         viewModelScope.launch(Dispatchers.IO) {
+            if (emailAddress == currentUserEmail) {
+                onResult(false, _selectedPet.value)
+                return@launch
+            }
+
             var success: Boolean
             try {
                 val json = JSONObject().apply {

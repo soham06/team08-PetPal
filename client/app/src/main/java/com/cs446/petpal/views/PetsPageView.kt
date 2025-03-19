@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import android.util.Log
 import coil3.compose.AsyncImage
 import com.cs446.petpal.R
 import com.cs446.petpal.models.Pet
@@ -37,33 +38,37 @@ import com.cs446.petpal.viewmodels.PetsPageViewModel
 @Composable
 fun PetsPageView(
     petsPageViewModel: PetsPageViewModel = hiltViewModel(),
-    navController: NavController
+    navController: NavController,
+    petId: String?
 ) {
-    //Collect the flows from the ViewModel
+    // Collect the flows from the ViewModel
     val myPets by petsPageViewModel.myPetsList.collectAsState()
     val sharedPets by petsPageViewModel.sharedPetsList.collectAsState()
     val selectedPet by petsPageViewModel.selectedPet.collectAsState()
 
-    //Trigger network fetch once on screen load
     LaunchedEffect(Unit) {
         petsPageViewModel.fetchAllPetsFromServer()
     }
+    LaunchedEffect(key1 = petId, key2 = myPets) {
+        if (!myPets.isNullOrEmpty() && petId != null) {
+            Log.d("PetsPageView", "Selecting pet with petId: $petId")
+            petsPageViewModel.selectPet(petId)
+        }
+    }
 
-    // Show the selected pet or default to the first
-    val petToShow = selectedPet ?: myPets.firstOrNull()
+    val petToShow = selectedPet ?: if (myPets.isNotEmpty()) myPets.firstOrNull() else sharedPets.firstOrNull()
+
 
     val scrollState = rememberScrollState()
-
     var showSharePetDialog by remember { mutableStateOf(false) }
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.fillMaxSize()) {
-            // Top Bar
             TopBar(navController = navController)
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // My Pet Selection Row
+
             MyPetSelectionRow(
                 pets = myPets,
                 selectedPet = petToShow?.petId ?: "",
@@ -88,7 +93,6 @@ fun PetsPageView(
                     .verticalScroll(scrollState),
                 horizontalAlignment = Alignment.Start
             ) {
-                // Main Pet Image Section
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -131,8 +135,6 @@ fun PetsPageView(
 
                 Spacer(modifier = Modifier.height(16.dp))
             }
-
-            // Bottom Bar
             BottomBar(navController)
         }
 
@@ -143,9 +145,7 @@ fun PetsPageView(
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(8.dp), // Adjust spacing
-                    // verticalAlignment = Arrangement.spacedBy(8.dp) ,
-                    // horizontalArrangement = Arrangement.SpaceBetween
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     // Floating Action Button (Manage Pet Sharing)
                     FloatingActionButton(
@@ -183,6 +183,7 @@ fun PetsPageView(
             }
         }
     }
+
     if (showSharePetDialog && petToShow != null) {
         showSharePetDialog = sharePetsPopup(
             currPet = selectedPet,
@@ -191,6 +192,7 @@ fun PetsPageView(
         )
     }
 }
+
 
 // PetInfoCard
 @Composable
@@ -285,7 +287,7 @@ fun MyPetSelectionRow(
         horizontalArrangement = Arrangement.Start
     ) {
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
+            horizontalAlignment = Alignment.Start,
             modifier = Modifier.padding(horizontal = 4.dp)
         ) {
             Text(
@@ -293,28 +295,32 @@ fun MyPetSelectionRow(
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier
-                    .padding(horizontal = 8.dp)
+                    .padding(horizontal = 8.dp, vertical = 4.dp)
             )
-            pets.forEach { pet ->
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier
-                        .padding(horizontal = 8.dp)
-                        .clickable { onPetSelected(pet.petId) }
-                ) {
-                    Image(
-                        painter = painterResource(id = getPetProfilePic(pet.name.value)),
-                        contentDescription = "Profile picture for ${pet.name.value}",
+            Row(
+                horizontalArrangement = Arrangement.Start,
+            ) {
+                pets.forEach { pet ->
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier
-                            .size(50.dp)
-                            .clip(CircleShape),
-                        contentScale = ContentScale.Crop
-                    )
-                    Text(
-                        text = pet.name.value,
-                        fontSize = 12.sp,
-                        fontWeight = if (selectedPet == pet.petId) FontWeight.Bold else FontWeight.Normal
-                    )
+                            .padding(horizontal = 8.dp)
+                            .clickable { onPetSelected(pet.petId) }
+                    ) {
+                        Image(
+                            painter = painterResource(id = getPetProfilePic(pet.name.value)),
+                            contentDescription = "Profile picture for ${pet.name.value}",
+                            modifier = Modifier
+                                .size(50.dp)
+                                .clip(CircleShape),
+                            contentScale = ContentScale.Crop
+                        )
+                        Text(
+                            text = pet.name.value,
+                            fontSize = 12.sp,
+                            fontWeight = if (selectedPet == pet.petId) FontWeight.Bold else FontWeight.Normal
+                        )
+                    }
                 }
             }
         }
@@ -357,35 +363,44 @@ fun SharedPetSelectionRow(
     modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = modifier.fillMaxWidth().padding(horizontal = 16.dp),
+        modifier = modifier.fillMaxWidth().padding(start = 4.dp),
         horizontalArrangement = Arrangement.Start
     ) {
         Column(
             horizontalAlignment = Alignment.Start,
+            modifier = Modifier.padding(horizontal = 4.dp)
         ) {
             Text(
                 text = "Shared Pets",
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
+                modifier = Modifier
+                    .padding(horizontal = 8.dp, vertical = 4.dp)
             )
-            pets.forEach { pet ->
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.clickable { onPetSelected(pet.petId) }
-                ) {
-                    Image(
-                        painter = painterResource(id = getPetProfilePic(pet.name.value)),
-                        contentDescription = "Profile picture for ${pet.name.value}",
+            Row(
+                horizontalArrangement = Arrangement.Start,
+            ) {
+                pets.forEach { pet ->
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier
-                            .size(50.dp)
-                            .clip(CircleShape),
-                        contentScale = ContentScale.Crop
-                    )
-                    Text(
-                        text = pet.name.value,
-                        fontSize = 12.sp,
-                        fontWeight = if (selectedPet == pet.petId) FontWeight.Bold else FontWeight.Normal
-                    )
+                            .padding(horizontal = 8.dp)
+                            .clickable { onPetSelected(pet.petId) }
+                    ) {
+                        Image(
+                            painter = painterResource(id = getPetProfilePic(pet.name.value)),
+                            contentDescription = "Profile picture for ${pet.name.value}",
+                            modifier = Modifier
+                                .size(50.dp)
+                                .clip(CircleShape),
+                            contentScale = ContentScale.Crop
+                        )
+                        Text(
+                            text = pet.name.value,
+                            fontSize = 12.sp,
+                            fontWeight = if (selectedPet == pet.petId) FontWeight.Bold else FontWeight.Normal
+                        )
+                    }
                 }
             }
         }
@@ -595,8 +610,6 @@ fun ImageGallery(images: List<Int>) {
                     modifier = Modifier.clickable { showAddPhotoDialog = true }
                 )
             }
-
-            // Spacer(modifier = Modifier.height(8.dp))
 
             LazyRow {
                 items(images) { imageRes ->

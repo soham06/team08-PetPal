@@ -22,6 +22,7 @@ import com.cs446.petpal.views.NotificationsView
 import com.cs446.petpal.views.TasksPage.TasksPageView
 import com.cs446.petpal.views.ProfilePageView
 import com.cs446.petpal.repository.UserRepository
+import com.cs446.petpal.views.Marketplace.MarketplaceView
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -47,9 +48,13 @@ class MainActivity : ComponentActivity() {
                         composable("homepage") { HomepageView(navController = navController) }
                         composable("calendarpage") { CalendarPageView(navController = navController) }
                         composable("taskspage") { TasksPageView(navController = navController) }
-                        composable("petspage") { PetsPageView(navController = navController) }
+                        composable("petspage") { PetsPageView(navController = navController, petId = null) }
+                        composable("petspage/{petId}") { backStackEntry ->
+                            val petId = backStackEntry.arguments?.getString("petId")
+                            PetsPageView(navController = navController, petId = petId)}
                         composable("notifspage") { NotificationsView(navController = navController) }
                         composable("profilepage") { ProfilePageView(navController = navController) }
+                        composable("marketplace") { MarketplaceView(navController = navController) }
                     }
                 }
             }
