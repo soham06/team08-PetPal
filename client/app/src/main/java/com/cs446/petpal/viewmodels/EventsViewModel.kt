@@ -20,6 +20,8 @@ import java.util.Locale
 import com.cs446.petpal.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import com.google.firebase.messaging.FirebaseMessaging
+import kotlinx.coroutines.tasks.await
 
 
 private fun convertDateFormat(dateStr: String): String {
@@ -41,6 +43,9 @@ class EventsViewModel @Inject constructor(
 
     var currentUserId: String = userRepository.currentUser.value?.userId.toString();
 
+    private val _registrationToken = mutableStateOf("")
+    val registrationToken: State<String> = _registrationToken
+
     fun setSelectedEvent(event: Event) {
         selectedEvent.value = event
     }
@@ -48,6 +53,19 @@ class EventsViewModel @Inject constructor(
     init {
         println("User: ${userRepository.currentUser.value}")
         getEventsForUser()
+        fetchFCMToken()
+    }
+
+    fun fetchFCMToken() {
+        viewModelScope.launch {
+            try {
+                val token = FirebaseMessaging.getInstance().token.await()
+                Log.d("PushNotification", "FCM Token: $token")
+                _registrationToken.value = token
+            } catch (e: Exception) {
+                Log.e("PushNotification", "FCM token error", e)
+            }
+        }
     }
 
     fun createEventForUser(
@@ -73,6 +91,7 @@ class EventsViewModel @Inject constructor(
                     put("startTime", startTime)
                     put("endTime", endTime)
                     put("location", location)
+                    put("registrationToken", registrationToken.value)
                 }
                 val requestBody = json.toString()
                     .toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
@@ -95,8 +114,10 @@ class EventsViewModel @Inject constructor(
                             startTime = mutableStateOf(jsonResponse.optString("startTime")),
                             endTime = mutableStateOf(jsonResponse.optString("endTime")),
                             location = mutableStateOf(jsonResponse.optString("location")),
+                            notificationSent = false,
+                            registrationToken = registrationToken.value
                         )
-                        event.eventId = jsonResponse.optString("eventId")
+                        event!!.eventId = jsonResponse.optString("eventId")
                         getEventsForUser()
                     }
                     else {
@@ -136,6 +157,7 @@ class EventsViewModel @Inject constructor(
                     put("startTime", startTime)
                     put("endTime", endTime)
                     put("location", location)
+                    put("registrationToken", registrationToken.value)
                 }
                 val requestBody = json.toString()
                     .toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
@@ -158,6 +180,8 @@ class EventsViewModel @Inject constructor(
                             startTime = mutableStateOf(jsonResponse.optString("startTime")),
                             endTime = mutableStateOf(jsonResponse.optString("endTime")),
                             location = mutableStateOf(jsonResponse.optString("location")),
+                            notificationSent = false,
+                            registrationToken = registrationToken.value
                         )
 
                         event!!.eventId = jsonResponse.optString("eventId")
@@ -203,6 +227,8 @@ class EventsViewModel @Inject constructor(
                                 startTime = mutableStateOf(eventJson.getString("startTime")),
                                 endTime = mutableStateOf(eventJson.getString("endTime")),
                                 location = mutableStateOf(eventJson.getString("location")),
+                                notificationSent = false,
+                                registrationToken = registrationToken.value
                             )
                             event.eventId = eventJson.optString("eventId")
                             events.add(event)

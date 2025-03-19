@@ -12,4 +12,6 @@ data class Event (
     var endTime: MutableState<String>,
     var location: MutableState<String>,
     var eventId: String = "",
+    var notificationSent: Boolean,
+    var registrationToken: String = ""
 )
