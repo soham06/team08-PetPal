@@ -31,7 +31,7 @@ fun BottomBarButton(navController: NavController, label: String, iconRes: Int) {
         onClick = {
             when (label) {
                 "Home" -> navController.navigate("homepage")
-                "Calendar" -> navController.navigate("calendarpage")
+                "Market" -> navController.navigate("marketplace")
                 "Tasks" -> navController.navigate("taskspage")
                 "Pets" -> navController.navigate("petspage")
             }
@@ -124,7 +124,7 @@ fun BottomBar(navController: NavController) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             BottomBarButton(navController,"Home", R.drawable.home)
-            BottomBarButton(navController,"Calendar", R.drawable.calendar)
+            BottomBarButton(navController,"Market", R.drawable.ic_marketplace)
             BottomBarButton(navController,"Tasks", R.drawable.tasks)
             BottomBarButton(navController,"Pets", R.drawable.pets)
         }
