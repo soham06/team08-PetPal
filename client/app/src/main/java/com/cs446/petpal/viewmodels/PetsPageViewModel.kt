@@ -43,7 +43,7 @@ class PetsPageViewModel @Inject constructor(
 
     // Currently selected pet
     private val _selectedPet = MutableStateFlow<Pet?>(null)
-    var selectedPet: StateFlow<Pet?> = _selectedPet
+    val selectedPet: StateFlow<Pet?> = _selectedPet
 
     var currentUserId: String = userRepository.currentUser.value?.userId.toString();
     var currentUserEmail: String = userRepository.currentUser.value?.email?.value.toString();
