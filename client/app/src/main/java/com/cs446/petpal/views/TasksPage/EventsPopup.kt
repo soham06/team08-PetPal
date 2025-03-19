@@ -269,6 +269,14 @@ fun eventsPopup(currEvent: Event?, currEventId: String?, popupType: String, even
                             userInputLocation,
                         ) { success, _ ->
                         }
+                        println("Event Info\n" +
+                                "userInputDescription: $userInputDescription\n" +
+                                "startDate $startDate\n" +
+                                "endDate $endDate\n" +
+                                "startTime $startTime\n" +
+                                "endTime $endTime\n" +
+                                "userInputLocation $userInputLocation\n"
+                        )
                     }
                     else {
                         if (currEventId != null) {
