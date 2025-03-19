@@ -241,6 +241,8 @@ class HomepagePetsViewModel @Inject constructor(
                         val startTime = obj.optString("startTime", "")
                         val endTime = obj.optString("endTime", "")
                         val location = obj.optString("location", "")
+                        val notificationSent = obj.optBoolean("notificationSent", false)
+                        val registrationToken = obj.optString("registrationToken", "")
 
                         val event = Event(
                             eventId = eventId,
@@ -249,7 +251,9 @@ class HomepagePetsViewModel @Inject constructor(
                             endDate = mutableStateOf(endDate),
                             startTime = mutableStateOf(startTime),
                             endTime = mutableStateOf(endTime),
-                            location = mutableStateOf(location)
+                            location = mutableStateOf(location),
+                            notificationSent = notificationSent,
+                            registrationToken = registrationToken
                         )
                         allEvents.add(event)
                     }

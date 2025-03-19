@@ -194,6 +194,9 @@ class PetsPageViewModel @Inject constructor(
                     }
 
                     _sharedPetsList.value = petList
+                    if (_myPetsList.value.isEmpty()) {
+                        _selectedPet.value = petList.firstOrNull()
+                    }
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -357,6 +360,8 @@ class PetsPageViewModel @Inject constructor(
     }
 
     fun isSharedPetProfile(): Boolean {
+        println("HIIIIII")
+        println(selectedPet.value)
         if (_selectedPet.value?.sharedUsers != null) {
             if (_selectedPet.value?.sharedUsers?.value?.contains(currentUserId) == true) {
                 return true
