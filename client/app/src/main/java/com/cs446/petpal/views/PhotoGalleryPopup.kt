@@ -1,5 +1,6 @@
 package com.cs446.petpal.views
 
+import android.content.Context
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -14,9 +15,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil3.compose.rememberAsyncImagePainter
+import java.io.File
+import java.io.FileOutputStream
+import java.io.InputStream
+import java.util.UUID
 
 @Composable
 fun ImageUploadPopup(
@@ -67,6 +73,7 @@ fun imageUploadScreen(): Boolean {
     var showUploadDialog by remember { mutableStateOf(true) }
     var showImageDialog by remember { mutableStateOf(false) }
     var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
+    val context = LocalContext.current
 
     AlertDialog(
         onDismissRequest = { showUploadDialog = false },
@@ -95,6 +102,24 @@ fun imageUploadScreen(): Boolean {
                 }
             }
         },
+        confirmButton = {
+            Button(
+                onClick = {
+                    selectedImageUri?.let { uri ->
+                        val savedPath = saveImageToInternalStorage(context, uri, "uploaded_image_${UUID.randomUUID()}.jpg")
+                        if (savedPath != null && File(savedPath).exists()) {
+                            println("ImageCheck Image is saved and exists: $savedPath")
+                        } else {
+                            println("ImageCheck Image was NOT saved correctly!")
+                        }
+                        showUploadDialog = false
+                    }
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFD700))
+            ) {
+                Text(text = "Upload", color = Color.Black)
+            }
+        },
         dismissButton = {
             Button(
                 onClick = {
@@ -108,7 +133,6 @@ fun imageUploadScreen(): Boolean {
                 )
             }
         },
-        confirmButton = {}
     )
 
     ImageUploadPopup(
@@ -117,5 +141,20 @@ fun imageUploadScreen(): Boolean {
         onImageSelected = { uri -> selectedImageUri = uri }
     )
     return showUploadDialog
+}
+
+fun saveImageToInternalStorage(context: Context, imageUri: Uri, fileName: String): String? {
+    val inputStream: InputStream? = context.contentResolver.openInputStream(imageUri)
+    val file = File(context.filesDir, fileName)
+
+    return try {
+        FileOutputStream(file).use { outputStream ->
+            inputStream?.copyTo(outputStream)
+        }
+        file.absolutePath
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
+    }
 }
 
