@@ -43,7 +43,7 @@ fun getAllFilesInDirectory(directoryPath: String): List<String> {
         ?.filter { it.isFile && it.extension.lowercase() in listOf("jpg") }
         ?.map { "${directoryPath}/${it.name}" }
         ?: emptyList()
-
+    println(filePaths)
     return filePaths
 }
 
@@ -141,7 +141,7 @@ fun PetsPageView(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                val addedImages = getAllFilesInDirectory("/data/user/0/com.cs446.petpal/files/")
+                val addedImages = getAllFilesInDirectory("/data/user/0/com.cs446.petpal/files/${selectedPet?.petId}/")
                 ImageGallery(addedImages)
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -225,7 +225,6 @@ fun PetInfoCard(
             modifier = Modifier.padding(12.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            // Row with Pet Name and "Edit" text
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
@@ -237,7 +236,7 @@ fun PetInfoCard(
                         fontWeight = FontWeight.Bold
                     )
                 )
-                if (petToShow != null) {
+                if (petToShow != null && !petsPageViewModel.isSharedPetProfile()) {
                     Text(
                         text = "Edit",
                         color = MaterialTheme.colorScheme.primary,
@@ -624,24 +623,33 @@ fun ImageGallery(addedImages: List<String>) {
                 )
             }
 
-            LazyRow {
-                items(addedImages) { imageRes ->
-                    val imageFile = File(imageRes)
-                    val imageUri = Uri.fromFile(imageFile)
-                    Image(
-                        painter = rememberAsyncImagePainter(
-                            ImageRequest.Builder(context)
-                                .data(imageUri)
-                                .build()
-                        ),
-                        contentDescription = "Uploaded image",
-                        modifier = Modifier
-                            .padding(8.dp)
-                            .size(100.dp)
-                            .clip(RoundedCornerShape(8.dp))
-                            .clickable { selectedAddedImage = imageRes },
-                    )
+            if (addedImages.size > 0) {
+                LazyRow {
+                    items(addedImages) { imageRes ->
+                        val imageFile = File(imageRes)
+                        val imageUri = Uri.fromFile(imageFile)
+                        Image(
+                            painter = rememberAsyncImagePainter(
+                                ImageRequest.Builder(context)
+                                    .data(imageUri)
+                                    .build()
+                            ),
+                            contentDescription = "Uploaded image",
+                            modifier = Modifier
+                                .padding(8.dp)
+                                .size(100.dp)
+                                .clip(RoundedCornerShape(8.dp))
+                                .clickable { selectedAddedImage = imageRes },
+                        )
+                    }
                 }
+            } else {
+                Text(
+                    text = "Your gallery is empty!",
+                    color = MaterialTheme.colorScheme.primary,
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(8.dp)
+                )
             }
         }
     }

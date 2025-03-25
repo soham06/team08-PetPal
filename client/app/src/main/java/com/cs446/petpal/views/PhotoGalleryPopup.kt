@@ -18,7 +18,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.rememberAsyncImagePainter
+import com.cs446.petpal.viewmodels.PetsPageViewModel
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
@@ -69,11 +71,13 @@ fun ImageUploadPopup(
 }
 
 @Composable
-fun imageUploadScreen(): Boolean {
+fun imageUploadScreen(petsPageViewModel: PetsPageViewModel = hiltViewModel()): Boolean {
     var showUploadDialog by remember { mutableStateOf(true) }
     var showImageDialog by remember { mutableStateOf(false) }
     var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
     val context = LocalContext.current
+
+    val selectedPet by petsPageViewModel.selectedPet.collectAsState()
 
     AlertDialog(
         onDismissRequest = { showUploadDialog = false },
@@ -106,7 +110,7 @@ fun imageUploadScreen(): Boolean {
             Button(
                 onClick = {
                     selectedImageUri?.let { uri ->
-                        val savedPath = saveImageToInternalStorage(context, uri, "uploaded_image_${UUID.randomUUID()}.jpg")
+                        val savedPath = selectedPet?.let { saveImageToInternalStorage(context, uri, it.petId, "uploaded_image_${UUID.randomUUID()}.jpg") }
                         if (savedPath != null && File(savedPath).exists()) {
                             println("ImageCheck Image is saved and exists: $savedPath")
                         } else {
@@ -143,9 +147,15 @@ fun imageUploadScreen(): Boolean {
     return showUploadDialog
 }
 
-fun saveImageToInternalStorage(context: Context, imageUri: Uri, fileName: String): String? {
+fun saveImageToInternalStorage(context: Context, imageUri: Uri, petId: String, fileName: String): String? {
     val inputStream: InputStream? = context.contentResolver.openInputStream(imageUri)
-    val file = File(context.filesDir, fileName)
+
+    val directory = File(context.filesDir, petId)
+    if (!directory.exists()) {
+        directory.mkdirs()
+    }
+
+    val file = File(directory, fileName)
 
     return try {
         FileOutputStream(file).use { outputStream ->
@@ -157,4 +167,3 @@ fun saveImageToInternalStorage(context: Context, imageUri: Uri, fileName: String
         null
     }
 }
-
