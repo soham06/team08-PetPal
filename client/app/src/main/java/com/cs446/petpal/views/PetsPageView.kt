@@ -1,7 +1,7 @@
 package com.cs446.petpal.views
 
+import android.net.Uri
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -23,23 +23,35 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import android.util.Log
-import coil3.compose.AsyncImage
+import androidx.compose.ui.platform.LocalContext
+import coil3.compose.rememberAsyncImagePainter
+import coil3.request.ImageRequest
 import com.cs446.petpal.R
 import com.cs446.petpal.models.Pet
 import com.cs446.petpal.viewmodels.PetsPageViewModel
+import java.io.File
+
+fun getAllFilesInDirectory(directoryPath: String): List<String> {
+    val directory = File(directoryPath)
+    val filePaths = directory.listFiles()
+        ?.filter { it.isFile && it.extension.lowercase() in listOf("jpg") }
+        ?.map { "${directoryPath}/${it.name}" }
+        ?: emptyList()
+    println(filePaths)
+    return filePaths
+}
 
 @Composable
 fun PetsPageView(
     petsPageViewModel: PetsPageViewModel = hiltViewModel(),
     navController: NavController,
-    petId: String?
+    petId: String?,
 ) {
     // Collect the flows from the ViewModel
     val myPets by petsPageViewModel.myPetsList.collectAsState()
@@ -129,9 +141,8 @@ fun PetsPageView(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // if (!petsPageViewModel.isSharedPetProfile()) {
-                val images = listOf(R.drawable.dog_play, R.drawable.dog_drink, R.drawable.dog_eat, R.drawable.dog_bath)
-                ImageGallery(images)
+                val addedImages = getAllFilesInDirectory("/data/user/0/com.cs446.petpal/files/${selectedPet?.petId}/")
+                ImageGallery(addedImages)
 
                 Spacer(modifier = Modifier.height(16.dp))
             }
@@ -214,7 +225,6 @@ fun PetInfoCard(
             modifier = Modifier.padding(12.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            // Row with Pet Name and "Edit" text
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
@@ -226,7 +236,7 @@ fun PetInfoCard(
                         fontWeight = FontWeight.Bold
                     )
                 )
-                if (petToShow != null) {
+                if (petToShow != null && !petsPageViewModel.isSharedPetProfile()) {
                     Text(
                         text = "Edit",
                         color = MaterialTheme.colorScheme.primary,
@@ -582,8 +592,10 @@ fun MedicationInfoCard(
 }
 
 @Composable
-fun ImageGallery(images: List<Int>) {
+fun ImageGallery(addedImages: List<String>) {
     var showAddPhotoDialog by remember { mutableStateOf(false) }
+    var selectedAddedImage by remember { mutableStateOf<String?>(null) }
+    val context = LocalContext.current
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -611,22 +623,69 @@ fun ImageGallery(images: List<Int>) {
                 )
             }
 
-            LazyRow {
-                items(images) { imageRes ->
-                    Image(
-                        painter = painterResource(id = imageRes),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .padding(8.dp)
-                            .size(100.dp)
-                            .clip(RoundedCornerShape(8.dp))
-                    )
+            if (addedImages.size > 0) {
+                LazyRow {
+                    items(addedImages) { imageRes ->
+                        val imageFile = File(imageRes)
+                        val imageUri = Uri.fromFile(imageFile)
+                        Image(
+                            painter = rememberAsyncImagePainter(
+                                ImageRequest.Builder(context)
+                                    .data(imageUri)
+                                    .build()
+                            ),
+                            contentDescription = "Uploaded image",
+                            modifier = Modifier
+                                .padding(8.dp)
+                                .size(100.dp)
+                                .clip(RoundedCornerShape(8.dp))
+                                .clickable { selectedAddedImage = imageRes },
+                        )
+                    }
                 }
+            } else {
+                Text(
+                    text = "Your gallery is empty!",
+                    color = MaterialTheme.colorScheme.primary,
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(8.dp)
+                )
             }
         }
     }
     if (showAddPhotoDialog) {
         showAddPhotoDialog = imageUploadScreen()
+    }
+
+    if (selectedAddedImage != null) {
+        AlertDialog(
+            onDismissRequest = { selectedAddedImage = null },
+            title = {
+                Text("Enlarge Image")
+            },
+            text = {
+                Box(
+                    modifier = Modifier.clickable { selectedAddedImage = null },
+                    contentAlignment = Alignment.Center
+                ) {
+                    val imageFile = selectedAddedImage?.let { File(it) }
+                    val imageUri = Uri.fromFile(imageFile)
+                    Image(
+                        painter = rememberAsyncImagePainter(
+                            ImageRequest.Builder(context)
+                                .data(imageUri)
+                                .build()
+                        ),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                    )
+                }
+            },
+            dismissButton = {},
+            confirmButton = {}
+        )
     }
 }
 

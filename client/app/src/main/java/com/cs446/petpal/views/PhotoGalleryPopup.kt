@@ -1,5 +1,6 @@
 package com.cs446.petpal.views
 
+import android.content.Context
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -14,9 +15,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.rememberAsyncImagePainter
+import com.cs446.petpal.viewmodels.PetsPageViewModel
+import java.io.File
+import java.io.FileOutputStream
+import java.io.InputStream
+import java.util.UUID
 
 @Composable
 fun ImageUploadPopup(
@@ -63,10 +71,13 @@ fun ImageUploadPopup(
 }
 
 @Composable
-fun imageUploadScreen(): Boolean {
+fun imageUploadScreen(petsPageViewModel: PetsPageViewModel = hiltViewModel()): Boolean {
     var showUploadDialog by remember { mutableStateOf(true) }
     var showImageDialog by remember { mutableStateOf(false) }
     var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
+    val context = LocalContext.current
+
+    val selectedPet by petsPageViewModel.selectedPet.collectAsState()
 
     AlertDialog(
         onDismissRequest = { showUploadDialog = false },
@@ -95,6 +106,24 @@ fun imageUploadScreen(): Boolean {
                 }
             }
         },
+        confirmButton = {
+            Button(
+                onClick = {
+                    selectedImageUri?.let { uri ->
+                        val savedPath = selectedPet?.let { saveImageToInternalStorage(context, uri, it.petId, "uploaded_image_${UUID.randomUUID()}.jpg") }
+                        if (savedPath != null && File(savedPath).exists()) {
+                            println("ImageCheck Image is saved and exists: $savedPath")
+                        } else {
+                            println("ImageCheck Image was NOT saved correctly!")
+                        }
+                        showUploadDialog = false
+                    }
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFD700))
+            ) {
+                Text(text = "Upload", color = Color.Black)
+            }
+        },
         dismissButton = {
             Button(
                 onClick = {
@@ -108,7 +137,6 @@ fun imageUploadScreen(): Boolean {
                 )
             }
         },
-        confirmButton = {}
     )
 
     ImageUploadPopup(
@@ -119,3 +147,23 @@ fun imageUploadScreen(): Boolean {
     return showUploadDialog
 }
 
+fun saveImageToInternalStorage(context: Context, imageUri: Uri, petId: String, fileName: String): String? {
+    val inputStream: InputStream? = context.contentResolver.openInputStream(imageUri)
+
+    val directory = File(context.filesDir, petId)
+    if (!directory.exists()) {
+        directory.mkdirs()
+    }
+
+    val file = File(directory, fileName)
+
+    return try {
+        FileOutputStream(file).use { outputStream ->
+            inputStream?.copyTo(outputStream)
+        }
+        file.absolutePath
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
+    }
+}
