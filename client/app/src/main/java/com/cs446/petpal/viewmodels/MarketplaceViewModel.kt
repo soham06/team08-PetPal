@@ -38,7 +38,7 @@ class MarketplaceViewModel @Inject constructor(
 
     init {
         // Fetch posts when the ViewModel is created.
-        getPostsForUser()
+      //  getPostsForUser()
     }
 
     // Retrieve posts from the backend.
@@ -135,7 +135,10 @@ class MarketplaceViewModel @Inject constructor(
                         newPost.postId = jsonResponse.optString("postId")
                         // Update the UI on the main thread.
                         viewModelScope.launch(Dispatchers.Main) {
-                            posts.add(newPost)
+                            val exists = posts.any { it.postId == newPost.postId }
+                            if (!exists) {
+                                posts.add(newPost)
+                            }
                         }
                     }
                 }
