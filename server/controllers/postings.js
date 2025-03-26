@@ -65,7 +65,7 @@ export async function createPostingForUser (req, res) {
         }
 
         const postData = req.body;
-        if (!postData.city || !postData.description || !postData.email || !postData.name || !postData.phone || !postData.petId) {
+        if (!postData.city || !postData.description || !postData.email || !postData.name || !postData.phone || !postData.petId || !postData.date) {
             return res.status(400).json({ message: "Invalid request body, please ensure all required fields are present"});
         }
 
