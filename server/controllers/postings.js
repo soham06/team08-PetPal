@@ -65,11 +65,13 @@ export async function createPostingForUser (req, res) {
         }
 
         const postData = req.body;
-        if (!postData.city || !postData.description || !postData.email || !postData.name || !postData.phone) {
+        if (!postData.city || !postData.description || !postData.email || !postData.name || !postData.phone || !postData.petId) {
             return res.status(400).json({ message: "Invalid request body, please ensure all required fields are present"});
         }
 
         postData["userId"] = userId;
+        postData["date"] = new Date().toISOString().split('T')[0];
+
         const postingsTable = collection(db, "postings")
         const newPost = await addDoc(postingsTable, postData)
 
@@ -102,7 +104,7 @@ export async function updatePostForUser (req, res) {
 
         const postData = req.body;
 
-        if (!postData.city || !postData.description || !postData.email || !postData.name || !postData.phone) {
+        if (!postData.city || !postData.description || !postData.email || !postData.name || !postData.phone || !postData.petId || !postData.date) {
             return res.status(400).json({ message: "Invalid request body, please ensure all required fields are present"});
         }
 
