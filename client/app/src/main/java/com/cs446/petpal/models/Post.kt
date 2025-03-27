@@ -8,5 +8,6 @@ data class Post(
     val phone: MutableState<String>,
     val email: MutableState<String>,
     val description: MutableState<String>,
+    val date: MutableState<String>,
     var postId: String? = null
 )

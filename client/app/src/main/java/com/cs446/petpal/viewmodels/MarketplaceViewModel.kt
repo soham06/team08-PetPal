@@ -15,6 +15,15 @@ import com.cs446.petpal.models.Post
 import com.cs446.petpal.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import java.text.SimpleDateFormat
+import java.util.Locale
+
+private fun convertDateFormat(dateStr: String): String {
+    val inputFormat = SimpleDateFormat("MM-dd-yyyy", Locale.US)
+    val outputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.US)
+    val date = inputFormat.parse(dateStr) ?: return ""
+    return outputFormat.format(date)
+}
 
 @HiltViewModel
 class MarketplaceViewModel @Inject constructor(
@@ -70,7 +79,8 @@ class MarketplaceViewModel @Inject constructor(
                                 city = androidx.compose.runtime.mutableStateOf(postJson.getString("city")),
                                 phone = androidx.compose.runtime.mutableStateOf(postJson.getString("phone")),
                                 email = androidx.compose.runtime.mutableStateOf(postJson.getString("email")),
-                                description = androidx.compose.runtime.mutableStateOf(postJson.getString("description"))
+                                description = androidx.compose.runtime.mutableStateOf(postJson.getString("description")),
+                                date = androidx.compose.runtime.mutableStateOf(postJson.optString("date", ""))
                             )
                             // Store the postId from the backend.
                             post.postId = postJson.optString("postId")
@@ -95,6 +105,7 @@ class MarketplaceViewModel @Inject constructor(
         phone: String,
         email: String,
         description: String,
+        date: String,
         callback: (Boolean, String?) -> Unit
     ) {
         // Prevent PetSitters from creating posts.
@@ -111,6 +122,7 @@ class MarketplaceViewModel @Inject constructor(
                     put("phone", phone)
                     put("email", email)
                     put("description", description)
+                    put("date", date)
                 }
                 val requestBody = json.toString()
                     .toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
@@ -130,7 +142,8 @@ class MarketplaceViewModel @Inject constructor(
                             city = androidx.compose.runtime.mutableStateOf(jsonResponse.optString("city")),
                             phone = androidx.compose.runtime.mutableStateOf(jsonResponse.optString("phone")),
                             email = androidx.compose.runtime.mutableStateOf(jsonResponse.optString("email")),
-                            description = androidx.compose.runtime.mutableStateOf(jsonResponse.optString("description"))
+                            description = androidx.compose.runtime.mutableStateOf(jsonResponse.optString("description")),
+                            date = androidx.compose.runtime.mutableStateOf(jsonResponse.optString("date", ""))
                         )
                         newPost.postId = jsonResponse.optString("postId")
                         // Update the UI on the main thread.
@@ -158,6 +171,7 @@ class MarketplaceViewModel @Inject constructor(
         phone: String,
         email: String,
         description: String,
+        date: String,
         callback: (Boolean, String?) -> Unit
     ) {
         if (isPetSitter) {
@@ -173,6 +187,7 @@ class MarketplaceViewModel @Inject constructor(
                     put("phone", phone)
                     put("email", email)
                     put("description", description)
+                    put("date", date)
                 }
                 val requestBody = json.toString()
                     .toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
@@ -192,7 +207,9 @@ class MarketplaceViewModel @Inject constructor(
                             city = androidx.compose.runtime.mutableStateOf(jsonResponse.optString("city")),
                             phone = androidx.compose.runtime.mutableStateOf(jsonResponse.optString("phone")),
                             email = androidx.compose.runtime.mutableStateOf(jsonResponse.optString("email")),
-                            description = androidx.compose.runtime.mutableStateOf(jsonResponse.optString("description"))
+                            description = androidx.compose.runtime.mutableStateOf(jsonResponse.optString("description")),
+                            date = androidx.compose.runtime.mutableStateOf(jsonResponse.optString("date", ""))
+
                         )
                         updatedPost.postId = jsonResponse.optString("postId")
                         viewModelScope.launch(Dispatchers.Main) {

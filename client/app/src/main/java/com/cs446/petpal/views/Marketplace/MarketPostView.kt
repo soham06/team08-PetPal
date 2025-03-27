@@ -1,6 +1,7 @@
 package com.cs446.petpal.views.Marketplace
 
 import androidx.compose.foundation.background
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -17,6 +18,17 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.cs446.petpal.R
 import com.cs446.petpal.models.Post
 import com.cs446.petpal.viewmodels.MarketplaceViewModel
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
+import java.util.Date
+import java.util.TimeZone
+import android.app.DatePickerDialog
+import android.widget.DatePicker
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CalendarToday
+import androidx.compose.foundation.clickable
+
 
 @Composable
 fun MarketPostView(marketplaceViewModel: MarketplaceViewModel = hiltViewModel()) {
@@ -36,6 +48,28 @@ fun MarketPostView(marketplaceViewModel: MarketplaceViewModel = hiltViewModel())
     var editPhone by remember { mutableStateOf("") }
     var editEmail by remember { mutableStateOf("") }
     var editDescription by remember { mutableStateOf("") }
+
+    // Date
+    val dateFormat = SimpleDateFormat("MM-dd-yyyy", Locale.getDefault())
+    var dateInput by remember { mutableStateOf(dateFormat.format(Calendar.getInstance().time)) }
+    val context = LocalContext.current
+    val calendar = Calendar.getInstance()
+    val datePickerDialog = remember {
+        DatePickerDialog(
+            context,
+            { _: DatePicker, year: Int, month: Int, dayOfMonth: Int ->
+                dateInput = dateFormat.format(
+                    Calendar.getInstance().apply {
+                        set(year, month, dayOfMonth)
+                    }.time
+                )
+            },
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.DAY_OF_MONTH)
+        )
+    }
+
 
     // Fetch posts on launch.
     LaunchedEffect(key1 = marketplaceViewModel.currentUserId) {
@@ -167,6 +201,24 @@ fun MarketPostView(marketplaceViewModel: MarketplaceViewModel = hiltViewModel())
                             label = { Text("Email") },
                             modifier = Modifier.fillMaxWidth()
                         )
+                        // DATE
+                        OutlinedTextField(
+                            value = dateInput,
+                            onValueChange = {},
+                            label = { Text("Sitting Date") },
+                            readOnly = true,
+                            trailingIcon = {
+                                Icon(
+                                    imageVector = Icons.Default.CalendarToday,
+                                    contentDescription = "Calendar Icon",
+                                    modifier = Modifier.clickable { datePickerDialog.show() }
+                                )
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable { datePickerDialog.show() }
+                        )
+
                         OutlinedTextField(
                             value = descriptionInput,
                             onValueChange = {
@@ -194,7 +246,8 @@ fun MarketPostView(marketplaceViewModel: MarketplaceViewModel = hiltViewModel())
                                 city = cityInput,
                                 phone = phoneInput,
                                 email = emailInput,
-                                description = descriptionInput
+                                description = descriptionInput,
+                                date = dateInput
                             ) { success, errorMsg ->
                                 // Optionally handle result (e.g., show a toast on error)
                             }
@@ -258,6 +311,26 @@ fun MarketPostView(marketplaceViewModel: MarketplaceViewModel = hiltViewModel())
 
         // Edit Post Dialog for PetOwners only.
         if (!isPetSitter && showEditDialog && currentPostToEdit != null) {
+
+            var editDate by remember { mutableStateOf(currentPostToEdit?.date?.value ?: dateFormat.format(Calendar.getInstance().time)) }
+
+            val editDatePickerDialog = remember {
+                DatePickerDialog(
+                    context,
+                    { _: DatePicker, year: Int, month: Int, dayOfMonth: Int ->
+                        editDate = dateFormat.format(
+                            Calendar.getInstance().apply {
+                                set(year, month, dayOfMonth)
+                            }.time
+                        )
+                    },
+                    calendar.get(Calendar.YEAR),
+                    calendar.get(Calendar.MONTH),
+                    calendar.get(Calendar.DAY_OF_MONTH)
+                )
+            }
+
+
             AlertDialog(
                 onDismissRequest = { showEditDialog = false },
                 title = { Text(text = "Edit Post") },
@@ -291,7 +364,7 @@ fun MarketPostView(marketplaceViewModel: MarketplaceViewModel = hiltViewModel())
                                 }.take(12)
                                 editPhone = formatted
                             },
-                            label = { Text("Phone") },
+                            label = { Text("Phone Number") },
                             modifier = Modifier.fillMaxWidth(),
                             singleLine = true
                         )
@@ -300,6 +373,22 @@ fun MarketPostView(marketplaceViewModel: MarketplaceViewModel = hiltViewModel())
                             onValueChange = { editEmail = it },
                             label = { Text("Email") },
                             modifier = Modifier.fillMaxWidth()
+                        )
+                        OutlinedTextField(
+                            value = editDate,
+                            onValueChange = {},
+                            label = { Text("Sitting Date") },
+                            readOnly = true,
+                            trailingIcon = {
+                                Icon(
+                                    imageVector = Icons.Default.CalendarToday,
+                                    contentDescription = "Calendar Icon",
+                                    modifier = Modifier.clickable { editDatePickerDialog.show() }
+                                )
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable { editDatePickerDialog.show() }
                         )
                         OutlinedTextField(
                             value = editDescription,
@@ -330,7 +419,8 @@ fun MarketPostView(marketplaceViewModel: MarketplaceViewModel = hiltViewModel())
                                     city = editCity,
                                     phone = editPhone,
                                     email = editEmail,
-                                    description = editDescription
+                                    description = editDescription,
+                                    date = editDate
                                 ) { success, errorMsg ->
                                     if (success) {
                                         // Hide the dialog upon successful update.

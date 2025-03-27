@@ -95,6 +95,10 @@ fun PostCard(
                 text = "Email: ${post.email.value}",
                 style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black)
             )
+            Text(
+                text = "Sitting Date: ${post.date.value}",
+                style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black)
+            )
             Spacer(modifier = Modifier.height(8.dp))
             // Description label and content.
             Text(
