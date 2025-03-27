@@ -69,8 +69,8 @@ fun PostCard(
                             )
                         ) {
                             Icon(
-                                painter = painterResource(id = R.drawable.delete),
-                                contentDescription = "Delete Post",
+                                painter = painterResource(id = R.drawable.ic_close),
+                                contentDescription = "Resolve Post",
                                 tint = Color.Black
                             )
                         }

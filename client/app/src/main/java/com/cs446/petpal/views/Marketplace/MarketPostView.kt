@@ -225,8 +225,8 @@ fun MarketPostView(marketplaceViewModel: MarketplaceViewModel = hiltViewModel())
         if (!isPetSitter && showDeleteDialog && currentPostToDelete != null) {
             AlertDialog(
                 onDismissRequest = { showDeleteDialog = false },
-                title = { Text(text = "Delete Post") },
-                text = { Text("Are you sure you want to delete this post?") },
+                title = { Text(text = "Resolve Post") },
+                text = { Text("Are you sure you want to resolve this post?") },
                 confirmButton = {
                     Button(
                         onClick = {
@@ -242,7 +242,7 @@ fun MarketPostView(marketplaceViewModel: MarketplaceViewModel = hiltViewModel())
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFA2D9FF))
                     ) {
-                        Text("Delete", color = Color.Black)
+                        Text("Resolve", color = Color.Black)
                     }
                 },
                 dismissButton = {
