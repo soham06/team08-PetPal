@@ -20,7 +20,11 @@ export async function getPostingsForUser (req, res) {
         }
 
         const postingsTable = collection(db, "postings")
-        const q = query(postingsTable, where("userId", "==", userId))
+        const q = query(
+          postingsTable,
+          where("userId", "==", userId),
+          orderBy("createdAt", "desc")
+        );
         const posts = await getDocs(q)
         const postsList = posts.docs.map(post => ({
             postId: post.id,
@@ -69,6 +73,7 @@ export async function createPostingForUser (req, res) {
             return res.status(400).json({ message: "Invalid request body, please ensure all required fields are present"});
         }
 
+        postData["createdAt"] = serverTimestamp();
         postData["userId"] = userId;
         postData["date"] = new Date().toISOString().split('T')[0];
 
