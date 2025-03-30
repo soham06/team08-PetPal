@@ -71,21 +71,75 @@ fun MarketPostView(marketplaceViewModel: MarketplaceViewModel = hiltViewModel())
                     .padding(top = 12.dp, start = 8.dp)
             )
             if (!isPetSitter) {
-                IconButton(
-                    onClick = { showAddDialog = true },
-                    modifier = Modifier
-                        .size(48.dp)
-                        .padding(top = 12.dp, end = 12.dp),
-                    colors = IconButtonDefaults.iconButtonColors(
-                        containerColor = Color(0xFFA2D9FF)
-                    )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.add),
-                        contentDescription = "Add Post",
-                        modifier = Modifier.size(24.dp),
-                        tint = Color.Black
-                    )
+                    IconButton(
+                        onClick = {
+                            marketplaceViewModel.undoDeletePost()
+                            // Clear inputs.
+                            nameInput = ""
+                            cityInput = ""
+                            phoneInput = ""
+                            emailInput = ""
+                            descriptionInput = ""
+                        },
+                        modifier = Modifier
+                            .size(48.dp)
+                            .padding(top = 12.dp, end = 12.dp),
+                        colors = IconButtonDefaults.iconButtonColors(
+                            containerColor = Color(0xFFA2D9FF)
+                        )
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.undo),
+                            contentDescription = "Add Post",
+                            modifier = Modifier.size(24.dp),
+                            tint = Color.Black
+                        )
+                    }
+                    IconButton(
+                        onClick = {
+                            marketplaceViewModel.redoDeletePost()
+                            // Clear inputs.
+                            nameInput = ""
+                            cityInput = ""
+                            phoneInput = ""
+                            emailInput = ""
+                            descriptionInput = ""
+                        },
+                        modifier = Modifier
+                            .size(48.dp)
+                            .padding(top = 12.dp, end = 12.dp),
+                        colors = IconButtonDefaults.iconButtonColors(
+                            containerColor = Color(0xFFA2D9FF)
+                        )
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.redo),
+                            contentDescription = "Add Post",
+                            modifier = Modifier.size(24.dp),
+                            tint = Color.Black
+                        )
+                    }
+                    IconButton(
+                        onClick = { showAddDialog = true },
+                        modifier = Modifier
+                            .size(48.dp)
+                            .padding(top = 12.dp, end = 12.dp),
+                        colors = IconButtonDefaults.iconButtonColors(
+                            containerColor = Color(0xFFA2D9FF)
+                        )
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.add),
+                            contentDescription = "Add Post",
+                            modifier = Modifier.size(24.dp),
+                            tint = Color.Black
+                        )
+                    }
                 }
             }
         }
