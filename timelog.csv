@@ -76,3 +76,5 @@ date,Rozhan,Gursimran,Bhavya,Jaskirat,Soham,Shaan,task
 2025-03-18,0,0,0,0,1.5,0,setup initial UI for pet gallery
 2025-03-18,0,0,0,0,1,0,fixed bug with pet profile sharing
 2025-03-24,0,0,0,0,4,0,finish image gallery feature for pets
+2025-03-25,0,1.5,0,0,0,0,started implementing memento pattern for undoing and redoing deletion of posts for marketplace
+2025-03-18,0,2.5,0,0,0,0,finished implementing undo and redo for post deletion for marketplace
