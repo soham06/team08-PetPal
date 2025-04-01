@@ -168,6 +168,25 @@ fun DailyEventsView(eventsViewModel: EventsViewModel = hiltViewModel()) {
                             )
                         )
                     }
+                    Row (
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        Text(
+                            text = "Location:",
+                            style = MaterialTheme.typography.bodyLarge.copy(
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        )
+                        Text(
+                            text = event.location.value,
+                            style = MaterialTheme.typography.bodyLarge.copy(
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        )
+                    }
                     Spacer(modifier = Modifier.height(4.dp))
                     Row (
                         modifier = Modifier.fillMaxWidth(),
