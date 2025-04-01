@@ -69,7 +69,7 @@ date,Rozhan,Gursimran,Bhavya,Jaskirat,Soham,Shaan,task
 2025-03-15,0,0,0,0,0,3,finished main functionality for pet postings
 2025-03-16,0,2,0,0,0,0,started looking into push notification functionality
 2025-03-16,1,0,0,0,0,0,started Hoeme Page front end 
-2025-03-17,2.5,0,0,0,0,0,finished working on Hoeme Page front end 
+2025-03-17,2.5,0,0,0,0,0,finished working on Home Page front end 
 2025-03-17,0,2,0,0,0,0,continued working on push notifications and got them to send manually
 2025-03-18,0,2.5,0,0,0,0,finished working on push notifications and got them to send automatically 
 2025-03-18,2.5,0,0,0,0,0, setup navigation for Home Page and fixed issues 
@@ -79,3 +79,6 @@ date,Rozhan,Gursimran,Bhavya,Jaskirat,Soham,Shaan,task
 2025-03-25,0,1.5,0,0,0,0,started implementing memento pattern for undoing and redoing deletion of posts for marketplace
 2025-03-18,0,2.5,0,0,0,0,finished implementing undo and redo for post deletion for marketplace
 2025-03-25,0,0,1,0,0,0,modified pet postings backend to include date and pet id
+2025-03-26,0,0,0,0,0,1,fixed duplicate posting bug
+2025-03-27,0,0,0,0,0,2.5,added date functionality to postings
+2025-03-31,0,0,0,0,0,5,added pet profile functionality to postings
