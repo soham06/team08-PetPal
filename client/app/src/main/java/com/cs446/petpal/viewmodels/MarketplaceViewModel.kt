@@ -108,8 +108,11 @@ class MarketplaceViewModel @Inject constructor(
     fun getPetsForUser() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-
-                val url = "http://10.0.2.2:3000/api/pets/$currentUserId"
+                val url = if (isPetSitter) {
+                    "http://10.0.2.2:3000/api/pets/all"  // New endpoint for PetSitters.
+                } else {
+                    "http://10.0.2.2:3000/api/pets/$currentUserId"
+                }
                 val request = Request.Builder()
                     .url(url)
                     .get()
