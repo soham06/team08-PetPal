@@ -82,3 +82,5 @@ date,Rozhan,Gursimran,Bhavya,Jaskirat,Soham,Shaan,task
 2025-03-26,0,0,0,0,0,1,fixed duplicate posting bug
 2025-03-27,0,0,0,0,0,2.5,added date functionality to postings
 2025-03-31,0,0,0,0,0,5,added pet profile functionality to postings
+2025-04-01,0,0,0,0,1,0,debug and fixed small bug with marketplace page
+2025-04-01,0,0,0,0,0.5,0,debug bug with usage of observer pattern on hompage
