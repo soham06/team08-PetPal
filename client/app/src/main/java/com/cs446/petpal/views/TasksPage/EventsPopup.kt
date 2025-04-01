@@ -2,7 +2,6 @@ package com.cs446.petpal.views.TasksPage
 
 import androidx.compose.material3.*
 import androidx.compose.ui.graphics.Color
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,7 +23,6 @@ import java.util.Calendar
 import java.util.Locale
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
-import android.util.Log
 import android.widget.DatePicker
 import android.widget.TimePicker
 import androidx.compose.foundation.clickable
@@ -62,7 +60,7 @@ fun eventsDelPopup(currEventId: String, eventsViewModel: EventsViewModel = hiltV
             Button(
                 onClick = {
                     showDelDialog = false
-                    eventsViewModel.deleteEventForUser(currEventId) { success, _ ->
+                    eventsViewModel.deleteEventForUser(currEventId) { success ->
 
                     }
                 },
@@ -90,6 +88,7 @@ fun eventsPopup(currEvent: Event?, currEventId: String?, popupType: String, even
     var endDate by remember { mutableStateOf(currEvent?.endDate?.value ?:dateFormat.format(calendar.time)) }
     var startTime by remember { mutableStateOf(currEvent?.startTime?.value ?:timeFormat.format(calendar.time)) }
     var endTime by remember { mutableStateOf(currEvent?.endTime?.value ?:timeFormat.format(calendar.time)) }
+
     val startDatePickerDialog = remember {
         DatePickerDialog(
             context,
@@ -262,7 +261,7 @@ fun eventsPopup(currEvent: Event?, currEventId: String?, popupType: String, even
                     showDialog = false
                     if (popupType == "ADD") {
                         eventsViewModel.createEventForUser(
-                            userInputDescription.toString(),
+                            userInputDescription,
                             startDate,
                             endDate,
                             startTime,
@@ -270,12 +269,20 @@ fun eventsPopup(currEvent: Event?, currEventId: String?, popupType: String, even
                             userInputLocation,
                         ) { success, _ ->
                         }
+                        println("Event Info\n" +
+                                "userInputDescription: $userInputDescription\n" +
+                                "startDate $startDate\n" +
+                                "endDate $endDate\n" +
+                                "startTime $startTime\n" +
+                                "endTime $endTime\n" +
+                                "userInputLocation $userInputLocation\n"
+                        )
                     }
                     else {
                         if (currEventId != null) {
                             eventsViewModel.updateEventForUser(
                                 currEventId,
-                                userInputDescription.toString(),
+                                userInputDescription,
                                 startDate,
                                 endDate,
                                 startTime,

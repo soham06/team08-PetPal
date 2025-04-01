@@ -36,7 +36,8 @@ fun HomepageView(homepagePetsViewModel: HomepagePetsViewModel = hiltViewModel(),
 
     val myPets by homepagePetsViewModel.myPetsList.collectAsState()
     val sharedPets by homepagePetsViewModel.sharedPetsList.collectAsState()
-    val upcomingEvents by homepagePetsViewModel.upcomingEvents.collectAsState()
+    val upcomingEvents by homepagePetsViewModel.events
+    println(upcomingEvents)
 
     Column(
         modifier = Modifier.fillMaxSize()

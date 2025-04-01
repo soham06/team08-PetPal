@@ -1,6 +1,7 @@
 package com.cs446.petpal.viewmodels
 
 import android.util.Log
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -8,7 +9,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cs446.petpal.models.Pet
 import com.cs446.petpal.models.Event
+import com.cs446.petpal.observer.EventSubject
+import com.cs446.petpal.observer.EventsObserver
 import com.cs446.petpal.repository.UserRepository
+import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -16,6 +20,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONArray
@@ -25,9 +30,13 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomepagePetsViewModel @Inject constructor(
-    private val userRepository: UserRepository
+    val userRepository: UserRepository
 ) : ViewModel() {
-
+    private val eventSubject: EventSubject = EventSubject(userRepository.currentUser.value?.userId ?: "")
+    val observer = EventsObserver()
+    private val _registrationToken = mutableStateOf("")
+    val registrationToken: State<String> = _registrationToken
+    val events: State<List<Event>> get() = observer.events
     private val client = OkHttpClient()
 
     // If the user ID is null/empty, we use "TEST_USER" as a fallback
@@ -53,7 +62,21 @@ class HomepagePetsViewModel @Inject constructor(
 
     init {
         fetchAllPetsFromServer()
+        eventSubject.attach(observer) // Register as an observer
         fetchUpcomingEvents()
+        fetchFCMToken()
+    }
+
+    fun fetchFCMToken() {
+        viewModelScope.launch {
+            try {
+                val token = FirebaseMessaging.getInstance().token.await()
+                Log.d("PushNotification", "FCM Token: $token")
+                _registrationToken.value = token
+            } catch (e: Exception) {
+                Log.e("PushNotification", "FCM token error", e)
+            }
+        }
     }
 
     fun fetchAllPetsFromServer() {
@@ -214,64 +237,17 @@ class HomepagePetsViewModel @Inject constructor(
 
 
     fun fetchUpcomingEvents() {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val request = Request.Builder()
-                    .url("http://10.0.2.2:3000/api/events/$currentUserId")
-                    .get()
-                    .addHeader("Content-Type", "application/json")
-                    .addHeader("Accept", "application/json")
-                    .build()
+        eventSubject.fetchEvents(registrationToken)
+        // Filter out past events & sort by computed timestamp
+        val now = System.currentTimeMillis()
+        println("Events: ${observer.getEvents()}")
+        println("Line: $events")
+        val upcoming = events.value
+            .filter { parseEventTimestamp(it.startDate.value, it.startTime.value) >= now }
+            .sortedBy { parseEventTimestamp(it.startDate.value, it.startTime.value) }
+            .take(3)
 
-                client.newCall(request).execute().use { response ->
-                    if (!response.isSuccessful) {
-                        Log.e("HomepagePetsViewModel", "Error fetching events: ${response.code}")
-                        return@use
-                    }
-                    val responseBody = response.body?.string() ?: "[]"
-                    val eventsArray = JSONArray(responseBody)
-                    val allEvents = mutableListOf<Event>()
-
-                    for (i in 0 until eventsArray.length()) {
-                        val obj = eventsArray.getJSONObject(i)
-                        val eventId = obj.optString("eventId", "")
-                        val description = obj.optString("description", "")
-                        val startDate = obj.optString("startDate", "")
-                        val endDate = obj.optString("endDate", "")
-                        val startTime = obj.optString("startTime", "")
-                        val endTime = obj.optString("endTime", "")
-                        val location = obj.optString("location", "")
-                        val notificationSent = obj.optBoolean("notificationSent", false)
-                        val registrationToken = obj.optString("registrationToken", "")
-
-                        val event = Event(
-                            eventId = eventId,
-                            description = mutableStateOf(description),
-                            startDate = mutableStateOf(startDate),
-                            endDate = mutableStateOf(endDate),
-                            startTime = mutableStateOf(startTime),
-                            endTime = mutableStateOf(endTime),
-                            location = mutableStateOf(location),
-                            notificationSent = notificationSent,
-                            registrationToken = registrationToken
-                        )
-                        allEvents.add(event)
-                    }
-
-                    // Filter out past events & sort by computed timestamp
-                    val now = System.currentTimeMillis()
-                    val upcoming = allEvents
-                        .filter { parseEventTimestamp(it.startDate.value, it.startTime.value) >= now }
-                        .sortedBy { parseEventTimestamp(it.startDate.value, it.startTime.value) }
-                        .take(3)
-
-                    _upcomingEvents.value = upcoming
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-                Log.e("HomepagePetsViewModel", "Exception fetching events", e)
-            }
-        }
+        _upcomingEvents.value = upcoming
     }
 
     // Adjust if your server uses a different format, e.g. "MM-dd-yyyy h:mma"
