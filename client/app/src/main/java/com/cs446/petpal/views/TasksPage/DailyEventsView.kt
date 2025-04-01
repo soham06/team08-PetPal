@@ -47,7 +47,7 @@ fun DailyEventsView(eventsViewModel: EventsViewModel = hiltViewModel()) {
     val tomorrow = Calendar.getInstance().apply { add(Calendar.DAY_OF_YEAR, 1) }
 
     val displayFormat = SimpleDateFormat("MMMM d yyyy", Locale.getDefault())
-    val events: MutableList<Event> = eventsViewModel.observer.getEvents()
+    val events by eventsViewModel.events
     val scrollState = rememberScrollState()
     Row(
         modifier = Modifier.fillMaxWidth(),

@@ -45,7 +45,8 @@ class EventSubject(val userId: String) {
     private fun convertDateFormat(dateStr: String): String {
         val inputFormat = SimpleDateFormat("MM-dd-yyyy", Locale.US)
         val outputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.US)
-        val date = inputFormat.parse(dateStr) ?: return ""
+
+        val date = inputFormat.parse(dateStr) ?: return ""  // Handle parsing failure
         return outputFormat.format(date)
     }
 
@@ -109,6 +110,15 @@ class EventSubject(val userId: String) {
         onResult: (Boolean, Event?) -> Unit
     ) {
         CoroutineScope(Dispatchers.IO).launch {
+            println("Event Info Create Event\n" +
+                    "userInputDescription: $description\n" +
+                    "startDate $startDate\n" +
+                    "endDate $endDate\n" +
+                    "startTime $startTime\n" +
+                    "endTime $endTime\n" +
+                    "userInputLocation $location\n" +
+                    "registrationToken $registrationToken\n"
+            )
             val formattedStartDay = convertDateFormat(startDate)
             val formattedEndDay = convertDateFormat(endDate)
             var successfulEventAdded = false
@@ -151,10 +161,8 @@ class EventSubject(val userId: String) {
                                 notificationSent = false,
                                 registrationToken = registrationToken.value
                             )
-                            val events: MutableList<Event> = getState()
-                            events.add(event)
                             withContext(Dispatchers.Main) {
-                                setState(events)
+                                fetchEvents(registrationToken) // Refresh events after update
                             }
                         } else {
                             // Optionally log error details from response
@@ -260,10 +268,9 @@ class EventSubject(val userId: String) {
                     client.newCall(request).execute().use { response ->
                         successfulEventDeleted = response.isSuccessful
                         if (successfulEventDeleted) {
-                            val events: MutableList<Event> = getState()
-                            events.removeIf { it.eventId == eventId }
+                            val newEvents = getState().filter { it.eventId != eventId }
                             withContext(Dispatchers.Main) {
-                                setState(events)
+                                setState(newEvents.toMutableList())
                             }
                         }
                     }

@@ -26,6 +26,7 @@ class EventsViewModel @Inject constructor(
     var selectedEvent: MutableState<Event?> = mutableStateOf(null)
     private val _registrationToken = mutableStateOf("")
     val registrationToken: State<String> = _registrationToken
+    val events: State<List<Event>> get() = observer.events
 
     init {
         println("User: ${userRepository.currentUser.value}")
