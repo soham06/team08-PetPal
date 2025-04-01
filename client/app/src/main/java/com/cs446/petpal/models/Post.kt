@@ -9,5 +9,6 @@ data class Post(
     val email: MutableState<String>,
     val description: MutableState<String>,
     val date: MutableState<String>,
+    val petId: MutableState<String>,
     var postId: String? = null
 )

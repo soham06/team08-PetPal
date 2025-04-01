@@ -14,14 +14,23 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cs446.petpal.R
 import com.cs446.petpal.models.Post
+import com.cs446.petpal.models.Pet
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.ui.draw.clip
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 
 @Composable
 fun PostCard(
     post: Post,
+    pet: Pet?,
     modifier: Modifier = Modifier,
-    editable: Boolean = false, // Controls visibility of edit/delete buttons.
+    editable: Boolean = false,
     onEdit: () -> Unit = {},
-    onDelete: () -> Unit = {}
+    onDelete: () -> Unit = {},
+    onPetClick: () -> Unit = {}
 ) {
     Card(
         modifier = modifier
@@ -29,12 +38,11 @@ fun PostCard(
             .padding(vertical = 8.dp, horizontal = 4.dp),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color(0xFFA2D9FF)// Color(0xCC1C1C1C)
+            containerColor = Color(0xFFA2D9FF)
         ),
         border = BorderStroke(1.dp, Color(0xCC1C1C1C))
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            // Top Row: Title with optional action buttons.
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -99,6 +107,41 @@ fun PostCard(
                 text = "Sitting Date: ${post.date.value}",
                 style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black)
             )
+            Spacer(modifier = Modifier.height(8.dp))
+            // Pet
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { onPetClick() }
+                    .padding(vertical = 4.dp),
+                shape = RoundedCornerShape(12.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    val petImageRes = R.drawable.pet_max
+                    Image(
+                        painter = painterResource(id = petImageRes),
+                        contentDescription = "Pet Image",
+                        modifier = Modifier
+                            .size(60.dp)
+                            .clip(CircleShape),
+                        contentScale = androidx.compose.ui.layout.ContentScale.Crop
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Pet: ${pet?.name?.value ?: "Unknown"}",
+                        fontSize = 16.sp,
+                        fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
+                        color = Color.Black
+                    )
+                }
+            }
             Spacer(modifier = Modifier.height(8.dp))
             // Description label and content.
             Text(
