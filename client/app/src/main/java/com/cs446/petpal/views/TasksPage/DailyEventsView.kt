@@ -20,6 +20,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.cs446.petpal.R
 import com.cs446.petpal.viewmodels.EventsViewModel
+import com.cs446.petpal.models.Event
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import java.text.SimpleDateFormat
@@ -46,7 +47,7 @@ fun DailyEventsView(eventsViewModel: EventsViewModel = hiltViewModel()) {
     val tomorrow = Calendar.getInstance().apply { add(Calendar.DAY_OF_YEAR, 1) }
 
     val displayFormat = SimpleDateFormat("MMMM d yyyy", Locale.getDefault())
-    val events by eventsViewModel.events
+    val events: MutableList<Event> = eventsViewModel.observer.getEvents()
     val scrollState = rememberScrollState()
     Row(
         modifier = Modifier.fillMaxWidth(),

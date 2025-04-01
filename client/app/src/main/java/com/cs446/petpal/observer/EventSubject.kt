@@ -15,10 +15,9 @@ import java.util.Locale
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class EventSubject(private val userId: String) {
+class EventSubject(val userId: String) {
+    // Common interface for Subject
     private val observers: MutableList<EventObserver> = mutableListOf()
-    private val client = OkHttpClient()
-    private val events: MutableList<Event> = mutableListOf()
 
     fun attach(observer: EventObserver) {
         observers.add(observer)
@@ -28,10 +27,19 @@ class EventSubject(private val userId: String) {
         observers.remove(observer)
     }
 
-    private fun notifyObservers() {
+    fun notifyObservers() {
         for (observer in observers) {
-            observer.onEventUpdated(events)
+            observer.update(this)
         }
+    }
+
+    // Specific business logic for Events
+    private val client = OkHttpClient()
+    private var state: MutableList<Event> = mutableListOf()
+    fun getState(): MutableList<Event> = state
+    fun setState(state: MutableList<Event>) {
+        this.state = state
+        notifyObservers()
     }
 
     private fun convertDateFormat(dateStr: String): String {
@@ -59,7 +67,7 @@ class EventSubject(private val userId: String) {
                             val responseBody = response.body?.string()
                             val eventsArray = JSONArray(responseBody)
 
-                            val events = mutableListOf<Event>()
+                            val events: MutableList<Event> = mutableListOf<Event>()
                             for (i in 0 until eventsArray.length()) {
                                 val eventJson = eventsArray.getJSONObject(i)
                                 val event = Event(
@@ -78,7 +86,7 @@ class EventSubject(private val userId: String) {
                                 }
                             }
                             withContext(Dispatchers.Main) {
-                                notifyObservers()
+                                setState(events)
                             }
                         }
                     }
@@ -143,9 +151,10 @@ class EventSubject(private val userId: String) {
                                 notificationSent = false,
                                 registrationToken = registrationToken.value
                             )
+                            val events: MutableList<Event> = getState()
                             events.add(event)
                             withContext(Dispatchers.Main) {
-                                notifyObservers()
+                                setState(events)
                             }
                         } else {
                             // Optionally log error details from response
@@ -251,9 +260,10 @@ class EventSubject(private val userId: String) {
                     client.newCall(request).execute().use { response ->
                         successfulEventDeleted = response.isSuccessful
                         if (successfulEventDeleted) {
+                            val events: MutableList<Event> = getState()
                             events.removeIf { it.eventId == eventId }
                             withContext(Dispatchers.Main) {
-                                notifyObservers()
+                                setState(events)
                             }
                         }
                     }
