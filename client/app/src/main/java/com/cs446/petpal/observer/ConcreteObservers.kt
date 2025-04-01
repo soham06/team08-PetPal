@@ -1,9 +1,7 @@
 package com.cs446.petpal.observer
 
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.State
-import androidx.compose.runtime.setValue
 import com.cs446.petpal.models.Event
 
 class EventsObserver : EventObserver {
