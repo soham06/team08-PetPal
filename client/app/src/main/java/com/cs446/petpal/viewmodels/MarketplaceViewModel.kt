@@ -108,6 +108,7 @@ class MarketplaceViewModel @Inject constructor(
     fun getPetsForUser() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
+
                 val url = "http://10.0.2.2:3000/api/pets/$currentUserId"
                 val request = Request.Builder()
                     .url(url)
@@ -341,6 +342,8 @@ class MarketplaceViewModel @Inject constructor(
             lastDeletedPost.phone,
             lastDeletedPost.email,
             lastDeletedPost.description,
+            lastDeletedPost.date,
+            lastDeletedPost.petId,
         ) { success, errorMsg ->
             if(success) {
                 var oldMemento = deletedPostsMementos[curIndex + 1]

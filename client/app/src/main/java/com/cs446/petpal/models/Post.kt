@@ -17,11 +17,13 @@ data class Post(
                        val phone: String,
                        val email: String,
                        val description: String,
+                       val date: String,
+                       val petId: String,
                        var postId: String?)
 
     fun save(): Memento {
         return Memento(
-            name.value, city.value, phone.value, email.value, description.value, postId
+            name.value, city.value, phone.value, email.value, description.value, date.value, petId.value, postId
         )
     }
 
@@ -31,5 +33,7 @@ data class Post(
         phone.value = memento.phone
         email.value = memento.email
         description.value = memento.description
+        date.value = memento.date
+        petId.value = memento.petId
     }
 }

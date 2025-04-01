@@ -81,7 +81,6 @@ fun MarketPostView(marketplaceViewModel: MarketplaceViewModel = hiltViewModel())
     var addPostFieldError by remember { mutableStateOf("") }
     var addPostPetError by remember { mutableStateOf("") }
 
-
     // Fetch posts on launch.
     LaunchedEffect(key1 = marketplaceViewModel.currentUserId) {
         marketplaceViewModel.getPostsForUser()
