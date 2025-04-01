@@ -1,8 +1,6 @@
 package com.cs446.petpal.models
 
 import androidx.compose.runtime.MutableState
-import java.sql.Date
-import java.sql.Time
 
 data class Event (
     val description: MutableState<String>,

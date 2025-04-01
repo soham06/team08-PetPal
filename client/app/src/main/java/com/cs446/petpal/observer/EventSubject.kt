@@ -16,8 +16,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class EventSubject(val userId: String) {
-    // Common interface for Subject
     private val observers: MutableList<EventObserver> = mutableListOf()
+    private val client = OkHttpClient()
+    private var state: MutableList<Event> = mutableListOf()
 
     fun attach(observer: EventObserver) {
         observers.add(observer)
@@ -33,10 +34,8 @@ class EventSubject(val userId: String) {
         }
     }
 
-    // Specific business logic for Events
-    private val client = OkHttpClient()
-    private var state: MutableList<Event> = mutableListOf()
     fun getState(): MutableList<Event> = state
+
     fun setState(state: MutableList<Event>) {
         this.state = state
         notifyObservers()
@@ -46,7 +45,7 @@ class EventSubject(val userId: String) {
         val inputFormat = SimpleDateFormat("MM-dd-yyyy", Locale.US)
         val outputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.US)
 
-        val date = inputFormat.parse(dateStr) ?: return ""  // Handle parsing failure
+        val date = inputFormat.parse(dateStr) ?: return ""
         return outputFormat.format(date)
     }
 
@@ -110,15 +109,6 @@ class EventSubject(val userId: String) {
         onResult: (Boolean, Event?) -> Unit
     ) {
         CoroutineScope(Dispatchers.IO).launch {
-            println("Event Info Create Event\n" +
-                    "userInputDescription: $description\n" +
-                    "startDate $startDate\n" +
-                    "endDate $endDate\n" +
-                    "startTime $startTime\n" +
-                    "endTime $endTime\n" +
-                    "userInputLocation $location\n" +
-                    "registrationToken $registrationToken\n"
-            )
             val formattedStartDay = convertDateFormat(startDate)
             val formattedEndDay = convertDateFormat(endDate)
             var successfulEventAdded = false
@@ -136,7 +126,6 @@ class EventSubject(val userId: String) {
                 }
                 val requestBody = json.toString()
                     .toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
-                // Build the POST request
                 val request = Request.Builder()
                     .url("http://10.0.2.2:3000/api/events/$userId")
                     .post(requestBody)
@@ -162,10 +151,9 @@ class EventSubject(val userId: String) {
                                 registrationToken = registrationToken.value
                             )
                             withContext(Dispatchers.Main) {
-                                fetchEvents(registrationToken) // Refresh events after update
+                                fetchEvents(registrationToken)
                             }
                         } else {
-                            // Optionally log error details from response
                             println("Adding event failed: ${response.body?.string()}")
                         }
                     }
@@ -210,7 +198,6 @@ class EventSubject(val userId: String) {
                 val requestBody = json.toString()
                     .toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
 
-                // Build the PATCH request
                 val request = Request.Builder()
                     .url("http://10.0.2.2:3000/api/events/${eventId}")
                     .patch(requestBody)
@@ -236,10 +223,9 @@ class EventSubject(val userId: String) {
                                 registrationToken = registrationToken.value
                             )
                             withContext(Dispatchers.Main) {
-                                fetchEvents(registrationToken) // Refresh events after update
+                                fetchEvents(registrationToken)
                             }
                         } else {
-                            // Optionally log error details from response
                             println("Updating event failed: ${response.body?.string()}")
                         }
                     }

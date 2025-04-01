@@ -9,9 +9,6 @@ class UserRepository {
     private val _currentUser = mutableStateOf<User?>(null)
     val currentUser: State<User?> get() = _currentUser
 
-    /**
-     * Creates a new User object for the current User.
-     */
     fun createUser(
         firstName: MutableState<String>,
         lastName: MutableState<String>,
@@ -31,9 +28,6 @@ class UserRepository {
         )
     }
 
-    /**
-     * Reset the current User object fields to empty strings.
-     */
     fun resetUser() {
         _currentUser.value = User(
             firstName = mutableStateOf(""),
@@ -46,10 +40,6 @@ class UserRepository {
         )
     }
 
-    /**
-     * Set userId for the current User. Does nothing if a current
-     *  User has not been created with createUser() yet.
-     */
     fun setUserId(newUserId: String) {
         val user = _currentUser.value
         if (user != null) {

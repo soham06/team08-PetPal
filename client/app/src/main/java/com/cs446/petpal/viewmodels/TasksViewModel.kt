@@ -34,7 +34,6 @@ class TasksViewModel @Inject constructor(
         selectedTask.value = task
     }
     init {
-        println("User: ${userRepository.currentUser.value}")
         getTasksForUser()
     }
 
@@ -50,7 +49,6 @@ class TasksViewModel @Inject constructor(
                 }
                 val requestBody = json.toString()
                     .toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
-                // Build the POST request
                 val request = Request.Builder()
                     .url("http://10.0.2.2:3000/api/tasks/$currentUserId")
                     .post(requestBody)
@@ -67,12 +65,11 @@ class TasksViewModel @Inject constructor(
                             status = mutableStateOf(jsonResponse.optString("status")),
                         )
                         task.taskId = jsonResponse.optString("taskId")
-                        val updatedTasks = _tasks.value.toMutableList() // Create a mutable copy
+                        val updatedTasks = _tasks.value.toMutableList()
                         updatedTasks.add(task!!)
                         _tasks.value = updatedTasks
                     }
                     else {
-                        // Optionally log error details from response
                         println("Adding task failed: ${response.body?.string()}")
                     }
                 }
@@ -96,7 +93,6 @@ class TasksViewModel @Inject constructor(
                 }
                 val requestBody = json.toString()
                     .toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
-                // Build the PATCH request
                 val request = Request.Builder()
                     .url("http://10.0.2.2:3000/api/tasks/$taskId")
                     .patch(requestBody)
@@ -126,7 +122,6 @@ class TasksViewModel @Inject constructor(
                         }
                     }
                     else {
-                        // Optionally log error details from response
                         println("Editing task failed: ${response.body?.string()}")
                     }
                 }
@@ -138,7 +133,6 @@ class TasksViewModel @Inject constructor(
         }
     }
     fun deleteTaskForUser(taskId: String, onResult: (Boolean, Task?) -> Unit) {
-        Log.d("TASKID", taskId)
         viewModelScope.launch(Dispatchers.IO)
         {
             var successfulTaskDeleted = false

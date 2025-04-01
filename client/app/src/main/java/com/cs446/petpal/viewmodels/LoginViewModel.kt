@@ -21,15 +21,10 @@ class LoginViewModel @Inject constructor(
 
     private val client = OkHttpClient()
 
-    /**
-     * Calls the login endpoint with the provided email and hashed password.
-     * Returns a Boolean indicating success and an optional User instance on success.
-     */
     fun loginUser(email: String, password: String, onResult: (Boolean) -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
             var successfulLogin: Boolean
             try {
-                // Build JSON payload
                 val json = JSONObject().apply {
                     put("emailAddress", email)
                     put("password", password)
@@ -37,22 +32,19 @@ class LoginViewModel @Inject constructor(
                 val requestBody = json.toString()
                     .toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
 
-                // Build the POST request
                 val request = Request.Builder()
-                    .url("http://10.0.2.2:3000/api/login") // Adjust the endpoint as needed
+                    .url("http://10.0.2.2:3000/api/login")
                     .post(requestBody)
                     .addHeader("Content-Type", "application/json")
                     .addHeader("Accept", "application/json")
                     .build()
 
-                // Execute the request synchronously on the IO dispatcher
                 client.newCall(request).execute().use { response ->
                     successfulLogin = response.isSuccessful
                     if (successfulLogin) {
                         val responseBody = response.body?.string()
                         val jsonResponse = JSONObject(responseBody ?: "")
 
-                        // Create a User instance from the JSON response.
                         val retFirstName = jsonResponse.optString("firstName")
                         val retLastName = jsonResponse.optString("lastName")
                         val retAddress = jsonResponse.optString("address")
@@ -73,7 +65,6 @@ class LoginViewModel @Inject constructor(
                         println("Response: $jsonResponse")
                         println("User: ${userRepository.currentUser.value}")
                     } else {
-                        // Optionally log error details from response
                         println("Login error: ${response.body?.string()}")
                     }
                 }

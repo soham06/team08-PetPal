@@ -53,7 +53,6 @@ fun PetsPageView(
     navController: NavController,
     petId: String?,
 ) {
-    // Collect the flows from the ViewModel
     val myPets by petsPageViewModel.myPetsList.collectAsState()
     val sharedPets by petsPageViewModel.sharedPetsList.collectAsState()
     val selectedPet by petsPageViewModel.selectedPet.collectAsState()
@@ -89,7 +88,6 @@ fun PetsPageView(
 
             Spacer(modifier = Modifier.height(6.dp))
 
-            // Shared Pet Selection Row
             SharedPetSelectionRow(
                 pets = sharedPets,
                 selectedPet = petToShow?.petId ?: "",
@@ -126,17 +124,14 @@ fun PetsPageView(
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                // Pet Info Card
                 PetInfoCard(petToShow = petToShow, petsPageViewModel = petsPageViewModel)
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // Insurance Info Card
                 InsuranceInfoCard(petToShow)
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // Medication Info Card
                 MedicationInfoCard(petToShow)
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -158,7 +153,6 @@ fun PetsPageView(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
-                    // Floating Action Button (Manage Pet Sharing)
                     FloatingActionButton(
                         onClick = { showSharePetDialog = true },
                         containerColor = Color(0xFF64B5F6),
@@ -171,12 +165,10 @@ fun PetsPageView(
                             modifier = Modifier.size(20.dp)
                         )
                     }
-                    // Floating Action Button (Delete Pet)
                     FloatingActionButton(
                         onClick = {
                             petToShow?.petId?.let { petId ->
                                 petsPageViewModel.deletePetForUser(petId) { success ->
-                                    // Optionally handle success/error
                                 }
                             }
                         },
@@ -204,8 +196,6 @@ fun PetsPageView(
     }
 }
 
-
-// PetInfoCard
 @Composable
 fun PetInfoCard(
     petToShow: Pet?,
@@ -246,7 +236,6 @@ fun PetInfoCard(
                 }
             }
 
-            // Info rows (Gender, Age, Birthday, Weight)
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -283,7 +272,6 @@ fun PetInfoCard(
     }
 }
 
-// My Pet Selection Row
 @Composable
 fun MyPetSelectionRow(
     pets: List<Pet>,
@@ -364,7 +352,6 @@ fun MyPetSelectionRow(
     }
 }
 
-// My Pet Selection Row
 @Composable
 fun SharedPetSelectionRow(
     pets: List<Pet>,
@@ -419,7 +406,6 @@ fun SharedPetSelectionRow(
     }
 }
 
-// Pet Info Row (unchanged)
 @Composable
 fun PetInfoRow(label: String, value: String, iconRes: String) {
     Row(
@@ -441,7 +427,6 @@ fun PetInfoRow(label: String, value: String, iconRes: String) {
     }
 }
 
-// Insurance Info Card (unchanged)
 @Composable
 fun InsuranceInfoCard(
     pet: Pet?,
@@ -516,7 +501,6 @@ fun InsuranceInfoCard(
     }
 }
 
-// Medication Info Card (unchanged)
 @Composable
 fun MedicationInfoCard(
     pet: Pet?,
@@ -689,7 +673,6 @@ fun ImageGallery(addedImages: List<String>) {
     }
 }
 
-// Icon placeholders (unchanged)
 fun getIconPlaceholder(iconName: String): Int {
     return when (iconName) {
         "gender_icon" -> R.drawable.ic_gender
@@ -701,12 +684,10 @@ fun getIconPlaceholder(iconName: String): Int {
         "insurance_icon" -> R.drawable.ic_insurance
         "policy_icon" -> R.drawable.ic_policy
         "medication_icon" -> R.drawable.ic_medication
-        //"dosage_icon" -> R.drawable.ic_dosage
         else -> R.drawable.ic_default
     }
 }
 
-// Temp function for profile pics (unchanged)
 fun getPetProfilePic(petName: String): Int {
     return when (petName) {
         "Toby" -> R.drawable.pet_toby

@@ -30,18 +30,14 @@ class PetsPageViewModel @Inject constructor(
 
     private val client = OkHttpClient()
 
-    // List of my pets that drives the UI
     private val _myPetsList = MutableStateFlow<List<Pet>>(emptyList())
     val myPetsList: StateFlow<List<Pet>> = _myPetsList
 
-    // List of shared pets that drives the UI
     private val _sharedPetsList = MutableStateFlow<List<Pet>>(emptyList())
     val sharedPetsList: StateFlow<List<Pet>> = _sharedPetsList
 
-    // List of all pets that drives the UI
     private var _allPetsList = MutableStateFlow<List<Pet>>(emptyList())
 
-    // Currently selected pet
     private val _selectedPet = MutableStateFlow<Pet?>(null)
     val selectedPet: StateFlow<Pet?> = _selectedPet
 
@@ -296,7 +292,6 @@ class PetsPageViewModel @Inject constructor(
             var success = false
             var updatedPet: Pet? = null
             try {
-                // Build JSON body with updated fields
                 val json = JSONObject().apply {
                     put("name", name)
                     put("animal", animal)
@@ -313,7 +308,6 @@ class PetsPageViewModel @Inject constructor(
                 val requestBody = json.toString()
                     .toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
 
-                // Build PATCH or PUT request (depends on your server)
                 val request = Request.Builder()
                     .url("http://10.0.2.2:3000/api/pets/$petId")
                     .patch(requestBody)
@@ -326,7 +320,6 @@ class PetsPageViewModel @Inject constructor(
                     if (success) {
                         val responseBody = response.body?.string()
                         val jsonResponse = JSONObject(responseBody ?: "")
-                        // Build updatedPet from server response
                         updatedPet = Pet(
                             petId = jsonResponse.optString("petId", petId),
                             name = mutableStateOf(jsonResponse.optString("name", name)),
@@ -360,8 +353,6 @@ class PetsPageViewModel @Inject constructor(
     }
 
     fun isSharedPetProfile(): Boolean {
-        println("HIIIIII")
-        println(selectedPet.value)
         if (_selectedPet.value?.sharedUsers != null) {
             if (_selectedPet.value?.sharedUsers?.value?.contains(currentUserId) == true) {
                 return true
@@ -373,7 +364,6 @@ class PetsPageViewModel @Inject constructor(
     fun deletePetForUser(petId: String, onResult: (Boolean) -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                // Build the DELETE request to remove the pet
                 val request = Request.Builder()
                     .url("http://10.0.2.2:3000/api/pets/$petId")
                     .delete()

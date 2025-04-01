@@ -86,19 +86,19 @@ fun PostCard(
                 }
             }
             Spacer(modifier = Modifier.height(4.dp))
-            // City
+
             Text(
                 text = "City: ${post.city.value}",
                 style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black)
             )
             Spacer(modifier = Modifier.height(2.dp))
-            // Phone
+
             Text(
                 text = "Phone: ${post.phone.value}",
                 style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black)
             )
             Spacer(modifier = Modifier.height(2.dp))
-            // Email
+
             Text(
                 text = "Email: ${post.email.value}",
                 style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black)
@@ -108,7 +108,7 @@ fun PostCard(
                 style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black)
             )
             Spacer(modifier = Modifier.height(8.dp))
-            // Pet
+
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -143,7 +143,7 @@ fun PostCard(
                 }
             }
             Spacer(modifier = Modifier.height(8.dp))
-            // Description label and content.
+
             Text(
                 text = "Description:",
                 style = MaterialTheme.typography.bodyLarge.copy(

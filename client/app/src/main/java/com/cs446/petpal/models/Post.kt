@@ -27,6 +27,7 @@ data class Post(
         )
     }
 
+    // TODO: can this be deleted?
     fun restore(memento: Memento) {
         name.value = memento.name
         city.value = memento.city

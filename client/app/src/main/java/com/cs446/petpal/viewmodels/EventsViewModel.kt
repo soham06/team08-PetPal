@@ -9,7 +9,6 @@ import com.cs446.petpal.observer.EventSubject
 import com.cs446.petpal.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
-
 import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.lifecycle.viewModelScope
@@ -30,8 +29,8 @@ class EventsViewModel @Inject constructor(
 
     init {
         println("User: ${userRepository.currentUser.value}")
-        eventSubject.attach(observer) // Register as an observer
-        eventSubject.fetchEvents(registrationToken) // Fetch initial events
+        eventSubject.attach(observer)
+        eventSubject.fetchEvents(registrationToken)
         fetchFCMToken()
     }
 
@@ -78,16 +77,12 @@ class EventsViewModel @Inject constructor(
                                  startTime, endTime, location, registrationToken, onResult)
     }
 
-    fun getEventsForUser() {
-        eventSubject.fetchEvents(registrationToken)
-    }
-
     fun deleteEventForUser(eventId: String, onResult: (Boolean) -> Unit) {
         eventSubject.deleteEvent(eventId, onResult)
     }
 
     override fun onCleared() {
         super.onCleared()
-        eventSubject.detach(observer) // Detach observer to prevent memory leaks
+        eventSubject.detach(observer)
     }
 }

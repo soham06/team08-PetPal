@@ -24,7 +24,6 @@ fun LandingPageScreen(navController: NavController) {
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
-        // Background Image
         Image(
             painter = painterResource(id = R.drawable.dog_image),
             contentDescription = "Background Dog Image",
@@ -32,7 +31,6 @@ fun LandingPageScreen(navController: NavController) {
             contentScale = ContentScale.Crop
         )
 
-        // Foreground Content
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top,
@@ -40,7 +38,6 @@ fun LandingPageScreen(navController: NavController) {
                 .fillMaxSize()
                 .padding(top = 60.dp)
         ) {
-            // **Title**
             Text(
                 text = "PetPal",
                 fontSize = 40.sp,
@@ -49,7 +46,6 @@ fun LandingPageScreen(navController: NavController) {
                 modifier = Modifier.padding(top = 60.dp)
             )
 
-            // **Subtitle**
             Text(
                 text = "Take care of pets with ease!",
                 fontSize = 20.sp,
@@ -59,7 +55,6 @@ fun LandingPageScreen(navController: NavController) {
                 modifier = Modifier.padding(top = 4.dp, bottom = 20.dp)
             )
 
-            // **Buttons Row (Sign Up & Login)**
             Row(
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                 modifier = Modifier

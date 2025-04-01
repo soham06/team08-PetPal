@@ -81,7 +81,6 @@ fun ProfilePageView(profilePageViewModel: ProfilePageViewModel = hiltViewModel()
                 }
             }
 
-            // Profile Picture
             Image(
                 painter = painterResource(id = R.drawable.ic_profile),
                 contentDescription = "Profile Picture",
@@ -91,7 +90,7 @@ fun ProfilePageView(profilePageViewModel: ProfilePageViewModel = hiltViewModel()
                     .border(2.dp,Color.White, CircleShape),
                 contentScale = ContentScale.Crop
             )
-            // Edit Profile Text
+
             Text(
                 text = "Profile",
                 style = MaterialTheme.typography.headlineMedium.copy(
@@ -100,7 +99,6 @@ fun ProfilePageView(profilePageViewModel: ProfilePageViewModel = hiltViewModel()
                 )
             )
 
-            // User Type Text
             Text(
                 text = userType,
                 style = MaterialTheme.typography.headlineMedium.copy(
@@ -115,7 +113,6 @@ fun ProfilePageView(profilePageViewModel: ProfilePageViewModel = hiltViewModel()
                 .background(Color.White, RoundedCornerShape(15.dp))
                 .padding(top = 4.dp, bottom = 10.dp, start = 10.dp, end = 10.dp)
 
-            // FIRST NAME FIELD
             OutlinedTextField(
                 value = firstName,
                 onValueChange = {  },
@@ -124,7 +121,7 @@ fun ProfilePageView(profilePageViewModel: ProfilePageViewModel = hiltViewModel()
                 shape = RoundedCornerShape(15.dp),
                 readOnly = true
             )
-            // LAST NAME FIELD
+
             OutlinedTextField(
                 value = lastName,
                 onValueChange = {  },
@@ -133,7 +130,7 @@ fun ProfilePageView(profilePageViewModel: ProfilePageViewModel = hiltViewModel()
                 shape = RoundedCornerShape(15.dp),
                 readOnly = true
             )
-            // ADDRESS FIELD
+
             OutlinedTextField(
                 value = address,
                 onValueChange = {  },
@@ -142,7 +139,7 @@ fun ProfilePageView(profilePageViewModel: ProfilePageViewModel = hiltViewModel()
                 shape = RoundedCornerShape(15.dp),
                 readOnly = true
             )
-            // EMAIL FIELD
+
             OutlinedTextField(
                 value = email,
                 onValueChange = {  },
@@ -152,7 +149,6 @@ fun ProfilePageView(profilePageViewModel: ProfilePageViewModel = hiltViewModel()
                 readOnly = true
             )
 
-            // LOGOUT
             Button(
                 onClick = {
                     profilePageViewModel.logOutUser()
@@ -167,6 +163,4 @@ fun ProfilePageView(profilePageViewModel: ProfilePageViewModel = hiltViewModel()
 
         }
     }
-
-
 }

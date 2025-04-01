@@ -35,11 +35,9 @@ export async function getPetsForUser (req, res) {
 export async function getAllPets(req, res) {
     try {
         const db = getFirestore(firebaseConnection);
-        // No need to read a userId; we want all pets.
         const petsTable = collection(db, "pets");
-        // Get all documents from the pets collection.
         const petsSnapshot = await getDocs(petsTable);
-        // Map each document to an object including the petId.
+        
         const petsList = petsSnapshot.docs.map(pet => ({
             petId: pet.id,
             ...pet.data()
