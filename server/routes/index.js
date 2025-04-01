@@ -3,7 +3,7 @@ import { registerUser } from '../controllers/register.js'
 import { loginUser, getUserDetailsById } from '../controllers/login.js'
 import { getTasksForUser,createTaskForUser, updateTaskForUser, deleteTaskForUser } from '../controllers/tasks.js'
 import { getEventsForUser, createEventForUser, updateEventForUser, deleteEventForUser } from '../controllers/events.js'
-import { getPetsForUser, createPetForUser, updatePetForUser, deletePetForUser, sharePetWithUser, unsharePetWithUser, getSharedPetsForUser } from '../controllers/pets.js'
+import { getPetsForUser, getAllPets, createPetForUser, updatePetForUser, deletePetForUser, sharePetWithUser, unsharePetWithUser, getSharedPetsForUser } from '../controllers/pets.js'
 import { getPostingsForUser, getAllPostings, createPostingForUser, updatePostForUser, deletePostForUser } from '../controllers/postings.js'
 
 const router = express.Router()
@@ -30,6 +30,7 @@ router.patch('/events/:eventId', updateEventForUser);
 router.delete('/events/:eventId', deleteEventForUser);
 
 //pet profile routes
+router.get('/pets/all', getAllPets);
 router.get('/pets/:userId', getPetsForUser);
 router.post('/pets/:userId', createPetForUser)
 router.patch('/pets/:petId', updatePetForUser)

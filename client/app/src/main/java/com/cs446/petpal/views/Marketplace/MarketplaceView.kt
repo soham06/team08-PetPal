@@ -44,7 +44,6 @@ fun MarketplaceView( marketplaceViewModel: MarketplaceViewModel = hiltViewModel(
             ) {
                 MarketPostView(marketplaceViewModel)
                 Spacer(modifier = Modifier.height(20.dp))
-               // DailyEventsView(eventsViewModel)
             }
         }
         BottomBar(navController)

@@ -1,7 +1,7 @@
 import firebaseConnection from '../firebase.js'
 import { getFirestore, collection, getDoc,
          getDocs, query, where, addDoc, doc,
-         serverTimestamp, updateDoc, deleteDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
+         serverTimestamp, updateDoc, deleteDoc, orderBy } from 'firebase/firestore';
 
 export async function getPostingsForUser (req, res) {
     try {
@@ -20,7 +20,11 @@ export async function getPostingsForUser (req, res) {
         }
 
         const postingsTable = collection(db, "postings")
-        const q = query(postingsTable, where("userId", "==", userId))
+        const q = query(
+          postingsTable,
+          where("userId", "==", userId),
+          orderBy("createdAt", "desc")
+        );
         const posts = await getDocs(q)
         const postsList = posts.docs.map(post => ({
             postId: post.id,
@@ -65,11 +69,14 @@ export async function createPostingForUser (req, res) {
         }
 
         const postData = req.body;
-        if (!postData.city || !postData.description || !postData.email || !postData.name || !postData.phone) {
+        if (!postData.city || !postData.description || !postData.email || !postData.name || !postData.phone || !postData.petId || !postData.date) {
             return res.status(400).json({ message: "Invalid request body, please ensure all required fields are present"});
         }
 
+        postData["createdAt"] = serverTimestamp();
         postData["userId"] = userId;
+        postData["date"] = new Date().toISOString().split('T')[0];
+
         const postingsTable = collection(db, "postings")
         const newPost = await addDoc(postingsTable, postData)
 
@@ -102,7 +109,7 @@ export async function updatePostForUser (req, res) {
 
         const postData = req.body;
 
-        if (!postData.city || !postData.description || !postData.email || !postData.name || !postData.phone) {
+        if (!postData.city || !postData.description || !postData.email || !postData.name || !postData.phone || !postData.petId || !postData.date) {
             return res.status(400).json({ message: "Invalid request body, please ensure all required fields are present"});
         }
 
