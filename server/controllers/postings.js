@@ -1,7 +1,7 @@
 import firebaseConnection from '../firebase.js'
 import { getFirestore, collection, getDoc,
          getDocs, query, where, addDoc, doc,
-         serverTimestamp, updateDoc, deleteDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
+         serverTimestamp, updateDoc, deleteDoc, orderBy } from 'firebase/firestore';
 
 export async function getPostingsForUser (req, res) {
     try {
