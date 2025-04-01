@@ -3,9 +3,6 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import routes from './routes/index.js';
 import config from './config.js';
-import firebaseConnection from './firebase.js'
-import {initializeApp} from "firebase-admin/app";
-import { getMessaging } from 'firebase-admin/messaging'
 import admin from 'firebase-admin'
 import { readFile } from "fs/promises";
 import cron from 'node-cron'

@@ -50,7 +50,6 @@ fun LoginView(loginViewModel: LoginViewModel = hiltViewModel(), navController: N
     var passwordVisible by remember { mutableStateOf(false) }
     var loginSuccess by remember { mutableStateOf<Boolean?>(null) }
 
-    // Utility function to hash the password.
     fun hashPassword(password: String): String {
         val md = MessageDigest.getInstance("MD5")
         val digest = md.digest(password.toByteArray())
@@ -59,7 +58,6 @@ fun LoginView(loginViewModel: LoginViewModel = hiltViewModel(), navController: N
 
 
     Box(
-        // Blue Background
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFFA2D9FF)),
@@ -72,7 +70,6 @@ fun LoginView(loginViewModel: LoginViewModel = hiltViewModel(), navController: N
                 .fillMaxWidth()
                 .padding(24.dp)
         ) {
-            // Welcome Back Text
             Text(
                 text = "Welcome Back!",
                 style = MaterialTheme.typography.headlineMedium.copy(
@@ -86,7 +83,6 @@ fun LoginView(loginViewModel: LoginViewModel = hiltViewModel(), navController: N
                 .background(Color.White, RoundedCornerShape(15.dp))
                 .padding(top = 4.dp, bottom = 10.dp, start = 10.dp, end = 10.dp)
 
-            // EMAIL ADDRESS FIELD
             OutlinedTextField(
                 value = email,
                 onValueChange = { email = it },
@@ -95,7 +91,6 @@ fun LoginView(loginViewModel: LoginViewModel = hiltViewModel(), navController: N
                 shape = RoundedCornerShape(15.dp)
             )
 
-            // PASSWORD
             OutlinedTextField(
                 value = password,
                 onValueChange = { password = it },
@@ -114,23 +109,6 @@ fun LoginView(loginViewModel: LoginViewModel = hiltViewModel(), navController: N
                 shape = RoundedCornerShape(15.dp)
             )
 
-            // Forgot Password
-//            Row (
-//                modifier = Modifier.fillMaxWidth(),
-//                horizontalArrangement = Arrangement.End
-//            ) {
-//                Text(
-//                    text = "Forgot password?",
-//                    color = Color.DarkGray,
-//                    fontWeight = FontWeight.Bold,
-//                    fontSize = 18.sp,
-//                    modifier = Modifier.clickable {
-//                        // TODO: Implement forgot password navigation.
-//                    }
-//                )
-//            }
-
-            // Login Button
             Button(
                 onClick = {
                      loginViewModel.loginUser(email, hashPassword(password)) { success ->
@@ -145,7 +123,6 @@ fun LoginView(loginViewModel: LoginViewModel = hiltViewModel(), navController: N
             }
 
 
-            // Show a login result message.
             loginSuccess?.let { success ->
                 if (!success) {
                     Text(
@@ -163,7 +140,6 @@ fun LoginView(loginViewModel: LoginViewModel = hiltViewModel(), navController: N
                 }
             }
 
-            // Create an Account
             Row {
                 Text(
                     text = "Don't have an account? ",

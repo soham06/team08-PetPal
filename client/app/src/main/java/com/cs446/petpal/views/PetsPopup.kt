@@ -2,7 +2,6 @@ package com.cs446.petpal.views
 
 import androidx.compose.material3.*
 import androidx.compose.ui.graphics.Color
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -198,7 +197,6 @@ fun petsPopup(currPet: Pet?, currPetId: String?, popupType: String, petsViewMode
                                 medicationName = userInputMedicationName,
                                 medicationDosage = userInputMedicationDosage
                             ) { success, _ ->
-                                // Optionally handle success or error
                             }
                         }
                     }

@@ -13,17 +13,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.cs446.petpal.R
 import androidx.navigation.NavController
-import com.cs446.petpal.viewmodels.BarsViewModel
 
 @Composable
 fun BottomBarButton(navController: NavController, label: String, iconRes: Int) {
@@ -50,8 +44,7 @@ fun BottomBarButton(navController: NavController, label: String, iconRes: Int) {
 }
 
 @Composable
-fun TopBar(barsViewModel: BarsViewModel = hiltViewModel(), navController: NavController) {
-    var expanded by remember { mutableStateOf(false) }
+fun TopBar(navController: NavController) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -66,19 +59,6 @@ fun TopBar(barsViewModel: BarsViewModel = hiltViewModel(), navController: NavCon
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            IconButton(
-                onClick = { navController.navigate("notifsPage")},
-                modifier = Modifier
-                    .size(48.dp)
-                    .padding(top = 12.dp)
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.notif),
-                    contentDescription = "Notifications",
-                    modifier = Modifier.size(24.dp),
-                    tint = Color.Black
-                )
-            }
             Box(modifier = Modifier.weight(1f) .padding(top = 12.dp), contentAlignment = Alignment.Center) {
                 Text(
                     text = "PetPal",

@@ -1,38 +1,59 @@
 package com.cs446.petpal.views.Marketplace
 
-import androidx.compose.foundation.background
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.foundation.layout.*
+import android.app.DatePickerDialog
+import android.widget.DatePicker
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CalendarToday
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.cs446.petpal.R
-import com.cs446.petpal.models.Post
 import com.cs446.petpal.models.Pet
+import com.cs446.petpal.models.Post
 import com.cs446.petpal.viewmodels.MarketplaceViewModel
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
-import android.app.DatePickerDialog
-import android.widget.DatePicker
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CalendarToday
-import androidx.compose.foundation.clickable
-import androidx.compose.material3.DropdownMenuItem
 
 
 @Composable
 fun MarketPostView(marketplaceViewModel: MarketplaceViewModel = hiltViewModel()) {
-    // User Values
     val firstName = marketplaceViewModel.firstName
     val lastName = marketplaceViewModel.lastName
     val email = marketplaceViewModel.email
@@ -42,14 +63,12 @@ fun MarketPostView(marketplaceViewModel: MarketplaceViewModel = hiltViewModel())
     var showEditDialog by remember { mutableStateOf(false) }
     var currentPostToEdit by remember { mutableStateOf<Post?>(null) }
 
-    // State variables for the edit dialog's input fields:
     var editName by remember { mutableStateOf("") }
     var editCity by remember { mutableStateOf("") }
     var editPhone by remember { mutableStateOf("") }
     var editEmail by remember { mutableStateOf("") }
     var editDescription by remember { mutableStateOf("") }
 
-    // Date
     val dateFormat = SimpleDateFormat("MM-dd-yyyy", Locale.getDefault())
     var dateInput by remember { mutableStateOf(dateFormat.format(Calendar.getInstance().time)) }
     val context = LocalContext.current
@@ -70,10 +89,8 @@ fun MarketPostView(marketplaceViewModel: MarketplaceViewModel = hiltViewModel())
         )
     }
 
-    // Pets
-    // Holds the currently selected pet (null until one is chosen)
+
     var selectedPet by remember { mutableStateOf<Pet?>(null) }
-    // Controls whether the dropdown menu is expanded
     var dropdownExpanded by remember { mutableStateOf(false) }
     val petList = marketplaceViewModel.pets
     var showPetInfoDialog by remember { mutableStateOf(false) }
@@ -81,16 +98,13 @@ fun MarketPostView(marketplaceViewModel: MarketplaceViewModel = hiltViewModel())
     var addPostFieldError by remember { mutableStateOf("") }
     var addPostPetError by remember { mutableStateOf("") }
 
-    // Fetch posts on launch.
     LaunchedEffect(key1 = marketplaceViewModel.currentUserId) {
         marketplaceViewModel.getPostsForUser()
         marketplaceViewModel.getPetsForUser()
     }
 
-    // Check if the user is a PetSitter.
     val isPetSitter = marketplaceViewModel.isPetSitter
 
-    // UI state for the "Add Post" dialog (only for PetOwners).
     var showAddDialog by remember { mutableStateOf(false) }
     var nameInput by remember { mutableStateOf(firstName + " " + lastName ) }
     var cityInput by remember { mutableStateOf("") }
@@ -100,7 +114,6 @@ fun MarketPostView(marketplaceViewModel: MarketplaceViewModel = hiltViewModel())
     val maxDescriptionWords = 50
 
     Column {
-        // Top Row: Title and conditionally show Add button.
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -124,7 +137,6 @@ fun MarketPostView(marketplaceViewModel: MarketplaceViewModel = hiltViewModel())
                     IconButton(
                         onClick = {
                             marketplaceViewModel.undoDeletePost()
-                            // Clear inputs.
                             nameInput = ""
                             cityInput = ""
                             phoneInput = ""
@@ -148,7 +160,6 @@ fun MarketPostView(marketplaceViewModel: MarketplaceViewModel = hiltViewModel())
                     IconButton(
                         onClick = {
                             marketplaceViewModel.redoDeletePost()
-                            // Clear inputs.
                             nameInput = ""
                             cityInput = ""
                             phoneInput = ""
@@ -191,20 +202,17 @@ fun MarketPostView(marketplaceViewModel: MarketplaceViewModel = hiltViewModel())
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // List of posts.
         LazyColumn(
             modifier = Modifier.fillMaxWidth(),
             contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp)
         ) {
             items(marketplaceViewModel.posts) { post ->
-                // For PetOwners, enable editing; for PetSitters, disable it.
                 val associatedPet = petList.find { it.petId == post.petId.value }
                 PostCard(
                     post = post,
                     pet = associatedPet,
                     editable = !isPetSitter,
                     onEdit = {
-                        // Set the current post to edit and pre-populate edit fields.
                         currentPostToEdit = post
                         editName = post.name.value
                         editCity = post.city.value
@@ -214,7 +222,6 @@ fun MarketPostView(marketplaceViewModel: MarketplaceViewModel = hiltViewModel())
                         showEditDialog = true
                     },
                     onDelete = {
-                        // Set the post to delete and open the confirmation dialog.
                         currentPostToDelete = post
                         showDeleteDialog = true
                     },
@@ -228,7 +235,6 @@ fun MarketPostView(marketplaceViewModel: MarketplaceViewModel = hiltViewModel())
             }
         }
 
-        // Add Post dialog for PetOwners only.
         if (!isPetSitter && showAddDialog) {
             AlertDialog(
                 onDismissRequest = { showAddDialog = false },
@@ -253,15 +259,13 @@ fun MarketPostView(marketplaceViewModel: MarketplaceViewModel = hiltViewModel())
                         OutlinedTextField(
                             value = phoneInput,
                             onValueChange = { input ->
-                                // Remove all non-digit characters
                                 val digits = input.filter { it.isDigit() }
-                                // Format input as xxx-xxx-xxxx
                                 val formatted = buildString {
                                     for (i in digits.indices) {
                                         append(digits[i])
-                                        if (i == 2 || i == 5) append("-") // Insert dashes at appropriate positions
+                                        if (i == 2 || i == 5) append("-")
                                     }
-                                }.take(12) // Ensure it doesn't exceed "123-456-7890"
+                                }.take(12)
                                 phoneInput = formatted
                             },
                             label = { Text("Phone Number") },
@@ -274,7 +278,7 @@ fun MarketPostView(marketplaceViewModel: MarketplaceViewModel = hiltViewModel())
                             label = { Text("Email") },
                             modifier = Modifier.fillMaxWidth()
                         )
-                        // DATE
+
                         OutlinedTextField(
                             value = dateInput,
                             onValueChange = {},
@@ -292,7 +296,7 @@ fun MarketPostView(marketplaceViewModel: MarketplaceViewModel = hiltViewModel())
                                 .clickable { datePickerDialog.show() }
                         )
 
-                        // PET DROPDOWN
+
                         Box(modifier = Modifier.fillMaxWidth()) {
                             Row(
                                 modifier = Modifier
@@ -310,7 +314,7 @@ fun MarketPostView(marketplaceViewModel: MarketplaceViewModel = hiltViewModel())
                                     onClick = { dropdownExpanded = true }
                                 ) {
                                     Icon(
-                                        painter = painterResource(id = R.drawable.ic_dropdown), // use your dropdown icon resource
+                                        painter = painterResource(id = R.drawable.ic_dropdown),
                                         contentDescription = "Open Dropdown"
                                     )
                                 }
@@ -368,7 +372,6 @@ fun MarketPostView(marketplaceViewModel: MarketplaceViewModel = hiltViewModel())
                 confirmButton = {
                     Button(
                         onClick = {
-                            // Validate that every text field is filled.
                             val areFieldsValid = nameInput.trim().isNotEmpty() &&
                                     cityInput.trim().isNotEmpty() &&
                                     phoneInput.trim().isNotEmpty() &&
@@ -376,26 +379,22 @@ fun MarketPostView(marketplaceViewModel: MarketplaceViewModel = hiltViewModel())
                                     descriptionInput.trim().isNotEmpty() &&
                                     dateInput.trim().isNotEmpty()
 
-                            // Set error for missing fields if needed.
                             if (!areFieldsValid) {
                                 addPostFieldError = "Please fill out every field in order to complete post."
                             } else {
                                 addPostFieldError = ""
                             }
 
-                            // Validate that a pet is selected.
                             if (selectedPet == null) {
                                 addPostPetError = "Please add a pet to profile in order to create a pet posting."
                             } else {
                                 addPostPetError = ""
                             }
 
-                            // If any error exists, exit early.
                             if (!areFieldsValid || selectedPet == null) {
                                 return@Button
                             }
 
-                            // If all validations pass, clear error messages and create the post.
                             showAddDialog = false
                             marketplaceViewModel.createPost(
                                 name = nameInput,
@@ -406,9 +405,7 @@ fun MarketPostView(marketplaceViewModel: MarketplaceViewModel = hiltViewModel())
                                 date = dateInput,
                                 petId = selectedPet!!.petId
                             ) { success, errorMsg ->
-                                // Optionally handle result.
                             }
-                            // Clear inputs.
                             nameInput = ""
                             cityInput = ""
                             phoneInput = ""
@@ -431,7 +428,6 @@ fun MarketPostView(marketplaceViewModel: MarketplaceViewModel = hiltViewModel())
             )
         }
 
-        // Delete Post Dialog for PetOwners only.
         if (!isPetSitter && showDeleteDialog && currentPostToDelete != null) {
             AlertDialog(
                 onDismissRequest = { showDeleteDialog = false },
@@ -440,13 +436,10 @@ fun MarketPostView(marketplaceViewModel: MarketplaceViewModel = hiltViewModel())
                 confirmButton = {
                     Button(
                         onClick = {
-                            // Call the ViewModel's deletePost method.
                             marketplaceViewModel.deletePost(currentPostToDelete!!.postId ?: "") { success ->
                                 if (success) {
-                                    // Hide the dialog upon successful deletion.
                                     showDeleteDialog = false
                                 } else {
-                                    // Optionally, show an error message or handle the failure case.
                                 }
                             }
                         },
@@ -466,15 +459,11 @@ fun MarketPostView(marketplaceViewModel: MarketplaceViewModel = hiltViewModel())
             )
         }
 
-        // Edit Post Dialog for PetOwners only.
         if (!isPetSitter && showEditDialog && currentPostToEdit != null) {
-
-            // Inside the edit dialog block (after verifying currentPostToEdit is not null)
             val associatedPetForEdit = petList.find { it.petId == currentPostToEdit!!.petId.value }
             var editSelectedPet by remember { mutableStateOf<Pet?>(associatedPetForEdit) }
             var editPostFieldError by remember { mutableStateOf("") }
             var editPostPetError by remember { mutableStateOf("") }
-
 
             var editDate by remember { mutableStateOf(currentPostToEdit?.date?.value ?: dateFormat.format(Calendar.getInstance().time)) }
 
@@ -499,7 +488,6 @@ fun MarketPostView(marketplaceViewModel: MarketplaceViewModel = hiltViewModel())
                 onDismissRequest = { showEditDialog = false },
                 title = { Text(text = "Edit Post") },
                 text = {
-                    // Display the input fields in a column.
                     Column(
                         modifier = Modifier.fillMaxWidth(),
                         verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -554,7 +542,6 @@ fun MarketPostView(marketplaceViewModel: MarketplaceViewModel = hiltViewModel())
                                 .fillMaxWidth()
                                 .clickable { editDatePickerDialog.show() }
                         )
-                        // PET DROPDOWN for Edit Dialog
                         Box(modifier = Modifier.fillMaxWidth()) {
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
@@ -571,7 +558,7 @@ fun MarketPostView(marketplaceViewModel: MarketplaceViewModel = hiltViewModel())
                                     onClick = { dropdownExpanded = true }
                                 ) {
                                     Icon(
-                                        painter = painterResource(id = R.drawable.ic_dropdown), // your dropdown icon
+                                        painter = painterResource(id = R.drawable.ic_dropdown),
                                         contentDescription = "Open Dropdown"
                                     )
                                 }
@@ -629,7 +616,6 @@ fun MarketPostView(marketplaceViewModel: MarketplaceViewModel = hiltViewModel())
                 confirmButton = {
                     Button(
                         onClick = {
-                            // Validate text fields.
                             val areFieldsValid = editName.trim().isNotEmpty() &&
                                     editCity.trim().isNotEmpty() &&
                                     editPhone.trim().isNotEmpty() &&
@@ -642,19 +628,16 @@ fun MarketPostView(marketplaceViewModel: MarketplaceViewModel = hiltViewModel())
                                 editPostFieldError = ""
                             }
 
-                            // Validate that a pet is selected.
                             if (editSelectedPet == null) {
                                 editPostPetError = "Please add a pet to profile in order to create a pet posting."
                             } else {
                                 editPostPetError = ""
                             }
 
-                            // If either error exists, do not proceed.
                             if (!areFieldsValid || editSelectedPet == null) {
                                 return@Button
                             }
 
-                            // All validations passed; proceed to update the post.
                             currentPostToEdit?.let { post ->
                                 marketplaceViewModel.updatePost(
                                     postId = post.postId ?: "",
@@ -664,12 +647,11 @@ fun MarketPostView(marketplaceViewModel: MarketplaceViewModel = hiltViewModel())
                                     email = editEmail,
                                     description = editDescription,
                                     date = editDate,
-                                    petId = editSelectedPet!!.petId  // Using the updated pet from the dropdown
+                                    petId = editSelectedPet!!.petId
                                 ) { success, errorMsg ->
                                     if (success) {
                                         showEditDialog = false
                                     } else {
-                                        // Optionally handle the error.
                                     }
                                 }
                             }
@@ -690,7 +672,6 @@ fun MarketPostView(marketplaceViewModel: MarketplaceViewModel = hiltViewModel())
             )
         }
 
-        // Pet Info Dialog
         if (showPetInfoDialog && petInfoToShow != null) {
             PetInfoDialog(
                 petToShow = petInfoToShow,

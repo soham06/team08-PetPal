@@ -53,7 +53,7 @@ fun DailyTasksView(tasksViewModel: TasksViewModel = hiltViewModel()) {
                 fontWeight = FontWeight.Bold
             ),
             modifier = Modifier
-                .align(Alignment.CenterVertically) // Vertically center the text
+                .align(Alignment.CenterVertically)
                 .padding(top = 12.dp)
                 .padding(start = 8.dp)
         )
@@ -80,8 +80,7 @@ fun DailyTasksView(tasksViewModel: TasksViewModel = hiltViewModel()) {
             .verticalScroll(scrollState)
     )
     {
-        // Display each task description in the Row
-        (tasks as List<Task>).forEach { task ->
+        tasks.forEach { task ->
             val isChecked = task.status.value == "CLOSED"
             Card(
                 modifier = Modifier
@@ -205,7 +204,7 @@ fun DailyTasksView(tasksViewModel: TasksViewModel = hiltViewModel()) {
                 }
             )
         }
-        // Editing Task
+
         if (showEditDialog) {
             if (currTask != null) {
                 userInput = currTask.description.value
@@ -243,7 +242,7 @@ fun DailyTasksView(tasksViewModel: TasksViewModel = hiltViewModel()) {
             )
         }
 
-    // Adding Task
+
     if (showAddDialog) {
         userInput = ""
         AlertDialog(

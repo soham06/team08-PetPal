@@ -61,7 +61,6 @@ class SignUpViewModel @Inject constructor(
                         val responseBody = response.body?.string()
                         val jsonResponse = JSONObject(responseBody ?: "")
 
-                        // Obtain userId from the response
                         val userId = jsonResponse.optString("userId")
                         userRepository.setUserId(userId)
 

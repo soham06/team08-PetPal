@@ -84,7 +84,6 @@ fun PetInfoDialog(
                             modifier = Modifier.weight(1f),
                             verticalArrangement = Arrangement.spacedBy(10.dp)
                         ) {
-                            // Replace with your actual icon resource IDs.
                             PetInfoRow("Animal", petToShow?.animal ?: "--", R.drawable.ic_animal)
                             PetInfoRow("Gender", petToShow?.gender?.value ?: "--", R.drawable.ic_gender)
                             PetInfoRow("Breed", petToShow?.breed ?: "--", R.drawable.ic_breed)

@@ -127,7 +127,7 @@ fun eventsPopup(currEvent: Event?, currEventId: String?, popupType: String, even
             },
             calendar.get(Calendar.HOUR_OF_DAY),
             calendar.get(Calendar.MINUTE),
-            false // 12-hour format
+            false
         )
     }
     val endTimePickerDialog = remember {
@@ -141,7 +141,7 @@ fun eventsPopup(currEvent: Event?, currEventId: String?, popupType: String, even
             },
             calendar.get(Calendar.HOUR_OF_DAY),
             calendar.get(Calendar.MINUTE),
-            false // 12-hour format
+            false
         )
     }
     AlertDialog(
@@ -193,7 +193,6 @@ fun eventsPopup(currEvent: Event?, currEventId: String?, popupType: String, even
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                    // Start Time Picker
                     Column(modifier = Modifier.weight(1f)) {
                         OutlinedTextField(
                             value = startTime,
@@ -213,7 +212,6 @@ fun eventsPopup(currEvent: Event?, currEventId: String?, popupType: String, even
                         )
                     }
 
-                    // End Time Picker
                     Column(modifier = Modifier.weight(1f)) {
                         OutlinedTextField(
                             value = endTime,
