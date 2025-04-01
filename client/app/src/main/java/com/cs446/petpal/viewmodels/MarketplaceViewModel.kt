@@ -1,5 +1,6 @@
 package com.cs446.petpal.viewmodels
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -51,6 +52,9 @@ class MarketplaceViewModel @Inject constructor(
     init {
       //  getPostsForUser()
     }
+
+    private val deletedPostsMementos = mutableListOf<Post.Memento>()
+    private var curIndex = -1
 
     // Retrieve posts from the backend.
     // For PetSitters: fetch all posts.
@@ -170,6 +174,7 @@ class MarketplaceViewModel @Inject constructor(
         }
         viewModelScope.launch(Dispatchers.IO) {
             var success = false
+            var postId: String? = null
             try {
                 val json = JSONObject().apply {
                     put("name", name)
@@ -203,6 +208,7 @@ class MarketplaceViewModel @Inject constructor(
                             petId = androidx.compose.runtime.mutableStateOf(jsonResponse.optString("petId", ""))
                         )
                         newPost.postId = jsonResponse.optString("postId")
+                        postId = jsonResponse.optString("postId")
                         // Update the UI on the main thread.
                         viewModelScope.launch(Dispatchers.Main) {
                             val exists = posts.any { it.postId == newPost.postId }
@@ -215,7 +221,7 @@ class MarketplaceViewModel @Inject constructor(
             } catch (e: Exception) {
                 e.printStackTrace()
             }
-            callback(success, if (success) null else "Failed to create post")
+            callback(success, if (success) postId else "Failed to create post")
         }
     }
 
@@ -288,7 +294,7 @@ class MarketplaceViewModel @Inject constructor(
 
     // Delete a post.
     // Only allow deletion if the user is a PetOwner.
-    fun deletePost(postId: String, callback: (Boolean) -> Unit) {
+    fun deletePost(postId: String, isRedoing: Boolean = false, callback: (Boolean) -> Unit) {
         if (isPetSitter) {
             callback(false)
             return
@@ -296,6 +302,10 @@ class MarketplaceViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             var success = false
             try {
+                if (!isRedoing) {
+                    saveDeletedPost(postId)
+                }
+
                 val request = Request.Builder()
                     .url("http://10.0.2.2:3000/api/postings/$postId")
                     .delete()
@@ -315,5 +325,52 @@ class MarketplaceViewModel @Inject constructor(
             }
             callback(success)
         }
+    }
+
+    fun undoDeletePost(): Boolean {
+        if (curIndex < 0) {
+            println("cannot undo")
+            return false
+        }
+
+        val lastDeletedPost = deletedPostsMementos[curIndex]
+        curIndex--
+        createPost(
+            lastDeletedPost.name,
+            lastDeletedPost.city,
+            lastDeletedPost.phone,
+            lastDeletedPost.email,
+            lastDeletedPost.description,
+        ) { success, errorMsg ->
+            if(success) {
+                var oldMemento = deletedPostsMementos[curIndex + 1]
+                var newMemento = oldMemento.copy(postId = errorMsg)
+                deletedPostsMementos[curIndex + 1] = newMemento
+            }
+        }
+        return true
+    }
+
+    fun saveDeletedPost(postId: String) {
+        val postToDelete = posts.find { it.postId == postId }
+        postToDelete?.let {
+            while (curIndex < deletedPostsMementos.size - 1) {
+                deletedPostsMementos.removeAt(deletedPostsMementos.lastIndex)
+            }
+            deletedPostsMementos.add(it.save())
+            curIndex = deletedPostsMementos.size - 1
+        }
+    }
+
+    fun redoDeletePost(): Boolean {
+        if (curIndex >= deletedPostsMementos.size - 1) {
+            println("Cannot redo")
+            return false
+        }
+
+        curIndex++
+        val postToDelete = deletedPostsMementos[curIndex]
+        deletePost(postToDelete.postId!!, true) {}
+        return true
     }
 }
