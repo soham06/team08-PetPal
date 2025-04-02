@@ -83,11 +83,8 @@ fun HomepageView(homepagePetsViewModel: HomepagePetsViewModel = hiltViewModel(),
                     )
                 }
                 itemsIndexed(myPets) { index, pet ->
-                    val petImageRes = when (index) {
-                        0 -> R.drawable.pet_max
-                        1 -> R.drawable.pet_luna
-                        else -> R.drawable.pet_max
-                    }
+                    val petImageRes = getPetProfilePic(pet.name.value)
+                    println(petImageRes)
                     PetListItem(
                         petName = pet.name.value,
                         onClick = { Log.d("HomepageView", "Clicked pet: ${pet.petId}")
@@ -107,11 +104,7 @@ fun HomepageView(homepagePetsViewModel: HomepagePetsViewModel = hiltViewModel(),
                     )
                 }
                 itemsIndexed(sharedPets) { index, pet ->
-                    val petImageRes = when (index) {
-                        0 -> R.drawable.pet_toby
-                        1 -> R.drawable.pet_luna
-                        else -> R.drawable.pet_toby
-                    }
+                    val petImageRes = getPetProfilePic(pet.name.value)
                     PetListItem(
                         petName = pet.name.value,
                         onClick = { Log.d("HomepageView", "Clicked pet: ${pet.petId}")

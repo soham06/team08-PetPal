@@ -26,15 +26,4 @@ data class Post(
             name.value, city.value, phone.value, email.value, description.value, date.value, petId.value, postId
         )
     }
-
-    // TODO: can this be deleted?
-    fun restore(memento: Memento) {
-        name.value = memento.name
-        city.value = memento.city
-        phone.value = memento.phone
-        email.value = memento.email
-        description.value = memento.description
-        date.value = memento.date
-        petId.value = memento.petId
-    }
 }
