@@ -51,7 +51,6 @@ fun HomepageView(homepagePetsViewModel: HomepagePetsViewModel = hiltViewModel(),
     val myPets by homepagePetsViewModel.myPetsList.collectAsState()
     val sharedPets by homepagePetsViewModel.sharedPetsList.collectAsState()
     val upcomingEvents by homepagePetsViewModel.events
-    println(upcomingEvents)
 
     Column(
         modifier = Modifier.fillMaxSize()
@@ -84,7 +83,6 @@ fun HomepageView(homepagePetsViewModel: HomepagePetsViewModel = hiltViewModel(),
                 }
                 itemsIndexed(myPets) { index, pet ->
                     val petImageRes = getPetProfilePic(pet.name.value)
-                    println(petImageRes)
                     PetListItem(
                         petName = pet.name.value,
                         onClick = { Log.d("HomepageView", "Clicked pet: ${pet.petId}")
