@@ -12,17 +12,17 @@ date,Rozhan,Gursimran,Bhavya,Jaskirat,Soham,Shaan,task
 2025-02-03,0,3,0,0,0,0,initial project setup in android studio. firebase console setup. firebase auth setup
 2025-02-03,0,0,0,3,0,0,made class diagram
 2025-01-10,0,0,0,0,3,0,restructure codebase to follow client-server and mvvm architechure and setup backend server using Node/Express
-2025-02-5,1,1,1,1,1,1,team meeting to finalize features for first sprint
-2025-02-6,0,1,0,0,1,0,worked on setting up firebase with node
-2025-02-7,0,0,0,0,1,0,setting up user registeration endpoint
-2025-02-7,0,0,0,0,1,0,setting up initial tasks endpoints
-2025-02-7,0,2,0,0,0,0,refactored endpoints for register and tasks so they no longer require admin info. set up the login endpoint.
-2025-02-7,0,0,0,0,0,1,started working on login in screen
-2025-02-8,0,0,0,2,0,0,started working on sign up screen
-2025-02-8,2,0,0,2,0,0,started working on landing screen
-2025-02-9,0,0,0,3,0,0,finished majority of sign up screen
-2025-02-9,0,0,0,0,0,1,working on login front-end screen
-2025-02-9,1,0,0,0,0,0,working on landing front-end screen
+2025-02-05,1,1,1,1,1,1,team meeting to finalize features for first sprint
+2025-02-06,0,1,0,0,1,0,worked on setting up firebase with node
+2025-02-07,0,0,0,0,1,0,setting up user registeration endpoint
+2025-02-07,0,0,0,0,1,0,setting up initial tasks endpoints
+2025-02-07,0,2,0,0,0,0,refactored endpoints for register and tasks so they no longer require admin info. set up the login endpoint.
+2025-02-07,0,0,0,0,0,1,started working on login in screen
+2025-02-08,0,0,0,2,0,0,started working on sign up screen
+2025-02-08,2,0,0,2,0,0,started working on landing screen
+2025-02-09,0,0,0,3,0,0,finished majority of sign up screen
+2025-02-09,0,0,0,0,0,1,working on login front-end screen
+2025-02-09,1,0,0,0,0,0,working on landing front-end screen
 2025-02-10,0,1,1,1,0,0,worked on sign up screen
 2025-02-10,0,0,0,0,1,0,fixed backend connection on sign up screen
 2025-02-10,0,0,0,2,0,0,finished remaining sign up screen features after backend connection fixed
@@ -47,8 +47,8 @@ date,Rozhan,Gursimran,Bhavya,Jaskirat,Soham,Shaan,task
 2025-02-28,0,0,0,0,0.5,0,enhanced get endpoints for tasks and events for better UI display experience
 2025-02-28,2,0,0,0,0,0,started working on pet profile screen
 2025-03-01,0,0,0,0,1,0,update events date handling/storage logic
-2025-03-01,2.5,0,0,0,0,0, working on pet profile screen
-2025-03-02,2,0,0,0,0,0, finished front-end on pet profile screen
+2025-03-01,2.5,0,0,0,0,0,working on pet profile screen
+2025-03-02,2,0,0,0,0,0,finished front-end on pet profile screen
 2025-03-02,0,0,0,1.5,0,0,looked into design patterns from lecture and started implementing singleton to have a single User class instance
 2025-03-03,0,0,0,1.5,0,0,worked on using the singleton User class in login and register modelViews but ran into errors with user repository
 2025-03-04,0,1.5,0,0,0,0,help debugging user repository
@@ -57,7 +57,7 @@ date,Rozhan,Gursimran,Bhavya,Jaskirat,Soham,Shaan,task
 2025-03-04,0,0,0,0,2.5,0,updated pet page structure and implemented add pet functionality
 2025-03-04,0,0,0,0,0,2.5,finished UI and navigation for user profile
 2025-03-04,0,0,0,0,0,1,added user details for profile
-2025-03-04,3,0,0,0,0,0, added delete and edit functionality to pet profile
+2025-03-04,3,0,0,0,0,0,added delete and edit functionality to pet profile
 2025-03-04,0,0,0,0.5,0,0,helped approve PRs and gave feedback to teammates
 2025-03-04,0.5,0.5,0.5,0.5,0.5,0.5,meeting to discuss P4 demo and review app functionality
 2025-03-04,0,0,0,0,1,0,integrate user repository with pets page and small bug fixes
@@ -67,14 +67,17 @@ date,Rozhan,Gursimran,Bhavya,Jaskirat,Soham,Shaan,task
 2025-03-13,0,0,1,0,0,0,added routes for pet postings
 2025-03-15,0,0,0,0,0,0.5,added additional routes for pet postings
 2025-03-15,0,0,0,0,0,3,finished main functionality for pet postings
+2025-03-15,0,0,0,3,0,0,began implementing observer pattern across modelViews and Views
 2025-03-16,0,2,0,0,0,0,started looking into push notification functionality
 2025-03-16,1,0,0,0,0,0,started Hoeme Page front end 
+2025-03-16,0,0,0,1,0,0,continued implementing observer pattern across modelViews and Views
 2025-03-17,2.5,0,0,0,0,0,finished working on Home Page front end 
 2025-03-17,0,2,0,0,0,0,continued working on push notifications and got them to send manually
 2025-03-18,0,2.5,0,0,0,0,finished working on push notifications and got them to send automatically 
-2025-03-18,2.5,0,0,0,0,0, setup navigation for Home Page and fixed issues 
+2025-03-18,2.5,0,0,0,0,0,setup navigation for Home Page and fixed issues 
 2025-03-18,0,0,0,0,1.5,0,setup initial UI for pet gallery
 2025-03-18,0,0,0,0,1,0,fixed bug with pet profile sharing
+2025-03-15,0,0,0,1.5,0,0,tried debugging observer pattern and reviewed PRs
 2025-03-24,0,0,0,0,4,0,finish image gallery feature for pets
 2025-03-25,0,1.5,0,0,0,0,started implementing memento pattern for undoing and redoing deletion of posts for marketplace
 2025-03-18,0,2.5,0,0,0,0,finished implementing undo and redo for post deletion for marketplace
@@ -82,6 +85,10 @@ date,Rozhan,Gursimran,Bhavya,Jaskirat,Soham,Shaan,task
 2025-03-26,0,0,0,0,0,1,fixed duplicate posting bug
 2025-03-27,0,0,0,0,0,2.5,added date functionality to postings
 2025-03-31,0,0,0,0,0,5,added pet profile functionality to postings
+2025-03-31,0,0,0,3,0,0,finished debugging and implementing observer pattern across modelViews and Views
+2025-03-31,0,0,0,1,0,0,tested for edge/corner cases across the app and notified others of changes needed
 2025-04-01,0,0,0,0,1,0,debug and fixed small bug with marketplace page
 2025-04-01,0,0,0,0,0.5,0,debug bug with usage of observer pattern on hompage
 2025-04-01,0,0,0,0,1.5,0,clean up code in entire repo
+2025-04-01,0,0,0,1,0,0,small fixes to observer pattern and tested/approved PRs
+2025-04-01,0,0,0,5,0,0,completed thorough analysis of Non-Functional Requirements including programs analysis and visuals
